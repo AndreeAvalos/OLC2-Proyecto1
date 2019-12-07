@@ -1,0 +1,31 @@
+package Analizadores;
+import java_cup.runtime.*; 
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
+parser code
+{:
+
+
+:}
+/*Terminales*/
+
+terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmenor, Tmayor, Tor, Tand, Tllave_a, Tllave_c,
+                Tcorchete_a, Tcorchete_c, Tpycoma, Tpar_a, Tpar_c, Tcoma, Tmod, Tmayorigual, Tmenorigual, Tnot,Tpotencia,
+                Tdospuntos, Tincremento, Tdecremento, Tpunto,Tent, Tdec, Tchr, Tbul, Tnlo, Tpesode, Treservar, Tzro, Tif,
+                Twhile, Tfor, Trepeat, Tswitch, Tcase, Tdefault, Tromper, Tsiga, Tdefinir, Tfusion, Timportar, Tregresar,
+                Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
+                Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
+                Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
+                Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena,Tcaracter; 
+
+non terminal String S, INSTRUCCIONES, INSTRUCCION;
+
+start with S;
+
+S::=INSTRUCCIONES;
+
+INSTRUCCIONES::= INSTRUCCIONES INSTRUCCION
+            | INSTRUCCION;
+
+INSTRUCCION::= Tpycoma;
