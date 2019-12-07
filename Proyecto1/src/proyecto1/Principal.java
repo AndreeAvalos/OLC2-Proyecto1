@@ -5,6 +5,13 @@
  */
 package proyecto1;
 
+import Analizadores.*;
+import Instrucciones.*;
+import Tabla_Simbolos.TablaDeSimbolos;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.LinkedList;
+
 /**
  *
  * @author Andree
@@ -42,7 +49,7 @@ public class Principal extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        consola = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -72,6 +79,11 @@ public class Principal extends javax.swing.JFrame {
         jButton4.setText("Guardar Proyecto");
 
         jButton5.setText("Correr Proyecto");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -110,11 +122,11 @@ public class Principal extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Default", jScrollPane2);
 
-        jTextArea2.setBackground(new java.awt.Color(0, 0, 0));
-        jTextArea2.setColumns(20);
-        jTextArea2.setForeground(new java.awt.Color(255, 255, 255));
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
+        consola.setBackground(new java.awt.Color(0, 0, 0));
+        consola.setColumns(20);
+        consola.setForeground(new java.awt.Color(255, 255, 255));
+        consola.setRows(5);
+        jScrollPane3.setViewportView(consola);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -247,6 +259,31 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        String input = jTextArea1.getText();
+        Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(input))));
+        try {
+            parser.parse();
+            LinkedList<Instruccion> AST = parser.AST;
+            TablaDeSimbolos global = new TablaDeSimbolos();
+            consola.append("--------------------- Inicio de la recoleccion ---------------------\n");
+            //Recolecatamos primero
+            AST.forEach((item) -> {
+                item.Recolectar(global);
+            });
+            consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
+            //Ejecutamos segundo
+            AST.forEach((item) -> {
+                item.Ejecutar(global);
+            });
+        } catch (Exception e) {
+            consola.setText("---------------------  Error de Compilacion   ---------------------");
+        }
+
+
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -283,6 +320,7 @@ public class Principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea consola;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -307,7 +345,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,7 +23,7 @@ public class GenerarSintactico {
         try {
             // TODO code application logic here
             String ruta = "src/Analizadores/";
-            String opcCup[] = {"-destdir", ruta, "-parser", "parser", ruta+"Sintactico.cup"};
+            String opcCup[] = {"-destdir", ruta, "-parser", "Sintactico", ruta+"Sintactico.cup"};
             generar(opcCup);
         } catch (Exception ex) {
             Logger.getLogger(GenerarSintactico.class.getName()).log(Level.SEVERE, null, ex);

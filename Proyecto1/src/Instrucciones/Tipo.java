@@ -16,10 +16,8 @@ public enum Tipo {
     RETURN, SWITCH,OPERADOR,
     //endregion
     
-    Numero,Cadena,Char,Bool,Identificador,
+    Entero,Decimal,Cadena,Char,Bool,Identificador,
     Incremento,Decremento,
-    //region Tipos Reales
-    Entero,Decimal,Float
-    //endregion
+
     
 }

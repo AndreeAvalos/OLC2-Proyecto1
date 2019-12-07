@@ -1,11 +1,34 @@
 package Analizadores;
+import java.util.LinkedList;
+import Instrucciones.*;
 import java_cup.runtime.*; 
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 parser code
 {:
+	public LinkedList<Instruccion> AST = new LinkedList<Instruccion>();
+	public static List<String> ErroresSintacticos = new ArrayList<>();
+    public String salida = "" ; 
+       
+    public void syntax_error(Symbol s)
+    {
+        System.err.println("El analizador se recupero tras el error\nError en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );  
+        ErroresSintacticos.add("El analizador se recupero tras el error\nError en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );
+    }
 
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        s.value + " no reconocido.");            
+    }
+    
+    public void setSalida(String cadena)
+    {
+        salida = cadena;
+    }
 
 :}
 /*Terminales*/
@@ -18,14 +41,32 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
                 Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena,Tcaracter; 
-
-non terminal String S, INSTRUCCIONES, INSTRUCCION;
+				
+non terminal String S;
+non terminal LinkedList<Instruccion> INSTRUCCIONES;
+non terminal Instruccion  INSTRUCCION, DECLARACION;
+non terminal Tipo TIPODATO;
 
 start with S;
 
 S::=INSTRUCCIONES;
 
-INSTRUCCIONES::= INSTRUCCIONES INSTRUCCION
-            | INSTRUCCION;
+INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
+			{: 	Lista1.add(instru);
+				RESULT = Lista1;
+			:}
+            | INSTRUCCION:instru
+			{: 	LinkedList<Instruccion> AST = new LinkedList<Instruccion>();
+				AST.add(instru);
+				RESULT = AST;
+			:};
 
-INSTRUCCION::= Tpycoma;
+INSTRUCCION::= DECLARACION:a {: RESULT = a ; :};
+
+DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :};
+
+TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
+		|	Tdec:a{: RESULT = Tipo.Decimal; :}
+		|	Tchr:a{: RESULT = Tipo.Char; :}
+		|	Tbul:a{: RESULT = Tipo.Bool; :}
+		;

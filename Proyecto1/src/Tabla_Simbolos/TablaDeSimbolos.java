@@ -29,16 +29,13 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
 
     private void setValor(String id, Object valor, TablaDeSimbolos tsPadre) {
         for (Simbolo item : tsPadre) {
-            if (item.getId().equalsIgnoreCase(id)) {
+            if (item.getId().equals(id)) {
                 switch (item.getTipo().getAsignado()) {
                     case Entero:
                         item.setValor((int) Double.parseDouble(valor.toString()));
                         return;
                     case Decimal:
                         item.setValor(Double.parseDouble(valor.toString()));
-                        return;
-                    case Float:
-                        item.setValor((float)  Double.parseDouble(valor.toString()));
                         return;
                     case Char:
                         item.setValor((char) valor);
@@ -50,7 +47,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                         item.setValor((boolean) valor);
                         return;
                     default:
-                        //deberia tirar error ya que no existe el 
+                        //deberia tirar error ya que no existe el ID
                         return;
                 }
             }
@@ -69,22 +66,15 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         try {
             Object val_aux = null;
             for (Simbolo item : tsPadre) {
-                if (item.getId().equalsIgnoreCase(id)) {
+                if (item.getId().equals(id)) {
                     switch (item.getTipo().getTipo()) {
-                        case Numero:
-                            switch (item.getTipo().getAsignado()) {
-                                case Entero:
-                                    val_aux = (int)  Double.parseDouble(valor.toString());
-                                    return true;
-                                case Decimal:
-                                    val_aux = Double.parseDouble(valor.toString());
-                                    return true;
-                                case Float:
-                                    val_aux = (float) Double.parseDouble(valor.toString());
-                                    return true;
-                                default:
-                                    return false;
-                            }
+
+                        case Entero:
+                            val_aux = (int) Double.parseDouble(valor.toString());
+                            return true;
+                        case Decimal:
+                            val_aux = Double.parseDouble(valor.toString());
+                            return true;
                         case Cadena:
                             val_aux = valor.toString();
                             return true;
@@ -155,7 +145,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     private boolean existeSimbolo(String id, TablaDeSimbolos tsPadre) {
-        return tsPadre.stream().anyMatch((item) -> (item.getId().equalsIgnoreCase(id)));
+        return tsPadre.stream().anyMatch((item) -> (item.getId().equals(id)));
     }
 
     public TablaDeSimbolos getPadre() {
