@@ -44,10 +44,15 @@ public class Asignacion implements Instruccion {
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
         String resultado = valor.Ejecutar(ts).toString();
-        if (ts.asignValor(id, resultado)) {
-            ts.setValor(id, resultado);
+        if (ts.existeSimbolo(id)) {
+            if (ts.asignValor(id, resultado)) {
+                ts.setValor(id, resultado);
+            } else {
+                //error porque no se puede hacer el casteo explicito
+                System.out.println("No es posible hacer el casteo ");
+            }
         } else {
-            //error porque no se puede hacer el casteo explicito
+            System.out.println("No existe la variable: " + id);
         }
         return null;
     }
@@ -61,6 +66,5 @@ public class Asignacion implements Instruccion {
     public Tipo getType() {
         return Tipo.ASIGNACION;
     }
-    
 
 }

@@ -69,7 +69,7 @@ public class Declaracion implements Instruccion {
         boolean declarada = false;
         if (ts.getPadre() != null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id, Tipo.VARIABLE));
                 declarada = true;
             } else {
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
@@ -97,7 +97,7 @@ public class Declaracion implements Instruccion {
         boolean declarada = false;
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id,Tipo.VARIABLE));
                 declarada = true;
             } else {
                 System.out.println("La varaible \'" + id + "\' ya esta declarada");

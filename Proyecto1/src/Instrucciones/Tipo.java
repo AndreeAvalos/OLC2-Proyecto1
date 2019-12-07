@@ -13,11 +13,15 @@ public enum Tipo {
     //region Tipos Sentencias
     WHILE,IF,BREAK,DOWHILE,FOR,FUNCION,METODO,
     ASIGNACION,DECLARACION,IMPRIMIR,OPERACION,
-    RETURN, SWITCH,OPERADOR,
+    RETURN, SWITCH,OPERADOR,VARIABLE,CONSTANTE,
+    STRUCT,DEFINIR,
     //endregion
     
     Entero,Decimal,Cadena,Char,Bool,Identificador,
-    Incremento,Decremento,
+    Incremento,Decremento, 
+    
+    
+    //
 
     
 }

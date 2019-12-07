@@ -5,6 +5,7 @@
  */
 package Tabla_Simbolos;
 
+import Instrucciones.Tipo;
 import java.util.LinkedList;
 
 /**
@@ -30,25 +31,36 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private void setValor(String id, Object valor, TablaDeSimbolos tsPadre) {
         for (Simbolo item : tsPadre) {
             if (item.getId().equals(id)) {
-                switch (item.getTipo().getAsignado()) {
-                    case Entero:
-                        item.setValor((int) Double.parseDouble(valor.toString()));
-                        return;
-                    case Decimal:
-                        item.setValor(Double.parseDouble(valor.toString()));
-                        return;
-                    case Char:
-                        item.setValor((char) valor);
-                        return;
-                    case Cadena:
-                        item.setValor((String) valor);
-                        return;
-                    case Bool:
-                        item.setValor((boolean) valor);
-                        return;
-                    default:
-                        //deberia tirar error ya que no existe el ID
-                        return;
+                if (item.getTipo_instruccion() == Tipo.VARIABLE) {
+                    switch (item.getTipo().getAsignado()) {
+                        case Entero:
+                            item.setValor((int) Double.parseDouble(valor.toString()));
+                            return;
+                        case Decimal:
+                            item.setValor(Double.parseDouble(valor.toString()));
+                            return;
+                        case Char:
+                            item.setValor((char) Double.parseDouble(valor.toString()));
+                            return;
+                        case Cadena:
+                            item.setValor((String) valor.toString());
+                            return;
+                        case Bool:
+                            item.setValor(Boolean.valueOf(valor.toString()));
+                            return;
+                        default:
+                            //deberia tirar error ya que no existe el ID
+                            return;
+                    }
+                } else if (item.getTipo_instruccion() == Tipo.CONSTANTE) {
+                    //error porque no se puede cambiar el valor 
+                    System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
+                } else if (item.getTipo_instruccion() == Tipo.FUNCION) {
+                    // le damos el valor resultante al metodo
+                } else if (item.getTipo_instruccion() == Tipo.STRUCT) {
+                    // ponemos valor de structn
+                } else {
+                    //error ya que es un metodo
                 }
             }
         }
@@ -79,10 +91,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                             val_aux = valor.toString();
                             return true;
                         case Char:
-                            val_aux = (char) valor;
+                            val_aux = (char) Double.parseDouble(valor.toString());
                             return true;
                         case Bool:
-                            val_aux = (boolean) valor;
+                            val_aux = Boolean.valueOf(valor.toString());
                             return true;
                         default:
                             break;
@@ -150,6 +162,32 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
 
     public TablaDeSimbolos getPadre() {
         return this.padre;
+    }
+
+    public Tipo getTipo(Object valor) {
+        try {
+            int val = (int) Double.parseDouble(valor.toString());
+            return Tipo.Entero;
+        } catch (NumberFormatException e1) {
+            try {
+                double val = Double.parseDouble(valor.toString());
+                return Tipo.Decimal;
+            } catch (NumberFormatException e2) {
+                try {
+                    boolean val = (boolean) Boolean.valueOf(valor.toString());
+                    return Tipo.Bool;
+                } catch (NumberFormatException e3) {
+                    try {
+                        char val = (char) Double.parseDouble(valor.toString());
+                        return Tipo.Char;
+                    } catch (NumberFormatException e4) {
+
+                    }
+                }
+
+            }
+        }
+        return null;
     }
 
 }

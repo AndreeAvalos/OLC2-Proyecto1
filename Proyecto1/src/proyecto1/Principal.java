@@ -273,15 +273,16 @@ public class Principal extends javax.swing.JFrame {
             AST.forEach((item) -> {
                 item.Recolectar(global);
             });
+            consola.append("--------------------- Final de la recoleccion ---------------------\n");
+            
             consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
             //Ejecutamos segundo
             AST.forEach((item) -> {
                 item.Ejecutar(global);
-                
-                Operacion new_op = new Operacion("2",TipoOperacion.IDENTIFICADOR,0, 0);
             });
+            consola.append("---------------------  Final de la ejecucion   ---------------------\n");
         } catch (Exception e) {
-            consola.setText("---------------------  Error de Compilacion   ---------------------");
+            consola.append("---------------------  Error de Compilacion   ---------------------");
         }
 
 

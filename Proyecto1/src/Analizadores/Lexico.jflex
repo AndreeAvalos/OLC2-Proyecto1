@@ -78,9 +78,9 @@ Tcase = "case"
 Tdefault = "default"
 Tromper = "romper"
 Tsiga = "siga"
-Tdefinir = "definir"
+Tdefinir = "#definir"
 Tfusion = "fusion"
-Timportar = "importar"
+Timportar = "#importar"
 Tregresar = "regresar"
 Twhen = "when"
 Ttrue = "true"
@@ -331,9 +331,9 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <cadena2> {
         [\'] { 
                 if(escape==0){
-                    if(contador>1)
+                    if(contador>=1)
                     {
-                        String tmp=tempcadena+"\""; 
+                        String tmp=tempcadena+"\'"; 
                         tempcadena=""; yybegin(YYINITIAL);  
                         return new Symbol(sym.Tcaracter, yychar,yyline,tmp); 
                     }

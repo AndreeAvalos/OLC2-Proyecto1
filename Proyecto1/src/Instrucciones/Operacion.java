@@ -21,6 +21,8 @@ public class Operacion implements Instruccion {
         DIVISION,
         NEGATIVO,
         NUMERO,
+        MODULAR,
+        POTENCIA,
         IDENTIFICADOR,
         CADENA,
         MAYOR_QUE,
@@ -112,6 +114,11 @@ public class Operacion implements Instruccion {
                 return !Objects.equals((Double) operadorIzq.Ejecutar(ts), (Double) operadorDer.Ejecutar(ts));
             case CONCATENACION:
                 return operadorIzq.Ejecutar(ts).toString() + operadorDer.Ejecutar(ts).toString();
+            case CARACTER:
+                int aux =(int) valor.toString().charAt(1);
+                return (double) aux;
+            case BOOL:
+                return Boolean.valueOf(valor.toString());
             default:
                 return null;
 

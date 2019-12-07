@@ -5,27 +5,43 @@
  */
 package Tabla_Simbolos;
 
+import Instrucciones.Tipo;
+
 /**
  *
  * @author Andree
  */
 public class Simbolo {
+
     private TipoSimbolo tipo;//Aqui puede venir (numero,int),(numero,double) etc
     private String id;//el id de la variable
     private Object valor;//el valor de la variable
     private boolean declarado;//si tiene valor o no.
+    private Tipo tipo_instruccion;
+    
 
     /**
      * Constructor para declarar una variable
+     *
      * @param tipo
      * @param id
+     * @param tipoinstru
      */
-    public Simbolo(TipoSimbolo tipo, String id) {
+    public Simbolo(TipoSimbolo tipo, String id, Tipo tipoinstru) {
         this.tipo = tipo;
         this.id = id;
         this.valor = null;
         this.declarado = false;
-    } 
+        this.tipo_instruccion = tipoinstru;
+    }
+
+    public Simbolo(TipoSimbolo tipo, String id, Object valor, Tipo tipo_instruccion) {
+        this.tipo = tipo;
+        this.id = id;
+        this.valor = valor;
+        this.tipo_instruccion = tipo_instruccion;
+    }
+    
 
     public TipoSimbolo getTipo() {
         return tipo;
@@ -59,6 +75,12 @@ public class Simbolo {
         this.declarado = declarado;
     }
     
-    
-    
+    public Tipo getTipo_instruccion() {
+        return tipo_instruccion;
+    }
+
+    public void setTipo_instruccion(Tipo tipo_instruccion) {
+        this.tipo_instruccion = tipo_instruccion;
+    }
+
 }

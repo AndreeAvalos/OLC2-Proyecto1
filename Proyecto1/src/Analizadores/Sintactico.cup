@@ -48,7 +48,7 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
 // Producciones				
 non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES;
-non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION;
+non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE;
 non terminal Operacion OPERACION_NUMERICA,VALOR;
 non terminal Tipo TIPODATO;
 
@@ -75,6 +75,7 @@ INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
 
 INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
 			| ASIGNACION:a {: RESULT = a; :}
+            | CONSTANTE:a{: RESULT = a; :}
 			;
 
 DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
@@ -90,13 +91,16 @@ TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 ASIGNACION::= Tid:a Tigual OPERACION_NUMERICA:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
         ;
 
-OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tmas OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tmenos OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tpor OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tdiv OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tmod OPERACION_NUMERICA
-        | OPERACION_NUMERICA Tpotencia OPERACION_NUMERICA 
+CONSTANTE::= Tdefinir Tid:a OPERACION_NUMERICA:b {: RESULT = new Definir(a,b,aleft,aright); :}
+        ;
+
+OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,TipoOperacion.NEGATIVO, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tmas OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.SUMA, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tmenos OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.RESTA, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tpor OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.MULTIPLICACION, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tdiv OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.DIVISION, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tmod OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.MODULAR, aleft, aright); :}
+        | OPERACION_NUMERICA:a Tpotencia OPERACION_NUMERICA:b {: RESULT = new Operacion(a,b,TipoOperacion.POTENCIA, aleft, aright); :}
         | Tpar_a OPERACION_NUMERICA:a Tpar_c {: RESULT = a; :}
         | VALOR:a {: RESULT = a;:}
         ;
