@@ -33,7 +33,10 @@ public class Operacion implements Instruccion {
         DIFERENTE,
         CONCATENACION,
         CARACTER,
-        BOOL
+        BOOL,
+        NOT,
+        AND,
+        OR
     }
     Operacion operadorDer;
     Operacion operadorIzq;
@@ -115,10 +118,20 @@ public class Operacion implements Instruccion {
             case CONCATENACION:
                 return operadorIzq.Ejecutar(ts).toString() + operadorDer.Ejecutar(ts).toString();
             case CARACTER:
-                int aux =(int) valor.toString().charAt(1);
+                int aux = (int) valor.toString().charAt(1);
                 return (double) aux;
             case BOOL:
                 return Boolean.valueOf(valor.toString());
+            case MODULAR:
+                return (Double) operadorIzq.Ejecutar(ts) % (Double) operadorDer.Ejecutar(ts);
+            case POTENCIA:
+                return Math.pow((Double) operadorIzq.Ejecutar(ts), (Double) operadorDer.Ejecutar(ts));
+            case NOT:
+                return !((boolean) operadorIzq.Ejecutar(ts));
+            case OR:
+                return ((boolean) operadorIzq.Ejecutar(ts)) || ((boolean) operadorDer.Ejecutar(ts));
+            case AND:
+                return ((boolean) operadorIzq.Ejecutar(ts)) && ((boolean) operadorDer.Ejecutar(ts));
             default:
                 return null;
 

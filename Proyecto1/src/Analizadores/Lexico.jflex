@@ -32,9 +32,8 @@ Tmenos = "-"
 Tmas = "+"
 Tpor = "*"
 Tdiv = "/"
-Tdiferente = "!="
+Tdiferente = "<>"
 Tigual = "="
-Tigualigual = "=="
 Tmenor = "<"
 Tmayor = ">"
 Tor = "||"
@@ -219,7 +218,6 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tdiv}     {return new Symbol(sym.Tdiv, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tdiferente}     {return new Symbol(sym.Tdiferente, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tigual}     {return new Symbol(sym.Tigual, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tigualigual}     {return new Symbol(sym.Tigualigual, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmenor}     {return new Symbol(sym.Tmenor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmayor}     {return new Symbol(sym.Tmayor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tand}     {return new Symbol(sym.Tand, yyline, yycolumn,yytext());}
