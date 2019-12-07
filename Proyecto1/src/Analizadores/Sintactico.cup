@@ -5,6 +5,8 @@ import java_cup.runtime.*;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
+import Instrucciones.Operacion.TipoOperacion;
+
 parser code
 {:
 	public LinkedList<Instruccion> AST = new LinkedList<Instruccion>();
@@ -13,15 +15,15 @@ parser code
        
     public void syntax_error(Symbol s)
     {
-        System.err.println("El analizador se recupero tras el error\nError en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        System.err.println("El analizador se recupero tras el error\nError en la Línea " + (s.left+1) +" Columna "+(s.right+1)+ ". Identificador "
         +s.value + " no reconocido." );  
-        ErroresSintacticos.add("El analizador se recupero tras el error\nError en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        ErroresSintacticos.add("El analizador se recupero tras el error\nError en la Línea " + (s.left+1) +" Columna "+(s.right+1)+ ". Identificador "
         +s.value + " no reconocido." );
     }
 
     /**Metodo al que se llama en el momento en que ya no es posible una recuperación de errores.*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +
         s.value + " no reconocido.");            
     }
     
@@ -31,7 +33,8 @@ parser code
     }
 
 :}
-/*Terminales*/
+
+//Terminales
 
 terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmenor, Tmayor, Tor, Tand, Tllave_a, Tllave_c,
                 Tcorchete_a, Tcorchete_c, Tpycoma, Tpar_a, Tpar_c, Tcoma, Tmod, Tmayorigual, Tmenorigual, Tnot,Tpotencia,
@@ -41,15 +44,24 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
                 Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena,Tcaracter; 
-				
+
+// Producciones				
 non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES;
-non terminal Instruccion  INSTRUCCION, DECLARACION;
+non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION;
+non terminal Operacion OPERACION_NUMERICA,VALOR;
 non terminal Tipo TIPODATO;
 
+
+//Procedencia 
+precedence left Tmas, Tmenos;
+precedence left Tpor, Tdiv, Tmod;
+precedence left Tpotencia;
+
+//Inicio de Gramatica
 start with S;
 
-S::=INSTRUCCIONES;
+S::=INSTRUCCIONES:a{: AST= a; :};
 
 INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
 			{: 	Lista1.add(instru);
@@ -61,12 +73,47 @@ INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
 				RESULT = AST;
 			:};
 
-INSTRUCCION::= DECLARACION:a {: RESULT = a ; :};
+INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
+			| ASIGNACION:a {: RESULT = a; :}
+			;
 
-DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :};
+DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
+            | TIPODATO: a Tid:b Tigual OPERACION_NUMERICA:c Tpycoma {: RESULT = new Declaracion(a,a,b, new Asignacion(b,c,bleft,bright) , bleft, bright); :}
+            ;
 
 TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 		|	Tdec:a{: RESULT = Tipo.Decimal; :}
 		|	Tchr:a{: RESULT = Tipo.Char; :}
 		|	Tbul:a{: RESULT = Tipo.Bool; :}
 		;
+		
+ASIGNACION::= Tid:a Tigual OPERACION_NUMERICA:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
+        ;
+
+OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tmas OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tmenos OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tpor OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tdiv OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tmod OPERACION_NUMERICA
+        | OPERACION_NUMERICA Tpotencia OPERACION_NUMERICA 
+        | Tpar_a OPERACION_NUMERICA:a Tpar_c {: RESULT = a; :}
+        | VALOR:a {: RESULT = a;:}
+        ;
+
+VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, aright); :}
+        |Tentero:a {: RESULT = new Operacion(a, aright, aleft); :}
+        |Tdecimal:a {: RESULT = new Operacion(a, aright, aleft); :}
+        |Tcaracter:a {: RESULT = new Operacion(a,TipoOperacion.CARACTER, aleft, aright); :}
+        |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
+        |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
+        ;
+		
+
+
+
+
+
+
+
+

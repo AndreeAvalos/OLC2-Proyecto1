@@ -7,6 +7,7 @@ package proyecto1;
 
 import Analizadores.*;
 import Instrucciones.*;
+import Instrucciones.Operacion.TipoOperacion;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -276,6 +277,8 @@ public class Principal extends javax.swing.JFrame {
             //Ejecutamos segundo
             AST.forEach((item) -> {
                 item.Ejecutar(global);
+                
+                Operacion new_op = new Operacion("2",TipoOperacion.IDENTIFICADOR,0, 0);
             });
         } catch (Exception e) {
             consola.setText("---------------------  Error de Compilacion   ---------------------");

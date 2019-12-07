@@ -19,6 +19,7 @@ public class Declaracion implements Instruccion {
     Tipo tipo_declarado;//entero,decimal,caracter etc
     String id;//nombre de variable;
     int line, column;// linea y columna de token 
+    Instruccion asignacion;
 
     /**
      *
@@ -34,6 +35,16 @@ public class Declaracion implements Instruccion {
         this.id = id;
         this.line = linea;
         this.column = columna;
+        this.asignacion = null;
+    }
+
+    public Declaracion(Tipo tipo_simbolo, Tipo tipo_declarado, String id, Instruccion asignacion, int line, int column) {
+        this.tipo_simbolo = tipo_simbolo;
+        this.tipo_declarado = tipo_declarado;
+        this.id = id;
+        this.line = line;
+        this.column = column;
+        this.asignacion = asignacion;
     }
 
     @Override
@@ -55,13 +66,23 @@ public class Declaracion implements Instruccion {
      */
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+        boolean declarada = false;
         if (ts.getPadre() != null) {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id));
+                declarada = true;
             } else {
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }
+        if (declarada == true) {
+            if (asignacion != null) {
+                asignacion.Ejecutar(ts);
+            }
+        } else {
+            //error ya que esta declarada
+        }
+
         return null;
     }
 
@@ -73,12 +94,23 @@ public class Declaracion implements Instruccion {
      */
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
+        boolean declarada = false;
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id));
+                declarada = true;
             } else {
-                //aqui va el mensaje de error que ya esta declarada la variable en el ambito global
+                System.out.println("La varaible \'" + id + "\' ya esta declarada");
+                //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
+        }
+
+        if (declarada == true) {
+            if (asignacion != null) {
+                asignacion.Ejecutar(ts);
+            }
+        } else {
+            //error ya que esta declarada
         }
     }
 

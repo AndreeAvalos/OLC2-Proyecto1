@@ -29,7 +29,9 @@ public class Operacion implements Instruccion {
         MENOR_IGUAL,
         IGUAL_IGUAL,
         DIFERENTE,
-        CONCATENACION
+        CONCATENACION,
+        CARACTER,
+        BOOL
     }
     Operacion operadorDer;
     Operacion operadorIzq;
@@ -59,7 +61,7 @@ public class Operacion implements Instruccion {
         this.column = column;
     }
 
-    public Operacion(double valor, int line, int column) {
+    public Operacion(String valor, int line, int column) {
         this.valor = valor;
         this.line = line;
         this.column = column;
