@@ -1,4 +1,4 @@
-# Proyecto 1
+# RMB
 Proyecto 1 de Organizacion de Lenguajes y Compiladores 2
 ### 📋
 
@@ -10,7 +10,9 @@ Proyecto 1 de Organizacion de Lenguajes y Compiladores 2
 * Aux. Ricardo Menchu
 
 Contenido:
-
+	-Analizador Lexico
+	-Analizador Sintactico
+	-Analizador Semantico
 
 Colaboradores:
 * Carlos Andree Avalos Soto       201408580
