@@ -5,6 +5,7 @@
  */
 package Tabla_Simbolos;
 
+import Instrucciones.Instruccion;
 import Instrucciones.Tipo;
 
 /**
@@ -16,8 +17,10 @@ public class Simbolo {
     private TipoSimbolo tipo;//Aqui puede venir (numero,int),(numero,double) etc
     private String id;//el id de la variable
     private Object valor;//el valor de la variable
+    private Instruccion contenido;
     private boolean declarado;//si tiene valor o no.
     private Tipo tipo_instruccion;
+    
     
 
     /**
@@ -35,10 +38,10 @@ public class Simbolo {
         this.tipo_instruccion = tipoinstru;
     }
 
-    public Simbolo(TipoSimbolo tipo, String id, Object valor, Tipo tipo_instruccion) {
+    public Simbolo(TipoSimbolo tipo, String id, Instruccion contenido, Tipo tipo_instruccion) {
         this.tipo = tipo;
         this.id = id;
-        this.valor = valor;
+        this.contenido = contenido;
         this.tipo_instruccion = tipo_instruccion;
     }
     
@@ -73,6 +76,14 @@ public class Simbolo {
 
     public void setDeclarado(boolean declarado) {
         this.declarado = declarado;
+    }
+
+    public Instruccion getContenido() {
+        return contenido;
+    }
+
+    public void setContenido(Instruccion contenido) {
+        this.contenido = contenido;
     }
     
     public Tipo getTipo_instruccion() {
