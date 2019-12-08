@@ -274,11 +274,28 @@ public class Principal extends javax.swing.JFrame {
                 item.Recolectar(global);
             });
             consola.append("--------------------- Final de la recoleccion ---------------------\n");
-            
+
             consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
             //Ejecutamos segundo
+            //vamos ejecutando importaciones, declaraciones, asignaciones, definiciones y buscamos el main
             AST.forEach((item) -> {
-                item.Ejecutar(global);
+                switch (item.getType()) {
+                    //no ejecuta metodos
+                    case FUNCION:
+                        break;
+                    case METODO:
+                        Metodo aux = (Metodo) item;
+                        //verificamos si es el metodo main
+                        if (aux.id.equals("main")) {
+                            aux.Ejecutar(global);
+                        } else {
+                            //no ejecutamos el metodo
+                        }
+                        break;
+                    default:
+                        item.Ejecutar(global);
+                        break;
+                }
             });
             consola.append("---------------------  Final de la ejecucion   ---------------------\n");
         } catch (Exception e) {

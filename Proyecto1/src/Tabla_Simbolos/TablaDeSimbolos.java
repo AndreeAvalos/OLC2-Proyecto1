@@ -31,36 +31,61 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private void setValor(String id, Object valor, TablaDeSimbolos tsPadre) {
         for (Simbolo item : tsPadre) {
             if (item.getId().equals(id)) {
-                if (item.getTipo_instruccion() == Tipo.VARIABLE) {
-                    switch (item.getTipo().getAsignado()) {
-                        case Entero:
-                            item.setValor((int) Double.parseDouble(valor.toString()));
-                            return;
-                        case Decimal:
-                            item.setValor(Double.parseDouble(valor.toString()));
-                            return;
-                        case Char:
-                            item.setValor((char) Double.parseDouble(valor.toString()));
-                            return;
-                        case Cadena:
-                            item.setValor((String) valor.toString());
-                            return;
-                        case Bool:
-                            item.setValor(Boolean.valueOf(valor.toString()));
-                            return;
-                        default:
-                            //deberia tirar error ya que no existe el ID
-                            return;
-                    }
-                } else if (item.getTipo_instruccion() == Tipo.CONSTANTE) {
-                    //error porque no se puede cambiar el valor 
-                    System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
-                } else if (item.getTipo_instruccion() == Tipo.FUNCION) {
-                    // le damos el valor resultante al metodo
-                } else if (item.getTipo_instruccion() == Tipo.STRUCT) {
-                    // ponemos valor de structn
-                } else {
-                    //error ya que es un metodo
+                switch (item.getTipo_instruccion()) {
+                    case VARIABLE:
+                        switch (item.getTipo().getAsignado()) {
+                            case Entero:
+                                item.setValor((int) Double.parseDouble(valor.toString()));
+                                return;
+                            case Decimal:
+                                item.setValor(Double.parseDouble(valor.toString()));
+                                return;
+                            case Char:
+                                item.setValor((char) Double.parseDouble(valor.toString()));
+                                return;
+                            case Cadena:
+                                item.setValor((String) valor.toString());
+                                return;
+                            case Bool:
+                                item.setValor(Boolean.valueOf(valor.toString()));
+                                return;
+                            default:
+                                //deberia tirar error ya que no existe el ID
+                                return;
+                        }
+                    case CONSTANTE:
+                        //error porque no se puede cambiar el valor
+                        System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
+                        break;
+                    case FUNCION:
+                        // le damos el valor resultante al metodo
+                        switch (item.getTipo().getAsignado()) {
+                            case Entero:
+                                item.setValor((int) Double.parseDouble(valor.toString()));
+                                return;
+                            case Decimal:
+                                item.setValor(Double.parseDouble(valor.toString()));
+                                return;
+                            case Char:
+                                item.setValor((char) Double.parseDouble(valor.toString()));
+                                return;
+                            case Cadena:
+                                item.setValor((String) valor.toString());
+                                return;
+                            case Bool:
+                                item.setValor(Boolean.valueOf(valor.toString()));
+                                return;
+                            default:
+                                //deberia tirar error ya que no existe el ID
+                                return;
+                        }
+                    // ponemos valor de struct
+                    case STRUCT:
+                        break;
+                    default:
+                        //error ya que es un metodo
+                        System.out.println("No puede asignar un valor a un metodo");
+                        break;
                 }
             }
         }
@@ -106,6 +131,69 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             }
             return val_aux != null;
         } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void setValorByIndex(int index, Object valor) {
+        setValorByIndex(index, valor, this);
+    }
+
+    private void setValorByIndex(int index, Object valor, TablaDeSimbolos tsPadre) {
+
+        Simbolo item = tsPadre.get(index);
+        switch (item.getTipo().getAsignado()) {
+            case Entero:
+                item.setValor((int) Double.parseDouble(valor.toString()));
+                return;
+            case Decimal:
+                item.setValor(Double.parseDouble(valor.toString()));
+                return;
+            case Char:
+                item.setValor((char) Double.parseDouble(valor.toString()));
+                return;
+            case Cadena:
+                item.setValor((String) valor.toString());
+                return;
+            case Bool:
+                item.setValor(Boolean.valueOf(valor.toString()));
+                return;
+            default:
+                //deberia tirar error ya que no existe el ID
+                return;
+        }
+    }
+
+    public boolean asignValorByIndex(int index, Object valor) {
+        return asignValorByIndex(index, valor, this);
+    }
+
+    private boolean asignValorByIndex(int index, Object valor, TablaDeSimbolos tsPadre) {
+
+        Simbolo item = tsPadre.get(index);
+        try {
+            Object val_aux = null;
+            switch (item.getTipo().getTipo()) {
+                case Entero:
+                    val_aux = (int) Double.parseDouble(valor.toString());
+                    return true;
+                case Decimal:
+                    val_aux = Double.parseDouble(valor.toString());
+                    return true;
+                case Cadena:
+                    val_aux = valor.toString();
+                    return true;
+                case Char:
+                    val_aux = (char) Double.parseDouble(valor.toString());
+                    return true;
+                case Bool:
+                    val_aux = Boolean.valueOf(valor.toString());
+                    return true;
+                default:
+                    return false;
+            }
+
+        } catch (NumberFormatException e) {
             return false;
         }
     }

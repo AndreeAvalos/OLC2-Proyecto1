@@ -43,7 +43,7 @@ public class Asignacion implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        String resultado = valor.Ejecutar(ts).toString();
+        Object resultado = valor.Ejecutar(ts);
         if (ts.existeSimbolo(id)) {
             if (ts.asignValor(id, resultado)) {
                 ts.setValor(id, resultado);

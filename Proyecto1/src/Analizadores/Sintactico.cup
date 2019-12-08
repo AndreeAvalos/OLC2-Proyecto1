@@ -47,8 +47,8 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
 
 // Producciones				
 non terminal String S;
-non terminal LinkedList<Instruccion> INSTRUCCIONES;
-non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE;
+non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS;
+non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA;
 non terminal Tipo TIPODATO;
 
@@ -76,6 +76,8 @@ INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
 INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
 			| ASIGNACION:a {: RESULT = a; :}
             | CONSTANTE:a{: RESULT = a; :}
+            | FUNCION:a {: RESULT = a; :}
+            | METODO:a {: RESULT = a; :}
 			;
 
 DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
@@ -92,6 +94,34 @@ ASIGNACION::= Tid:a Tigual OPERACION_NUMERICA:b Tpycoma{: RESULT = new Asignacio
         ;
 
 CONSTANTE::= Tdefinir Tid:a OPERACION_NUMERICA:b {: RESULT = new Definir(a,b,aleft,aright); :}
+        ;
+
+FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
+            RESULT= new Funcion(a,b,c,d,bleft,bright);
+        :}
+        |TIPODATO:a Tid:b Tpar_a Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
+            RESULT= new Funcion(a,b,d,bleft,bright);
+        :};
+
+METODO::= Tzro Tid:a Tpar_a PARAMETROS:b Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
+            RESULT= new Metodo(a,b,c,aleft,aright);
+        :}
+        |Tzro Tid:a Tpar_a Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
+            RESULT= new Metodo(a,c,aleft,aright);
+        :};
+
+PARAMETROS::= PARAMETROS:a Tcoma PARAMETRO:b {: a.add(b); RESULT = a; :}
+            | PARAMETRO:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
+            ;
+PARAMETRO::= TIPODATO:a Tid:b {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
+        ;
+
+CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
+            | SENTENCIA:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
+            ;
+
+SENTENCIA::= DECLARACION:a {: RESULT = a; :}
+		| ASIGNACION:a {: RESULT = a; :}
         ;
 
 OPERACION_LOGICA::= OPERACION_LOGICA Tor OPERACION_LOGICA
