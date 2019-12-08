@@ -5,6 +5,7 @@
  */
 package Tabla_Simbolos;
 
+import Instrucciones.Instruccion;
 import Instrucciones.Tipo;
 import java.util.LinkedList;
 
@@ -210,6 +211,22 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
         if (tsPadre.getPadre() != null) {
             return getValor(id, tsPadre.getPadre());
+        }
+        return null;
+    }
+
+    public Instruccion getContenido(String id) {
+        return getContenido(id, this);
+    }
+
+    private Instruccion getContenido(String id, TablaDeSimbolos tsPadre) {
+        for (Simbolo item : tsPadre) {
+            if (item.getId().equals(id)) {
+                return item.getContenido();
+            }
+        }
+        if (tsPadre.getPadre() != null) {
+            return getContenido(id, tsPadre.getPadre());
         }
         return null;
     }
