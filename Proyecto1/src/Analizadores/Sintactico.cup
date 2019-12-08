@@ -48,12 +48,17 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
 // Producciones				
 non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS;
-non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO;
+non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO,
+                          RETORNAR;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA;
 non terminal Tipo TIPODATO;
 
 
 //Procedencia 
+precedence left Tor;
+precedence left Tand;
+precedence left Tnot;
+precedence left Tigual,Tdiferente,Tmenor,Tmenorigual,Tmayor,Tmayorigual;
 precedence left Tmas, Tmenos;
 precedence left Tpor, Tdiv, Tmod;
 precedence left Tpotencia;
@@ -122,12 +127,15 @@ CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
 
 SENTENCIA::= DECLARACION:a {: RESULT = a; :}
 		| ASIGNACION:a {: RESULT = a; :}
+        | RETORNAR:a {:RESULT = a; :}
         ;
 
-OPERACION_LOGICA::= OPERACION_LOGICA Tor OPERACION_LOGICA
-                |   OPERACION_LOGICA Tand OPERACION_LOGICA
+RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
+
+
+OPERACION_LOGICA::= OPERACION_LOGICA:a Tor OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.OR, aleft, aright); :}
+                |   OPERACION_LOGICA:a Tand OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.AND, aleft, aright); :}
                 |   Tnot OPERACION_LOGICA:a {: RESULT = new Operacion(a,TipoOperacion.NEGATIVO, aleft, aright); :}
-                |   Tpar_a OPERACION_LOGICA:a Tpar_c {: RESULT = a; :}
                 |   OPERACION_RELACIONAL:a {: RESULT = a; :} 
                 ;
 
@@ -137,7 +145,6 @@ OPERACION_RELACIONAL::= OPERACION_RELACIONAL:a Tmayor OPERACION_RELACIONAL:b {: 
                     |   OPERACION_RELACIONAL:a Tmenorigual OPERACION_RELACIONAL:b {: RESULT = new Operacion(a,b,TipoOperacion.MENOR_IGUAL, aleft, aright); :}
                     |   OPERACION_RELACIONAL:a Tigual OPERACION_RELACIONAL:b {: RESULT = new Operacion(a,b,TipoOperacion.IGUAL_IGUAL, aleft, aright); :}
                     |   OPERACION_RELACIONAL:a Tdiferente OPERACION_RELACIONAL:b {: RESULT = new Operacion(a,b,TipoOperacion.DIFERENTE, aleft, aright); :}
-                    |   Tpar_a OPERACION_RELACIONAL:a Tpar_c {: RESULT = a; :}
                     |   OPERACION_NUMERICA:a {: RESULT = a; :}
                     ;
 
@@ -148,7 +155,7 @@ OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,Tip
         | OPERACION_NUMERICA:a Tdiv OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.DIVISION, aleft, aright); :}
         | OPERACION_NUMERICA:a Tmod OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.MODULAR, aleft, aright); :}
         | OPERACION_NUMERICA:a Tpotencia OPERACION_NUMERICA:b {: RESULT = new Operacion(a,b,TipoOperacion.POTENCIA, aleft, aright); :}
-        | Tpar_a OPERACION_NUMERICA:a Tpar_c {: RESULT = a; :}
+        | Tpar_a OPERACION_LOGICA:a Tpar_c {: RESULT = a; :}
         | VALOR:a {: RESULT = a;:}
         ;
 
