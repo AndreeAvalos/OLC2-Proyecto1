@@ -49,8 +49,10 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
 non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO,
-                          RETORNAR;
-non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA;
+                          RETORNAR, LLAMADA, IMPRIMIR;
+non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO;
+non terminal LinkedList<Operacion> VALORES_PARAMETROS;
+
 non terminal Tipo TIPODATO;
 
 
@@ -128,11 +130,24 @@ CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
 SENTENCIA::= DECLARACION:a {: RESULT = a; :}
 		| ASIGNACION:a {: RESULT = a; :}
         | RETORNAR:a {:RESULT = a; :}
+        | LLAMADA:a {:RESULT = a; :}
+        | IMPRIMIR:a {:RESULT = a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
 
+LLAMADA::=Tid:a Tpar_a Tpar_c Tpycoma{: RESULT = new Llamada(a,aleft,aright); :}
+        | Tid:a Tpar_a VALORES_PARAMETROS:b Tpar_c Tpycoma{: RESULT = new Llamada(a,b,aleft,aright); :}
+        ;
 
+VALORES_PARAMETROS::=VALORES_PARAMETROS:a Tcoma VALOR_PARAMETRO:b {: a.add(b); RESULT = a; :}
+                    |VALOR_PARAMETRO:a {: LinkedList<Operacion> b = new LinkedList<>(); b.add(a); RESULT = b; :}
+                    ;
+
+VALOR_PARAMETRO::= OPERACION_LOGICA:a {:RESULT = a ;:};
+
+IMPRIMIR::= Timp Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Imprimir(new Operacion(a,TipoOperacion.CADENA,aleft,aright),aleft,aright ); :}
+        ;
 OPERACION_LOGICA::= OPERACION_LOGICA:a Tor OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.OR, aleft, aright); :}
                 |   OPERACION_LOGICA:a Tand OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.AND, aleft, aright); :}
                 |   Tnot OPERACION_LOGICA:a {: RESULT = new Operacion(a,TipoOperacion.NEGATIVO, aleft, aright); :}

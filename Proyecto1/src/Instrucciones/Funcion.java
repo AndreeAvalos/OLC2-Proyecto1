@@ -19,8 +19,10 @@ public class Funcion implements Instruccion {
     Tipo tipo_simbolo;//numero,cadena,identificador etc
     String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
-    public LinkedList<Operacion> valores_parametros;
+    public LinkedList<Operacion> valores_parametros = new LinkedList<>();
+    ;
     int line, column;
+    boolean Llamada = false;
 
     public Funcion(Tipo tipo_simbolo, String id, LinkedList<Instruccion> parametros, LinkedList<Instruccion> contenido, int line, int column) {
         this.tipo_simbolo = tipo_simbolo;
@@ -52,7 +54,7 @@ public class Funcion implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        if (ts.getPadre() != null) {
+        if (Llamada == true) {
             TablaDeSimbolos local = new TablaDeSimbolos();
             local.setPadre(ts);
 
@@ -89,6 +91,7 @@ public class Funcion implements Instruccion {
                     item.Ejecutar(local);
                 }
             }
+            System.out.println("No se encontro la instruccion de retorno ");
         }
         //aun no se como hacer esto.
         return null;

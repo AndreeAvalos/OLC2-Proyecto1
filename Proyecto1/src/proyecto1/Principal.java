@@ -287,6 +287,7 @@ public class Principal extends javax.swing.JFrame {
                         Metodo aux = (Metodo) item;
                         //verificamos si es el metodo main
                         if (aux.id.equals("main")) {
+                            aux.Llamada = true;
                             aux.Ejecutar(global);
                         } else {
                             //no ejecutamos el metodo

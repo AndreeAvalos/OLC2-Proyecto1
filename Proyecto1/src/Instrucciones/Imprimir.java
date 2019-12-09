@@ -16,8 +16,10 @@ public class Imprimir implements Instruccion {
     Instruccion contenido;
     int line, column;
 
-    public Imprimir(Instruccion contenido) {
+    public Imprimir(Instruccion contenido, int line, int column) {
         this.contenido = contenido;
+        this.line = line;
+        this.column = column;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class Imprimir implements Instruccion {
     public void Recolectar(TablaDeSimbolos ts) {
         //Se dejo vacio con intencion
     }
+
     @Override
     public Tipo getType() {
         return Tipo.IMPRIMIR;

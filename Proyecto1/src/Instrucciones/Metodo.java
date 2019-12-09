@@ -18,7 +18,8 @@ public class Metodo implements Instruccion {
 
     public String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
-    public LinkedList<Operacion> valores_parametros;
+    public LinkedList<Operacion> valores_parametros = new LinkedList<>();
+    public boolean Llamada = false;
     int line, column;
 
     public Metodo(String id, LinkedList<Instruccion> parametros, LinkedList<Instruccion> contenido, int line, int column) {
@@ -49,7 +50,7 @@ public class Metodo implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        if (ts.getPadre() != null) {
+        if (Llamada == true) {
             TablaDeSimbolos local = new TablaDeSimbolos();
             local.setPadre(ts);
 

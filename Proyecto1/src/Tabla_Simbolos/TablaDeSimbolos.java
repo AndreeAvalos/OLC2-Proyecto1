@@ -244,6 +244,29 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    public boolean existeMetodo_Funcion(String id) {
+        return existeMetodo_Funcion(id, this);
+    }
+
+    private boolean existeMetodo_Funcion(String id, TablaDeSimbolos tsPadre) {
+        for (Simbolo item : tsPadre) {
+            if (item.getTipo().getTipo() == Tipo.METODO) {
+                if (item.getId().equals(id)) {
+                    return true;
+                }
+            } else if (item.getTipo().getTipo() == Tipo.FUNCION) {
+                if (item.getId().equals(id)) {
+                    return true;
+                }
+            }
+        }
+        if (tsPadre.getPadre() != null) {
+            return existeMetodo_Funcion(id, tsPadre.getPadre());
+        } else {
+            return false;
+        }
+    }
+
     public void decrementarValor(String id) {
         decrementarValor(id, this);
     }
