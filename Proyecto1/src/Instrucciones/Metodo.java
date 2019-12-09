@@ -50,7 +50,10 @@ public class Metodo implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+
+
         if (Llamada == true) {
+
             TablaDeSimbolos local = new TablaDeSimbolos();
             local.setPadre(ts);
 
@@ -60,8 +63,8 @@ public class Metodo implements Instruccion {
 
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
-                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(ts))) {
-                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(ts));
+                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(local))) {
+                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(local));
                     } else {
                         System.out.println("No coincide el parametro con el tipo enviado");
                         return null;

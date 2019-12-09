@@ -274,7 +274,7 @@ public class Principal extends javax.swing.JFrame {
                 item.Recolectar(global);
             });
             consola.append("--------------------- Final de la recoleccion ---------------------\n");
-
+            
             consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
             //Ejecutamos segundo
             //vamos ejecutando importaciones, declaraciones, asignaciones, definiciones y buscamos el main
@@ -288,6 +288,7 @@ public class Principal extends javax.swing.JFrame {
                         //verificamos si es el metodo main
                         if (aux.id.equals("main")) {
                             aux.Llamada = true;
+                            global.setPadre(null);
                             aux.Ejecutar(global);
                         } else {
                             //no ejecutamos el metodo
@@ -302,7 +303,7 @@ public class Principal extends javax.swing.JFrame {
         } catch (Exception e) {
             consola.append("---------------------  Error de Compilacion   ---------------------");
         }
-
+        
 
     }//GEN-LAST:event_jButton5ActionPerformed
 

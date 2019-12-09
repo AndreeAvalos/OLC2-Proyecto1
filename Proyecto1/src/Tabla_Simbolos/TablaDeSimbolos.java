@@ -15,7 +15,7 @@ import java.util.LinkedList;
  */
 public class TablaDeSimbolos extends LinkedList<Simbolo> {
 
-    private TablaDeSimbolos padre;
+    public TablaDeSimbolos padre;
 
     public TablaDeSimbolos() {
         this.padre = null;
@@ -26,113 +26,131 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     public void setValor(String id, Object valor) {
+
         setValor(id, valor, this);
     }
 
-    private void setValor(String id, Object valor, TablaDeSimbolos tsPadre) {
-        for (Simbolo item : tsPadre) {
-            if (item.getId().equals(id)) {
-                switch (item.getTipo_instruccion()) {
-                    case VARIABLE:
-                        switch (item.getTipo().getAsignado()) {
-                            case Entero:
-                                item.setValor((int) Double.parseDouble(valor.toString()));
-                                return;
-                            case Decimal:
-                                item.setValor(Double.parseDouble(valor.toString()));
-                                return;
-                            case Char:
-                                item.setValor((char) Double.parseDouble(valor.toString()));
-                                return;
-                            case Cadena:
-                                item.setValor((String) valor.toString());
-                                return;
-                            case Bool:
-                                item.setValor(Boolean.valueOf(valor.toString()));
-                                return;
+    private void setValor(String id, Object valor, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getTipo().getTipo() != null) {
+                if (item.getId().equals(id)) {
+                    try {
+                        switch (item.getTipo_instruccion()) {
+                            case VARIABLE:
+
+                                switch (item.getTipo().getAsignado()) {
+                                    case Entero:
+                                        item.setValor((int) Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Decimal:
+                                        item.setValor(Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Char:
+                                        item.setValor((char) Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Cadena:
+                                        item.setValor((String) valor.toString());
+                                        return;
+                                    case Bool:
+                                        item.setValor(Boolean.valueOf(valor.toString()));
+                                        return;
+                                    default:
+                                        //deberia tirar error ya que no existe el ID
+                                        break;
+                                }
+                            case CONSTANTE:
+                                //error porque no se puede cambiar el valor
+                                System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
+                                break;
+                            case FUNCION:
+                                // le damos el valor resultante al metodo
+                                switch (item.getTipo().getTipo()) {
+                                    case Entero:
+                                        item.setValor((int) Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Decimal:
+                                        item.setValor(Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Char:
+                                        item.setValor((char) Double.parseDouble(valor.toString()));
+                                        return;
+                                    case Cadena:
+                                        item.setValor((String) valor.toString());
+                                        return;
+                                    case Bool:
+                                        item.setValor(Boolean.valueOf(valor.toString()));
+                                        return;
+                                    default:
+                                        //deberia tirar error ya que no existe el ID
+                                        break;
+                                }
+                            // ponemos valor de struct
+                            case STRUCT:
+                                break;
                             default:
-                                //deberia tirar error ya que no existe el ID
-                                return;
+                                //error ya que es un metodo
+                                System.out.println("No puede asignar un valor a un metodo");
+                                break;
                         }
-                    case CONSTANTE:
-                        //error porque no se puede cambiar el valor
-                        System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
-                        break;
-                    case FUNCION:
-                        // le damos el valor resultante al metodo
-                        switch (item.getTipo().getAsignado()) {
-                            case Entero:
-                                item.setValor((int) Double.parseDouble(valor.toString()));
-                                return;
-                            case Decimal:
-                                item.setValor(Double.parseDouble(valor.toString()));
-                                return;
-                            case Char:
-                                item.setValor((char) Double.parseDouble(valor.toString()));
-                                return;
-                            case Cadena:
-                                item.setValor((String) valor.toString());
-                                return;
-                            case Bool:
-                                item.setValor(Boolean.valueOf(valor.toString()));
-                                return;
-                            default:
-                                //deberia tirar error ya que no existe el ID
-                                return;
-                        }
-                    // ponemos valor de struct
-                    case STRUCT:
-                        break;
-                    default:
-                        //error ya que es un metodo
-                        System.out.println("No puede asignar un valor a un metodo");
-                        break;
+
+                    } catch (EnumConstantNotPresentException e) {
+                        return;
+                    }
                 }
             }
         }
-        if (tsPadre.getPadre() != null) {
-            setValor(id, tsPadre.getPadre());
+        if (padre.getPadre() != null) {
+            setValor(id, valor, padre.getPadre());
         }
+
     }
 
     public boolean asignValor(String id, Object valor) {
         return asignValor(id, valor, this);
     }
 
-    private boolean asignValor(String id, Object valor, TablaDeSimbolos tsPadre) {
-
-        try {
-            Object val_aux = null;
-            for (Simbolo item : tsPadre) {
+    private boolean asignValor(String id, Object valor, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getTipo().getTipo() != null) {
                 if (item.getId().equals(id)) {
-                    switch (item.getTipo().getTipo()) {
-
-                        case Entero:
-                            val_aux = (int) Double.parseDouble(valor.toString());
-                            return true;
-                        case Decimal:
-                            val_aux = Double.parseDouble(valor.toString());
-                            return true;
-                        case Cadena:
-                            val_aux = valor.toString();
-                            return true;
-                        case Char:
-                            val_aux = (char) Double.parseDouble(valor.toString());
-                            return true;
-                        case Bool:
-                            val_aux = Boolean.valueOf(valor.toString());
-                            return true;
-                        default:
-                            break;
+                    try {
+                        Object val_aux = null;
+                        switch (item.getTipo().getTipo()) {
+                            case Entero:
+                                val_aux = (int) Double.parseDouble(valor.toString());
+                                return true;
+                            case Decimal:
+                                val_aux = Double.parseDouble(valor.toString());
+                                return true;
+                            case Cadena:
+                                val_aux = valor.toString();
+                                return true;
+                            case Char:
+                                val_aux = (char) Double.parseDouble(valor.toString());
+                                return true;
+                            case Bool:
+                                val_aux = Boolean.valueOf(valor.toString());
+                                return true;
+                            default:
+                                return false;
+                        }
+                    } catch (EnumConstantNotPresentException e) {
+                        return false;
                     }
                 }
             }
-            if (tsPadre.getPadre() != null) {
-                return asignValor(id, tsPadre.getPadre());
-            }
-            return val_aux != null;
-        } catch (Exception e) {
+        }
+        if (padre.getPadre() != null) {
+            return asignValor(id, valor, padre.getPadre());
+        } else {
             return false;
+        }
+    }
+
+    public void recorrerPadres(TablaDeSimbolos padre, int nivel) {
+        System.out.println("-----SU NIVEL:" + nivel + "-----");
+        if (padre.getPadre() != null) {
+            recorrerPadres(padre.getPadre(), nivel + 1);
         }
     }
 
@@ -244,19 +262,109 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    public boolean castearFuncion(String id, Object valor) {
+
+        return castearFuncion(id, valor, this);
+    }
+
+    private boolean castearFuncion(String id, Object valor, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getTipo_instruccion() != null) {
+                if (item.getTipo_instruccion() == Tipo.FUNCION) {
+                    if (item.getId().equals(id)) {
+                        try {
+                            Object val_aux = null;
+                            switch (item.getTipo().getTipo()) {
+                                case Entero:
+                                    val_aux = (int) Double.parseDouble(valor.toString());
+                                    return true;
+                                case Decimal:
+                                    val_aux = Double.parseDouble(valor.toString());
+                                    return true;
+                                case Cadena:
+                                    val_aux = valor.toString();
+                                    return true;
+                                case Char:
+                                    val_aux = (char) Double.parseDouble(valor.toString());
+                                    return true;
+                                case Bool:
+                                    val_aux = Boolean.valueOf(valor.toString());
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        } catch (EnumConstantNotPresentException e) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        if (padre.getPadre() != null) {
+            return castearFuncion(id, valor, padre.getPadre());
+        } else {
+            return false;
+        }
+    }
+
+    public void setValor_Funcion(String id, Object valor) {
+
+        setValor_Funcion(id, valor, this);
+    }
+
+    private void setValor_Funcion(String id, Object valor, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getTipo_instruccion() != null) {
+                if (item.getTipo_instruccion() == Tipo.FUNCION) {
+                    if (item.getId().equals(id)) {
+                        try {
+                            switch (item.getTipo().getTipo()) {
+                                case Entero:
+                                    item.setValor((int) Double.parseDouble(valor.toString()));
+                                    return;
+                                case Decimal:
+                                    item.setValor(Double.parseDouble(valor.toString()));
+                                    return;
+                                case Char:
+                                    item.setValor((char) Double.parseDouble(valor.toString()));
+                                    return;
+                                case Cadena:
+                                    item.setValor((String) valor.toString());
+                                    return;
+                                case Bool:
+                                    item.setValor(Boolean.valueOf(valor.toString()));
+                                    return;
+                                default:
+                                    //deberia tirar error ya que no existe el ID
+                                    break;
+                            }
+                        } catch (EnumConstantNotPresentException e) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        if (padre.getPadre() != null) {
+            setValor_Funcion(id, valor, padre.getPadre());
+        }
+    }
+
     public boolean existeMetodo_Funcion(String id) {
         return existeMetodo_Funcion(id, this);
     }
 
     private boolean existeMetodo_Funcion(String id, TablaDeSimbolos tsPadre) {
         for (Simbolo item : tsPadre) {
-            if (item.getTipo().getTipo() == Tipo.METODO) {
-                if (item.getId().equals(id)) {
-                    return true;
-                }
-            } else if (item.getTipo().getTipo() == Tipo.FUNCION) {
-                if (item.getId().equals(id)) {
-                    return true;
+            if (item.getTipo_instruccion() != null) {
+                if (item.getTipo_instruccion() == Tipo.METODO) {
+                    if (item.getId().equals(id)) {
+                        return true;
+                    }
+                } else if (item.getTipo_instruccion() == Tipo.FUNCION) {
+                    if (item.getId().equals(id)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -285,7 +393,17 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     private boolean existeSimbolo(String id, TablaDeSimbolos tsPadre) {
-        return tsPadre.stream().anyMatch((item) -> (item.getId().equals(id)));
+        for (Simbolo item : tsPadre) {
+            if (item.getId().equals(id)) {
+                return true;
+            }
+        }
+        if (tsPadre.getPadre() != null) {
+            return existeSimbolo(id, tsPadre.getPadre());
+        } else {
+            return false;
+        }
+
     }
 
     public TablaDeSimbolos getPadre() {

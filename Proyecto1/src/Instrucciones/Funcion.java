@@ -54,18 +54,18 @@ public class Funcion implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+        
         if (Llamada == true) {
             TablaDeSimbolos local = new TablaDeSimbolos();
             local.setPadre(ts);
-
             parametros.forEach((item) -> {
                 item.Ejecutar(local);
             });
 
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
-                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(ts))) {
-                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(ts));
+                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(local))) {
+                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(local));
                     } else {
                         System.out.println("No coincide el parametro con el tipo enviado");
                         return null;
@@ -75,13 +75,12 @@ public class Funcion implements Instruccion {
                 System.out.println("El numero de parametros no coincide.");
                 return null;
             }
-
             for (Instruccion item : contenido) {
                 if (item.getType() == Tipo.RETURN) {
                     //aqui ponemos el valor en la funcion
-                    Object resultado = item.Ejecutar(ts);
-                    if (ts.asignValor(id, resultado)) {
-                        ts.setValor(id, resultado);
+                    Object resultado = item.Ejecutar(local);
+                    if (local.asignValor(id, resultado)) {
+                        local.setValor(id, resultado);
                     } else {
                         //error porque no se puede hacer el casteo explicito
                         System.out.println("No es posible hacer el casteo ");
