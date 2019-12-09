@@ -130,14 +130,14 @@ CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
 SENTENCIA::= DECLARACION:a {: RESULT = a; :}
 		| ASIGNACION:a {: RESULT = a; :}
         | RETORNAR:a {:RESULT = a; :}
-        | LLAMADA:a {:RESULT = a; :}
+        | LLAMADA:a Tpycoma {:RESULT = a; :}
         | IMPRIMIR:a {:RESULT = a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
 
-LLAMADA::=Tid:a Tpar_a Tpar_c Tpycoma{: RESULT = new Llamada(a,aleft,aright); :}
-        | Tid:a Tpar_a VALORES_PARAMETROS:b Tpar_c Tpycoma{: RESULT = new Llamada(a,b,aleft,aright); :}
+LLAMADA::=Tid:a Tpar_a Tpar_c {: RESULT = new Llamada(a,aleft,aright); :}
+        | Tid:a Tpar_a VALORES_PARAMETROS:b Tpar_c {: RESULT = new Llamada(a,b,aleft,aright); :}
         ;
 
 VALORES_PARAMETROS::=VALORES_PARAMETROS:a Tcoma VALOR_PARAMETRO:b {: a.add(b); RESULT = a; :}
@@ -182,6 +182,7 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Tcaracter:a {: RESULT = new Operacion(a,TipoOperacion.CARACTER, aleft, aright); :}
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
+        |LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
         ;
 		
 

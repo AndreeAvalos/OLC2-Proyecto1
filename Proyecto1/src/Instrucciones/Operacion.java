@@ -36,7 +36,8 @@ public class Operacion implements Instruccion {
         BOOL,
         NOT,
         AND,
-        OR
+        OR,
+        FUNCION
     }
     Operacion operadorDer;
     Operacion operadorIzq;
@@ -100,7 +101,8 @@ public class Operacion implements Instruccion {
             case NUMERO:
                 return Double.parseDouble(valor.toString());
             case IDENTIFICADOR:
-                return ts.getValor(valor.toString());
+                double aux2 = Double.parseDouble(ts.getValor(valor.toString()).toString());
+                return aux2;
             case CADENA:
                 return valor.toString();
             case MAYOR_QUE:
@@ -132,6 +134,19 @@ public class Operacion implements Instruccion {
                 return ((boolean) operadorIzq.Ejecutar(ts)) || ((boolean) operadorDer.Ejecutar(ts));
             case AND:
                 return ((boolean) operadorIzq.Ejecutar(ts)) && ((boolean) operadorDer.Ejecutar(ts));
+            case FUNCION:
+
+                Llamada funcion = (Llamada) valor;
+                String id_funcion = funcion.id;
+                Instruccion aux3 = ts.getContenido(funcion.id);
+                if (aux3.getType() == Tipo.METODO) {
+                    System.out.println("No se Puede operar un metodo");
+                    return 0.0;
+                } else {
+                    funcion.Ejecutar(ts);
+                    aux2 = Double.parseDouble(ts.getValor(id_funcion).toString());
+                    return aux2;
+                }
             default:
                 return null;
 
