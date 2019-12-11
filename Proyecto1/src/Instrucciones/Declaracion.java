@@ -66,21 +66,25 @@ public class Declaracion implements Instruccion {
      */
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        boolean declarada = false;
+
         if (ts.getPadre() != null) {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id, Tipo.VARIABLE));
-                declarada = true;
+
             } else {
+                System.out.println("La varaible \'" + id + "\' ya esta declarada");
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                return null;
             }
         }
-        if (declarada == true) {
-            if (asignacion != null) {
-                asignacion.Ejecutar(ts);
+
+        if (asignacion != null) {
+            boolean pass = (boolean) asignacion.Ejecutar(ts);
+            if (pass) {
+                // si se asigno el valor;
+            } else {
+                ts.eliminarSimbolo(id);
             }
-        } else {
-            //error ya que esta declarada
         }
 
         return null;
@@ -94,24 +98,27 @@ public class Declaracion implements Instruccion {
      */
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-        boolean declarada = false;
+
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id,Tipo.VARIABLE));
-                declarada = true;
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id, Tipo.VARIABLE));
+
             } else {
                 System.out.println("La varaible \'" + id + "\' ya esta declarada");
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                return;
             }
         }
 
-        if (declarada == true) {
-            if (asignacion != null) {
-                asignacion.Ejecutar(ts);
+        if (asignacion != null) {
+            boolean pass = (boolean) asignacion.Ejecutar(ts);
+            if (pass) {
+                // si se asigno el valor;
+            } else {
+                ts.eliminarSimbolo(id);
             }
-        } else {
-            //error ya que esta declarada
         }
+
     }
 
     @Override

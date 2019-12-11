@@ -7,10 +7,10 @@ package proyecto1;
 
 import Analizadores.*;
 import Instrucciones.*;
-import Instrucciones.Operacion.TipoOperacion;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -273,8 +273,9 @@ public class Principal extends javax.swing.JFrame {
             AST.forEach((item) -> {
                 item.Recolectar(global);
             });
+
             consola.append("--------------------- Final de la recoleccion ---------------------\n");
-            
+
             consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
             //Ejecutamos segundo
             //vamos ejecutando importaciones, declaraciones, asignaciones, definiciones y buscamos el main
@@ -303,7 +304,7 @@ public class Principal extends javax.swing.JFrame {
         } catch (Exception e) {
             consola.append("---------------------  Error de Compilacion   ---------------------");
         }
-        
+
 
     }//GEN-LAST:event_jButton5ActionPerformed
 

@@ -34,6 +34,7 @@ Tpor = "*"
 Tdiv = "/"
 Tdiferente = "<>"
 Tigual = "="
+Tigualigual = "=="
 Tmenor = "<"
 Tmayor = ">"
 Tor = "||"
@@ -218,6 +219,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tdiv}     {return new Symbol(sym.Tdiv, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tdiferente}     {return new Symbol(sym.Tdiferente, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tigual}     {return new Symbol(sym.Tigual, yyline, yycolumn,yytext());}
+<YYINITIAL> {Tigualigual}     {return new Symbol(sym.Tigual, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmenor}     {return new Symbol(sym.Tmenor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmayor}     {return new Symbol(sym.Tmayor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tand}     {return new Symbol(sym.Tand, yyline, yycolumn,yytext());}
@@ -244,8 +246,8 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tentero}    { return new Symbol(sym.Tentero, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tdecimal}    { return new Symbol(sym.Tdecimal, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tid}        {return new Symbol(sym.Tid, yyline, yycolumn,yytext());}
-<YYINITIAL> [\"]        { yybegin(cadena); tempcadena+="\""; escape=0; }
-<YYINITIAL> [\']        { yybegin(cadena2); tempcadena+="\""; escape=0; contador=0;}
+<YYINITIAL> [\"]        { yybegin(cadena);}
+<YYINITIAL> [\']        { yybegin(cadena2); tempcadena+="\'"; escape=0; contador=0;}
 <YYINITIAL> {Comment} {/*iognore*/}
 <YYINITIAL> {space}     { /*Espacios en blanco, ignorados*/ }
 <YYINITIAL> {enter}     { /*Saltos de linea, ignorados*/}
@@ -256,74 +258,20 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
         System.out.println(errLex);
 }
 <cadena> {
-        [\"] { 
-                if(escape==0){
-                    String tmp=tempcadena+"\""; 
-                    tempcadena=""; yybegin(YYINITIAL);  
-                    return new Symbol(sym.Tcadena, yychar,yyline,tmp); 
-                }
-                else{
-                    tempcadena+=yytext();
-                    escape=0;
-                }
-            }
-        [\n] {
-                if(escape==0){
-                    String tmp=tempcadena; tempcadena="";  
-                    System.out.println("Se esperaba cierre de cadena (\")."); 
-                    yybegin(YYINITIAL);
-                }else{
-                    String tmp=tempcadena; tempcadena="";  
-                    System.out.println("Se esperaba caracter de escape o cierre de cadena;"); 
-                    yybegin(YYINITIAL); 
-                }
-            }
-        [\\] { 
-                tempcadena+=yytext();
-                if(escape==0){
-                 escape=1;
-                }else{
-                 escape=0;
-                }
-            }
-        [\'] {                
-                if(escape==0){
-                    String tmp=tempcadena; tempcadena="";  
-                    System.out.println("Caracter especial  sin escape definido"); 
-                    yybegin(YYINITIAL);              
-                }else{
-                 tempcadena+=yytext();
-                 escape=0;
-                }
-            }
-        [?] { 
-                
-                if(escape==0){
-                    tempcadena+=yytext();              
-                }else{
-                 tempcadena+=yytext();
-                 escape=0;
-                }
-            }
-        [%] { 
-                
-                if(escape==0){
-                    tempcadena+=yytext();              
-                }else{
-                 tempcadena+=yytext();
-                 escape=0;
-                }
-             }
-        [n] { 
-                
-                if(escape==0){
-                 tempcadena+=yytext();
-                }else{
-                 tempcadena+=yytext();
-                 escape=0;
-                }
-             }
-        [^\"] { tempcadena+=yytext();}
+       
+[^\"]   {tempcadena+=yytext();}
+
+[\"]    { String temp=tempcadena; tempcadena=""; yybegin(YYINITIAL); return  new Symbol(sym.Tcadena, yychar,yyline, temp);}
+
+
+"\\\""  {tempcadena+='\"';}
+"\\n"   {tempcadena+='\n';}
+"\\\\"	{tempcadena+='\\';}
+"\\'"	{tempcadena+='\'';}
+"\\?"	{tempcadena+='?';}
+"\\%"	{tempcadena+='%';}
+
+
         
 }
 <cadena2> {
@@ -378,7 +326,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
                  contador++;
                 }
              }
-        [?] { 
+        [\?] { 
                 contador++;
                 if(escape==0){
                     tempcadena+=yytext();              
@@ -387,7 +335,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
                  escape=0;
                 }
              }
-        [%] { 
+        [\%] { 
                 contador++;
                 if(escape==0){
                     tempcadena+=yytext();              

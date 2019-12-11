@@ -73,6 +73,7 @@ public class Operacion implements Instruccion {
         this.column = column;
         this.tipo = TipoOperacion.NUMERO;
     }
+    
 
     @Override
     public int getLine() {

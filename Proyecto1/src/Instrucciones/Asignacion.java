@@ -6,6 +6,7 @@
 package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
+import java.util.ArrayList;
 
 /**
  *
@@ -47,14 +48,25 @@ public class Asignacion implements Instruccion {
         if (ts.existeSimbolo(id)) {
             if (ts.asignValor(id, resultado)) {
                 ts.setValor(id, resultado);
+                if (ts.existReferencia(id)) {
+                    ArrayList<String> lst = ts.getListaReferencia(id);
+                    System.out.println(lst);
+                    if (lst.size() > 1) {
+                        lst.forEach((item) -> {
+                            ts.setValor(item, resultado);
+                        });
+                    }
+                }
+                return true;
             } else {
                 //error porque no se puede hacer el casteo explicito
                 System.out.println("No es posible hacer el casteo ");
+                return false;
             }
         } else {
             System.out.println("No existe la variable: " + id);
+            return false;
         }
-        return null;
     }
 
     @Override

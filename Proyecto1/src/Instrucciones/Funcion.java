@@ -20,6 +20,7 @@ public class Funcion implements Instruccion {
     String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
+
     ;
     int line, column;
     boolean Llamada = false;
@@ -54,14 +55,14 @@ public class Funcion implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        
+
         if (Llamada == true) {
             TablaDeSimbolos local = new TablaDeSimbolos();
-            local.setPadre(ts);
+            local.setPadre(new TablaDeSimbolos());
             parametros.forEach((item) -> {
                 item.Ejecutar(local);
             });
-
+            local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
                     if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(local))) {

@@ -7,6 +7,7 @@ package Tabla_Simbolos;
 
 import Instrucciones.Instruccion;
 import Instrucciones.Tipo;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,8 +21,9 @@ public class Simbolo {
     private Instruccion contenido;
     private boolean declarado;//si tiene valor o no.
     private Tipo tipo_instruccion;
-    
-    
+    private ArrayList<String> referencias = new ArrayList<>(); // id a los cual esta referida
+    private ArrayList<String> referidos; // id a los cual esta referida
+    private boolean PorReferencia; // si esta referenciada
 
     /**
      * Constructor para declarar una variable
@@ -44,7 +46,6 @@ public class Simbolo {
         this.contenido = contenido;
         this.tipo_instruccion = tipo_instruccion;
     }
-    
 
     public TipoSimbolo getTipo() {
         return tipo;
@@ -85,13 +86,41 @@ public class Simbolo {
     public void setContenido(Instruccion contenido) {
         this.contenido = contenido;
     }
-    
+
     public Tipo getTipo_instruccion() {
         return tipo_instruccion;
     }
 
     public void setTipo_instruccion(Tipo tipo_instruccion) {
         this.tipo_instruccion = tipo_instruccion;
+    }
+
+    public ArrayList<String> getReferencias() {
+        return referencias;
+    }
+
+    public boolean setReferencia(String id) {
+        return referencias.add(id);
+    }
+
+    public void setReferencias(ArrayList<String> referencias) {
+        this.referencias = referencias;
+    }
+
+    public boolean isPorReferencia() {
+        return PorReferencia;
+    }
+
+    public void setPorReferencia(boolean PorReferencia) {
+        this.PorReferencia = PorReferencia;
+    }
+
+    public ArrayList<String> getReferidos() {
+        return referidos;
+    }
+
+    public void setReferidos(ArrayList<String> referidos) {
+        this.referidos = referidos;
     }
 
 }
