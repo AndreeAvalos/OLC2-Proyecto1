@@ -47,6 +47,13 @@ public class Simbolo {
         this.tipo_instruccion = tipo_instruccion;
     }
 
+    public Simbolo(TipoSimbolo tipo, String id, Object valor, Tipo tipo_instruccion) {
+        this.tipo = tipo;
+        this.id = id;
+        this.valor = valor;
+        this.tipo_instruccion = tipo_instruccion;
+    }
+
     public TipoSimbolo getTipo() {
         return tipo;
     }

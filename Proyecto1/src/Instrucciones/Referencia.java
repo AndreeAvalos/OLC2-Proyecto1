@@ -57,7 +57,7 @@ public class Referencia implements Instruccion {
         if (tipo_simbolo != null) {
             if (ts.getPadre() == null) {
                 if (!ts.existeSimbolo(origen)) {
-                    ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_simbolo), origen, Tipo.VARIABLE));
+                    ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), origen, Tipo.VARIABLE));
                 } else {
                     System.out.println("La varaible \'" + origen + "\' ya esta declarada");
                     //aqui va el mensaje de error que ya esta declarada la variable en el ambito

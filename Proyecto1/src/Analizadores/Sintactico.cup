@@ -10,7 +10,7 @@ import Instrucciones.Operacion.TipoOperacion;
 parser code
 {:
 	public LinkedList<Instruccion> AST = new LinkedList<Instruccion>();
-	public static List<String> ErroresSintacticos = new ArrayList<>();
+	public static ArrayList<String> ErroresSintacticos = new ArrayList<>();
     public String salida = "" ; 
        
     public void syntax_error(Symbol s)
@@ -23,7 +23,7 @@ parser code
 
     /**Metodo al que se llama en el momento en que ya no es posible una recuperación de errores.*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +
+        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.left+1)+ " Columna "+(s.right+1)+". Identificador " +
         s.value + " no reconocido.");            
     }
     
@@ -43,16 +43,17 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
-                Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter; 
+                Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
 
 // Producciones				
 non terminal String S;
-non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS;
-non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO,
-                          RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA;
+non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
+non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
+                          RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
+                          DECLARACION_FUSION;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS;
-
+non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
 non terminal Tipo TIPODATO;
 
 
@@ -87,25 +88,55 @@ INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
             | METODO:a {: RESULT = a; :}
             | ARREGLO:a {: RESULT = a; :}
             | REFERENCIA:a {: RESULT = a; :}
+            | FUSION:a {: RESULT = a; :}
+            | ASIGNACION_FUSION:a {: RESULT = a; :}
+            | DECLARACION_FUSION:a {: RESULT = a; :}
 			;
+
+FUSION::= Tfusion Tid:a Tllave_a DECLARACIONES:b Tllave_c Tpycoma
+            {: RESULT = new Declaracion_Struct(a,b,aleft,bleft); :}
+            ;
+
+DECLARACIONES::= DECLARACIONES:a DECLARACION_STRUCT:b {: a.add(b); RESULT = a; :}
+            | DECLARACION_STRUCT:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
+            ;
+
+DECLARACION_STRUCT::=   TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
+                    |   TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tpycoma
+                        {: RESULT = new Arreglo(a,b,c,bleft,bright); :}
+                    |   Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
+                    ;
+
+ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA:c Tpycoma {: RESULT = new Asignacion_Fusion(a,b,c,aleft,aright); :};
+
+DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
+                    | Tid:tipo Tid:id  Tigual OPERACION_RELACIONAL:valor Tpycoma
+                    ;
+
+LISTA_ACCESOS_FUSION::= LISTA_ACCESOS_FUSION:a Tpunto Tid:b {: a.add(b); RESULT = a; :}
+                    | Tid:a {: ArrayList<String> lista = new ArrayList<>(); lista.add(a); RESULT = lista; :}
+                    ;
+
 
 DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
             | TIPODATO: a Tid:b Tigual OPERACION_NUMERICA:c Tpycoma {: RESULT = new Declaracion(a,a,b, new Asignacion(b,c,bleft,bright) , bleft, bright); :}
             ;
 
+        
 TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 		|	Tdec:a{: RESULT = Tipo.Decimal; :}
 		|	Tchr:a{: RESULT = Tipo.Char; :}
 		|	Tbul:a{: RESULT = Tipo.Bool; :}
+        |   Trstring:a{: RESULT = Tipo.Cadena; :}
 		;
 
 REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(origen,destino,origenleft,origenright);  :}
             | TIPODATO:a Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(a,origen,destino,origenleft,origenright);  :};
 	
-ASIGNACION::= Tid:a Tigual OPERACION_NUMERICA:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
+ASIGNACION::= Tid:a Tigual OPERACION_RELACIONAL:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
         ;
 
-CONSTANTE::= Tdefinir Tid:a OPERACION_NUMERICA:b {: RESULT = new Definir(a,b,aleft,aright); :}
+CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,aleft,aright); :}
         ;
 
 FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
@@ -152,6 +183,8 @@ VALORES_PARAMETROS::=VALORES_PARAMETROS:a Tcoma VALOR_PARAMETRO:b {: a.add(b); R
 VALOR_PARAMETRO::= OPERACION_LOGICA:a {:RESULT = a ; :};
 
 IMPRIMIR::= Timp Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Imprimir(new Operacion(a,TipoOperacion.CADENA,aleft,aright),aleft,aright ); :}
+        | Timp  Tpar_a Tcadena:a Tcoma VALORES_PARAMETROS:b Tpar_c Tpycoma
+        {: RESULT = new Imprimir(new Operacion(a,TipoOperacion.CADENA,aleft,aright),b,aleft,aright ); :}
         ;
 
 ARREGLO::= ARREGLO_SIMPLE:a {:RESULT = a ; :}
@@ -205,6 +238,7 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Tdecimal:a {: RESULT = new Operacion(a, aright, aleft); :}
         |Tcaracter:a {: RESULT = new Operacion(a,TipoOperacion.CARACTER, aleft, aright); :}
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
+        |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
         ;

@@ -9,6 +9,7 @@ import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
 import java.util.HashSet;
+import proyecto1.Principal;
 
 /**
  *
@@ -49,12 +50,13 @@ public class Definir implements Instruccion {
 
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_simbolo), id, valor, Tipo.CONSTANTE));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, valor.Ejecutar(ts), Tipo.CONSTANTE));
             } else {
-                System.out.println("La varaible \'" + id + "\' ya esta declarada");
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }
+        String resultado = valor.Ejecutar(ts).toString();
     }
 
     @Override

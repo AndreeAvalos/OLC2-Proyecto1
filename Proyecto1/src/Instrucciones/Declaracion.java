@@ -8,6 +8,7 @@ package Instrucciones;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
+import proyecto1.Principal;
 
 /**
  *
@@ -69,10 +70,10 @@ public class Declaracion implements Instruccion {
 
         if (ts.getPadre() != null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id, Tipo.VARIABLE));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, Tipo.VARIABLE));
 
             } else {
-                System.out.println("La varaible \'" + id + "\' ya esta declarada");
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 return null;
             }
@@ -101,10 +102,10 @@ public class Declaracion implements Instruccion {
 
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_declarado), id, Tipo.VARIABLE));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, Tipo.VARIABLE));
 
             } else {
-                System.out.println("La varaible \'" + id + "\' ya esta declarada");
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 return;
             }

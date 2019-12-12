@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class Asignacion implements Instruccion {
 
     String id;
+    Operacion index;
     Operacion valor;
     int line, column;
 
@@ -50,7 +51,6 @@ public class Asignacion implements Instruccion {
                 ts.setValor(id, resultado);
                 if (ts.existReferencia(id)) {
                     ArrayList<String> lst = ts.getListaReferencia(id);
-                    System.out.println(lst);
                     if (lst.size() > 1) {
                         lst.forEach((item) -> {
                             ts.setValor(item, resultado);

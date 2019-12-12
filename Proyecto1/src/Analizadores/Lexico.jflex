@@ -83,6 +83,7 @@ Tfusion = "fusion"
 Timportar = "#importar"
 Tregresar = "regresar"
 Twhen = "when"
+Trstring = "Rstring"
 Ttrue = "true"
 Tfalse = "false"
 Tatxt = "_atxt"
@@ -209,6 +210,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tcorrer}      { return new Symbol(sym.Tcorrer, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tconfiguracion}      { return new Symbol(sym.Tconfiguracion, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tfechamod}      { return new Symbol(sym.Tfechamod, yyline, yycolumn,yytext());}
+<YYINITIAL> {Trstring}      { return new Symbol(sym.Trstring, yyline, yycolumn,yytext());}
 
 
 

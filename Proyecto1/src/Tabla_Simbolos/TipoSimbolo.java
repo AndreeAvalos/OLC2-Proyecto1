@@ -14,9 +14,9 @@ import Instrucciones.Tipo;
 public class TipoSimbolo {
     
     Tipo tipo;
-    Tipo asignado;
+    String asignado;
 
-    public TipoSimbolo(Tipo tipo, Tipo asignado) {
+    public TipoSimbolo(Tipo tipo, String asignado) {
         this.tipo = tipo;
         this.asignado = asignado;
     }
@@ -29,11 +29,11 @@ public class TipoSimbolo {
         this.tipo = tipo;
     }
 
-    public Tipo getAsignado() {
+    public String getAsignado() {
         return asignado;
     }
 
-    public void setAsignado(Tipo asignado) {
+    public void setAsignado(String asignado) {
         this.asignado = asignado;
     }
     

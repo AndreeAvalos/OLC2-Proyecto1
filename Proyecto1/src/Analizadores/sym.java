@@ -37,6 +37,7 @@ public class sym {
   public static final int Tdecremento = 28;
   public static final int Tmod = 21;
   public static final int Tdiferente = 6;
+  public static final int Trstring = 98;
   public static final int Tsetalto = 78;
   public static final int Tzro = 37;
   public static final int Taltoyancho = 75;
@@ -204,7 +205,8 @@ public class sym {
   "Tdecimal",
   "Tentero",
   "Tcadena",
-  "Tcaracter"
+  "Tcaracter",
+  "Trstring"
   };
 }
 

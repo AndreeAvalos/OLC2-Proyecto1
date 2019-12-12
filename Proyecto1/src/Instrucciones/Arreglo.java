@@ -12,6 +12,7 @@ import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import proyecto1.Principal;
 
 /**
  *
@@ -146,13 +147,13 @@ public class Arreglo implements Instruccion {
         //Simpre se declara la variable
         if (ts.getPadre() != null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo, tipo), id, Tipo.ARREGLO));
+                ts.add(new Simbolo(new TipoSimbolo(tipo, ""), id, Tipo.ARREGLO));
             } else {
                 System.out.println("YA SE DECLARO LA VARIABLE");
                 return null;
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
-
+            
             ArrayList<ArrayList<Celda>> celdas = new ArrayList<>();
             ArrayList<Celda> celda = new ArrayList<>();
             String resultado = "";
@@ -169,7 +170,6 @@ public class Arreglo implements Instruccion {
                         }
                         celdas.add(celda);
                         new_arreglo.crearArbol(celdas);
-                        new_arreglo.print();
                         ts.setValor(id, new_arreglo);
 
                     } catch (Exception ex) {
@@ -203,17 +203,15 @@ public class Arreglo implements Instruccion {
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-        boolean declarada = false;
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo, tipo), id, Tipo.ARREGLO));
-                declarada = true;
+                ts.add(new Simbolo(new TipoSimbolo(tipo, ""), id, Tipo.ARREGLO));
             } else {
-                System.out.println("La varaible \'" + id + "\' ya esta declarada");
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 return;
             }
-            
+
             ArrayList<ArrayList<Celda>> celdas = new ArrayList<>();
             ArrayList<Celda> celda = new ArrayList<>();
             String resultado = "";
@@ -233,12 +231,13 @@ public class Arreglo implements Instruccion {
                         celdas.add(celda);
                         new_arreglo.crearArbol(celdas);
                         new_arreglo.print();
-                        System.out.println("");
+//                        System.out.println("El numero de celdas es: "+new_arreglo.getSize());
+//                        System.out.println("El numero de niveles es: "+new_arreglo.getNiveles());
                         ts.setValor(id, new_arreglo);
 
-                    } catch (Exception ex) {
+                    } catch (NumberFormatException ex) {
                         ts.eliminarSimbolo(id);
-                        System.out.println("El valor del indice no es un entero");
+                        Principal.add_error("El valor del indice no es un entero","Semantico",line,column);
                     }
 
                     break;
@@ -252,7 +251,7 @@ public class Arreglo implements Instruccion {
                             celda.add(new Celda(contador_indices, val));
                         } else {
                             ts.eliminarSimbolo(id);
-                            System.out.println("El valor: " + resultado + " no es del mismo tipo del arreglo");
+                           Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo","Semantico",line,column);
 
                         }
                         contador_indices++;
@@ -260,7 +259,6 @@ public class Arreglo implements Instruccion {
                     celdas.add(celda);
                     new_arreglo.crearArbol(celdas);
                     new_arreglo.print();
-                    System.out.println("");
                     ts.setValor(id, new_arreglo);
 
                     break;
@@ -277,7 +275,7 @@ public class Arreglo implements Instruccion {
                                     celda.add(new Celda(contador_indices, val));
                                 } else {
                                     ts.eliminarSimbolo(id);
-                                    System.out.println("El valor: " + resultado + " no es del mismo tipo del arreglo");
+                                    Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo","Semantico",line,column);
 
                                 }
                                 contador_indices++;
@@ -285,16 +283,15 @@ public class Arreglo implements Instruccion {
                             celdas.add(celda);
                             new_arreglo.crearArbol(celdas);
                             new_arreglo.print();
-                            System.out.println("");
                             ts.setValor(id, new_arreglo);
 
                         } else {
                             ts.eliminarSimbolo(id);
-                            System.out.println("Indice fuera de limite");
+                            Principal.add_error("Indice fuera de limite","Semantico",line,column);
                         }
                     } catch (Exception e) {
                         ts.eliminarSimbolo(id);
-                        System.out.println("El valor del indice no es un entero");
+                        Principal.add_error("El valor del indice no es un entero","Semantico",line,column);
                     }
 
                     break;
@@ -305,22 +302,24 @@ public class Arreglo implements Instruccion {
                         num_indice = (int) Double.parseDouble(resultado);
 
                         caracteres = cadena.Ejecutar(ts).toString().replace("\"", "").toCharArray();
-                        if (caracteres.length == num_indice) {
+                        if (caracteres.length <= num_indice) {
                             for (char item : caracteres) {
                                 resultado = String.valueOf(item);
                                 celda.add(new Celda(contador_indices, resultado));
 
                                 contador_indices++;
                             }
+                            for (int i = contador_indices; i < num_indice; i++) {
+                                celda.add(new Celda(i, null));
+                            }
                             celdas.add(celda);
                             new_arreglo.crearArbol(celdas);
                             new_arreglo.print();
-                            System.out.println("");
                             ts.setValor(id, new_arreglo);
 
                         } else {
                             ts.eliminarSimbolo(id);
-                            System.out.println("Indice fuera de limite");
+                            Principal.add_error("Indice fuera de limite","Semantico",line,column);
                         }
                     }
 
@@ -339,7 +338,6 @@ public class Arreglo implements Instruccion {
                         celdas.add(celda);
                         new_arreglo.crearArbol(celdas);
                         new_arreglo.print();
-                        System.out.println("");
                         ts.setValor(id, new_arreglo);
                     }
                     break;

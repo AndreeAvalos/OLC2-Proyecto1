@@ -15,13 +15,14 @@ import java.util.LinkedList;
  * @author Andree
  */
 public class Metodo implements Instruccion {
-    
+
     public String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
     public boolean Llamada = false;
     int line, column;
-    
+    TablaDeSimbolos local = new TablaDeSimbolos();
+
     public Metodo(String id, LinkedList<Instruccion> parametros, LinkedList<Instruccion> contenido, int line, int column) {
         this.id = id;
         this.parametros = parametros;
@@ -29,7 +30,7 @@ public class Metodo implements Instruccion {
         this.line = line;
         this.column = column;
     }
-    
+
     public Metodo(String id, LinkedList<Instruccion> contenido, int line, int column) {
         this.id = id;
         this.contenido = contenido;
@@ -37,28 +38,21 @@ public class Metodo implements Instruccion {
         this.line = line;
         this.column = column;
     }
-    
+
     @Override
     public int getLine() {
         return this.line;
     }
-    
+
     @Override
     public int getColumn() {
         return this.column;
     }
-    
+
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        
+
         if (Llamada == true) {
-            
-            TablaDeSimbolos local = new TablaDeSimbolos();
-            local.setPadre(new TablaDeSimbolos());
-            
-            parametros.forEach((item) -> {
-                item.Ejecutar(local);
-            });
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
@@ -70,10 +64,10 @@ public class Metodo implements Instruccion {
                     }
                 }
             } else {
-                System.out.println("El numero de parametros no coincide.");
+                System.out.println("El numero de parametros no coincide1.");
                 return null;
             }
-            
+
             for (Instruccion item : contenido) {
                 if (item.getType() == Tipo.RETURN) {
                     //aqui ponemos el valor en la funcion
@@ -87,23 +81,27 @@ public class Metodo implements Instruccion {
         //aun no se como hacer esto.
         return null;
     }
-    
+
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-        
+
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(Tipo.METODO, Tipo.METODO), id, this, Tipo.METODO));
+                ts.add(new Simbolo(new TipoSimbolo(Tipo.METODO, ""), id, this, Tipo.METODO));
             } else {
                 System.out.println("La funcion \'" + id + "\' ya esta declarada");
+                return;
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
+            parametros.forEach((item) -> {
+                item.Recolectar(local);
+            });
         }
     }
-    
+
     @Override
     public Tipo getType() {
         return Tipo.METODO;
     }
-    
+
 }

@@ -20,6 +20,7 @@ public class Funcion implements Instruccion {
     String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
+    TablaDeSimbolos local = new TablaDeSimbolos();
 
     ;
     int line, column;
@@ -57,11 +58,7 @@ public class Funcion implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
 
         if (Llamada == true) {
-            TablaDeSimbolos local = new TablaDeSimbolos();
-            local.setPadre(new TablaDeSimbolos());
-            parametros.forEach((item) -> {
-                item.Ejecutar(local);
-            });
+
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
@@ -73,7 +70,7 @@ public class Funcion implements Instruccion {
                     }
                 }
             } else {
-                System.out.println("El numero de parametros no coincide.");
+                System.out.println("El numero de parametros no coincide2.");
                 return null;
             }
             for (Instruccion item : contenido) {
@@ -84,7 +81,7 @@ public class Funcion implements Instruccion {
                         local.setValor(id, resultado);
                     } else {
                         //error porque no se puede hacer el casteo explicito
-                        System.out.println("No es posible hacer el casteo ");
+                        System.out.println("La valor retornado no concuerda con el tipo");
                     }
                     return null;
                 } else {
@@ -102,11 +99,15 @@ public class Funcion implements Instruccion {
 
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_simbolo), id, this, Tipo.FUNCION));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, this, Tipo.FUNCION));
             } else {
                 System.out.println("La funcion \'" + id + "\' ya esta declarada");
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                return;
             }
+            parametros.forEach((item) -> {
+                item.Recolectar(local);
+            });
         }
     }
 

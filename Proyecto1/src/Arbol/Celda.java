@@ -21,7 +21,7 @@ public class Celda {
 
     public Celda(int indice) {
         this.indice = indice;
-        this.dato = 0;
+        this.dato = null;
     }
 
     public int getIndice() {

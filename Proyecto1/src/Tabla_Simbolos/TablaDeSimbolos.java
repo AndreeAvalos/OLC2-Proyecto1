@@ -9,7 +9,7 @@ import Instrucciones.Instruccion;
 import Instrucciones.Tipo;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
+import Tipos_Importantes.Error;
 /**
  *
  * @author Andree
@@ -17,14 +17,22 @@ import java.util.LinkedList;
 public class TablaDeSimbolos extends LinkedList<Simbolo> {
 
     public TablaDeSimbolos padre;
+    public String nombre;
+    public ArrayList<String> lst = new ArrayList<>();
 
     public TablaDeSimbolos() {
+        this.padre = null;
+    }
+
+    public TablaDeSimbolos(String nombre) {
+        this.nombre = nombre;
         this.padre = null;
     }
 
     public void setPadre(TablaDeSimbolos tablapadre) {
         this.padre = tablapadre;
     }
+    // -------------------------------METODO PARA DAR VALOR SIMPLE-----------------------------
 
     public void setValor(String id, Object valor) {
 
@@ -39,7 +47,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                         switch (item.getTipo_instruccion()) {
                             case VARIABLE:
 
-                                switch (item.getTipo().getAsignado()) {
+                                switch (item.getTipo().getTipo()) {
                                     case Entero:
                                         item.setValor((int) Double.parseDouble(valor.toString()));
                                         return;
@@ -86,7 +94,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         break;
                                 }
                             // ponemos valor de struct
-                            case STRUCT:
+                            case FUSION:
+                                //asignamos la tabla de simbolos;
+                                item.setValor(valor);
                                 break;
                             case ARREGLO:
                                 item.setValor(valor);
@@ -97,7 +107,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 break;
                         }
 
-                    } catch (EnumConstantNotPresentException e) {
+                    } catch (Exception e) {
                         return;
                     }
                 }
@@ -108,7 +118,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
 
     }
+    // -------------------------------METODO PARA DAR VALOR SIMPLE-----------------------------
 
+    // -------------------------------METODO PARA Eliminar SIMBOLO-----------------------------
     public void eliminarSimbolo(String id) {
         eliminarSimbolo(id, this);
     }
@@ -121,7 +133,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             }
         }
     }
+    // -------------------------------METODO PARA Eliminar SIMBOLO-----------------------------
 
+    //--------------------------------------------------------------------------------------------
     public void setValorReferencias(String id, Object valor) {
         setValorReferencias(id, valor, this);
     }
@@ -140,6 +154,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean existReferencia(String id) {
         return existReferencia(id, this);
     }
@@ -157,6 +172,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         return false;
     }
 
+    //--------------------------------------------------------------------------------------------
     public void setReferencia(String origen, String destino) {
         setReferencia(origen, destino, this);
     }
@@ -173,6 +189,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean compararTipos(String origen, String destino) {
         return getTipoAsignado(destino, this).equals(getTipoAsignado(origen, this));
     }
@@ -190,6 +207,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         return null;
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean asignValor(String id, Object valor) {
         return asignValor(id, valor, this);
     }
@@ -208,8 +226,13 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 val_aux = Double.parseDouble(valor.toString());
                                 return true;
                             case Cadena:
-                                val_aux = valor.toString();
-                                return true;
+                                try {
+                                    val_aux = (String) valor;
+                                    return true;
+                                } catch (Exception e) {
+                                    return false;
+                                }
+
                             case Char:
                                 val_aux = (char) Double.parseDouble(valor.toString());
                                 return true;
@@ -219,7 +242,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                             default:
                                 return false;
                         }
-                    } catch (EnumConstantNotPresentException e) {
+                    } catch (Exception e) {
                         return false;
                     }
                 }
@@ -232,6 +255,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public void recorrerPadres(TablaDeSimbolos padre, int nivel) {
         System.out.println("-----SU NIVEL:" + nivel + "-----");
         if (padre.getPadre() != null) {
@@ -239,6 +263,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public void setValorByIndex(int index, Object valor) {
         setValorByIndex(index, valor, this);
     }
@@ -246,28 +271,29 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private void setValorByIndex(int index, Object valor, TablaDeSimbolos tsPadre) {
 
         Simbolo item = tsPadre.get(index);
-        switch (item.getTipo().getAsignado()) {
+        switch (item.getTipo().getTipo()) {
             case Entero:
                 item.setValor((int) Double.parseDouble(valor.toString()));
-                return;
+                break;
             case Decimal:
                 item.setValor(Double.parseDouble(valor.toString()));
-                return;
+                break;
             case Char:
                 item.setValor((char) Double.parseDouble(valor.toString()));
-                return;
+                break;
             case Cadena:
                 item.setValor((String) valor.toString());
-                return;
+                break;
             case Bool:
                 item.setValor(Boolean.valueOf(valor.toString()));
-                return;
+                break;
             default:
                 //deberia tirar error ya que no existe el ID
-                return;
+                break;
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public ArrayList<String> getListaReferencia(String id) {
         ArrayList<String> lista = new ArrayList<>();
         lista.add(id);
@@ -275,7 +301,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     private ArrayList<String> getListaReferencia(String id, ArrayList<String> lista, TablaDeSimbolos padre) {
-        ArrayList<String> lista_referencias = padre.getSimbolo(id, padre).getReferencias();        
+        ArrayList<String> lista_referencias = padre.getSimbolo(id, padre).getReferencias();
         for (String item : lista_referencias) {
             if (!lista.contains(item)) {
                 lista.add(item);
@@ -288,6 +314,11 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         } else {
             return lista;
         }
+    }
+
+    //--------------------------------------------------------------------------------------------
+    public Simbolo getSimbolo(String id) {
+        return getSimbolo(id, this);
     }
 
     private Simbolo getSimbolo(String id, TablaDeSimbolos padre) {
@@ -304,6 +335,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean asignValorByIndex(int index, Object valor) {
         return asignValorByIndex(index, valor, this);
     }
@@ -321,8 +353,12 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                     val_aux = Double.parseDouble(valor.toString());
                     return true;
                 case Cadena:
-                    val_aux = valor.toString();
-                    return true;
+                    try {
+                        val_aux = (String) valor;
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
                 case Char:
                     val_aux = (char) Double.parseDouble(valor.toString());
                     return true;
@@ -333,11 +369,12 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                     return false;
             }
 
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public Object getValor(String id) {
         return getValor(id, this);
     }
@@ -354,6 +391,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         return null;
     }
 
+    //--------------------------------------------------------------------------------------------
     public Instruccion getContenido(String id) {
         return getContenido(id, this);
     }
@@ -370,6 +408,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         return null;
     }
 
+    //--------------------------------------------------------------------------------------------
     public void incrementarValor(String id) {
         incrementarValor(id, this);
     }
@@ -383,6 +422,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean castearFuncion(String id, Object valor) {
 
         return castearFuncion(id, valor, this);
@@ -414,7 +454,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 default:
                                     return false;
                             }
-                        } catch (EnumConstantNotPresentException e) {
+                        } catch (Exception e) {
                             return false;
                         }
                     }
@@ -428,6 +468,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public Object castearValor(String id, Object Valor) {
         return castearValor(id, Valor, this);
 
@@ -452,7 +493,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                     //deberia tirar error ya que no existe el ID
                                     break;
                             }
-                        } catch (EnumConstantNotPresentException e) {
+                        } catch (Exception e) {
                             return null;
                         }
                     }
@@ -465,6 +506,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         return null;
     }
 
+    //--------------------------------------------------------------------------------------------
     public void setValor_Funcion(String id, Object valor) {
 
         setValor_Funcion(id, valor, this);
@@ -496,7 +538,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                     //deberia tirar error ya que no existe el ID
                                     break;
                             }
-                        } catch (EnumConstantNotPresentException e) {
+                        } catch (Exception e) {
                             return;
                         }
                     }
@@ -508,6 +550,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean existeMetodo_Funcion(String id) {
         return existeMetodo_Funcion(id, this);
     }
@@ -533,6 +576,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public void decrementarValor(String id) {
         decrementarValor(id, this);
     }
@@ -546,6 +590,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         }
     }
 
+    //--------------------------------------------------------------------------------------------
     public boolean existeSimbolo(String id) {
         return existeSimbolo(id, this);
     }
@@ -564,6 +609,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
 
     }
 
+    //--------------------------------------------------------------------------------------------
     public TablaDeSimbolos getPadre() {
         return this.padre;
     }
@@ -572,26 +618,88 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         try {
             int val = (int) Double.parseDouble(valor.toString());
             return Tipo.Entero;
-        } catch (NumberFormatException e1) {
+        } catch (Exception e1) {
             try {
                 double val = Double.parseDouble(valor.toString());
                 return Tipo.Decimal;
-            } catch (NumberFormatException e2) {
+            } catch (Exception e2) {
                 try {
                     boolean val = (boolean) Boolean.valueOf(valor.toString());
                     return Tipo.Bool;
-                } catch (NumberFormatException e3) {
+                } catch (Exception e3) {
                     try {
                         char val = (char) Double.parseDouble(valor.toString());
                         return Tipo.Char;
-                    } catch (NumberFormatException e4) {
-
+                    } catch (Exception e4) {
+                        return Tipo.Cadena;
                     }
                 }
 
             }
         }
+    }
+
+    //-------------------------------------Area para Accesos a structs recursivos--------------------------------------
+    public boolean existeAcceso(String id, ArrayList<String> identificadores) {
+        lst.clear();
+        Simbolo simbol = getSimbolo(id, this);
+        if (simbol != null) {
+            if (simbol.getTipo().getTipo() == Tipo.Struct) {
+                return existeAcceso(identificadores, 0, (TablaDeSimbolos) simbol.getValor());
+            }
+            add_error("La variable " + id + " no es una fusion. ");
+            return false;
+        }
+        add_error("La variable " + id + " no existe. ");
+        return false;
+    }
+
+    private boolean existeAcceso(ArrayList<String> identificadores, int nivel, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getId().equals(identificadores.get(nivel))) {
+                if ((nivel + 1) < identificadores.size()) {
+                    if (item.getTipo().getTipo() == Tipo.Struct) {
+                        return existeAcceso(identificadores, nivel + 1, (TablaDeSimbolos) item.getValor());
+                    } else {
+                        add_error(identificadores.get(nivel) + " no es tipo fusion");
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+        add_error("La ruta de accesos no existe");
+        return false;
+    }
+
+    public TablaDeSimbolos getTable(String id, ArrayList<String> identificadores) {
+        lst.clear();
+        Simbolo simbol = getSimbolo(id, this);
+        if (simbol != null) {
+            if (simbol.getTipo().getTipo() == Tipo.Struct) {
+                return getTable(identificadores, 0, (TablaDeSimbolos) simbol.getValor());
+            }
+            add_error("La variable " + id + " no es una fusion. ");
+            return null;
+        }
+        add_error("La variable " + id + " no existe. ");
         return null;
     }
 
+    private TablaDeSimbolos getTable(ArrayList<String> identificadores, int nivel, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getId().equals(identificadores.get(nivel))) {
+                return (TablaDeSimbolos) item.getValor();
+            }
+        }
+        add_error("La ruta de accesos no existe");
+        return null;
+    }
+
+    //-------------------------------------Fin  para Accesos a structs recursivos--------------------------------------
+
+    private void add_error(String mensaje) {
+        lst.add(mensaje);
+    }
 }

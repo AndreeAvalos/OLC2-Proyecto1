@@ -11,13 +11,19 @@ import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import Tipos_Importantes.Error;
 
 /**
  *
  * @author Andree
  */
 public class Principal extends javax.swing.JFrame {
+
+    public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
+    public static ArrayList<String> salida = new ArrayList<>();
+    public static Hashtable<String, TablaDeSimbolos> Estructuras = new Hashtable<String, TablaDeSimbolos>();
 
     /**
      * Creates new form Principal
@@ -263,6 +269,9 @@ public class Principal extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         String input = jTextArea1.getText();
+        Lista_Errores_Semanticos.clear();
+        Estructuras.clear();
+        salida.clear();
         Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(input))));
         try {
             parser.parse();
@@ -273,7 +282,6 @@ public class Principal extends javax.swing.JFrame {
             AST.forEach((item) -> {
                 item.Recolectar(global);
             });
-
             consola.append("--------------------- Final de la recoleccion ---------------------\n");
 
             consola.append("---------------------  Inicio de la ejecucion   ---------------------\n");
@@ -300,11 +308,17 @@ public class Principal extends javax.swing.JFrame {
                         break;
                 }
             });
+            salida.forEach((item) -> {
+                consola.append(item + "\n");
+            });
             consola.append("---------------------  Final de la ejecucion   ---------------------\n");
         } catch (Exception e) {
             consola.append("---------------------  Error de Compilacion   ---------------------");
         }
 
+        Lista_Errores_Semanticos.forEach((item) -> {
+            System.out.println(item.toString());
+        });
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -342,6 +356,27 @@ public class Principal extends javax.swing.JFrame {
             }
         });
     }
+
+    public static void add_error(String error, String tipo, int line, int column) {
+        Lista_Errores_Semanticos.add(new Error(error, tipo, line+1, column+1));
+    }
+
+    public static void add_struct(String id, TablaDeSimbolos struct) {
+        Estructuras.put(id, struct);
+    }
+
+    public static boolean exist_struct(String id) {
+        return Estructuras.containsKey(id);
+    }
+
+    public static TablaDeSimbolos get_struct(String id) {
+        return Estructuras.get(id);
+    }
+
+    public static void setMensaje(String mensaje) {
+        salida.add(mensaje);
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea consola;

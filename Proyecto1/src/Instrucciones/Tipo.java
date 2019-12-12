@@ -14,11 +14,12 @@ public enum Tipo {
     WHILE,IF,BREAK,DOWHILE,FOR,FUNCION,METODO,
     ASIGNACION,DECLARACION,IMPRIMIR,OPERACION,
     RETURN, SWITCH,OPERADOR,VARIABLE,CONSTANTE,
-    STRUCT,DEFINIR, LLAMADA, ARREGLO,REFERENCIA,
+    DEFINIR, LLAMADA, ARREGLO,REFERENCIA, FUSION,
+     DECLARACION_FUSION ,
     //endregion
     
     Entero,Decimal,Cadena,Char,Bool,Identificador,
-    Incremento,Decremento,    
+    Incremento,Decremento, Struct, ASIGNACION_FUSION,
     
     
     //

@@ -5,6 +5,7 @@
  */
 package Instrucciones;
 
+import Arbol.Arbol;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.Objects;
 
@@ -73,7 +74,6 @@ public class Operacion implements Instruccion {
         this.column = column;
         this.tipo = TipoOperacion.NUMERO;
     }
-    
 
     @Override
     public int getLine() {
@@ -87,7 +87,7 @@ public class Operacion implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-
+        double aux2 = 0.0;
         switch (tipo) {
             case DIVISION:
                 return (Double) operadorIzq.Ejecutar(ts) / (Double) operadorDer.Ejecutar(ts);
@@ -102,8 +102,15 @@ public class Operacion implements Instruccion {
             case NUMERO:
                 return Double.parseDouble(valor.toString());
             case IDENTIFICADOR:
-                double aux2 = Double.parseDouble(ts.getValor(valor.toString()).toString());
-                return aux2;
+                Object val = ts.getValor(valor.toString());
+                if (ts.getSimbolo(valor.toString()).getTipo_instruccion() == Tipo.ARREGLO) {
+
+                    Arbol aux = (Arbol) val;
+                    return aux;
+                } else {
+                    aux2 = Double.parseDouble(val.toString());
+                    return aux2;
+                }
             case CADENA:
                 return valor.toString();
             case MAYOR_QUE:
