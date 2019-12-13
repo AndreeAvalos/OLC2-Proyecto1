@@ -19,7 +19,7 @@ public enum Tipo {
     //endregion
     
     Entero,Decimal,Cadena,Char,Bool,Identificador,
-    Incremento,Decremento, Struct, ASIGNACION_FUSION,
+    Incremento,Decremento, Struct, ASIGNACION_FUSION, DEF_STRUCT, OBJETO,
     
     
     //

@@ -16,19 +16,8 @@ import proyecto1.Principal;
  */
 public class Declaracion_Fusion implements Instruccion {
 
-    String tipo;
-    String id;
-    String tipo2;
-    Operacion valor;
+    String tipo, id, tipo2;
     int line, column;
-    boolean reservar_memoria = false;
-
-    public Declaracion_Fusion(String tipo, String id, int line, int column) {
-        this.tipo = tipo;
-        this.id = id;
-        this.line = line;
-        this.column = column;
-    }
 
     public Declaracion_Fusion(String tipo, String id, String tipo2, int line, int column) {
         this.tipo = tipo;
@@ -36,7 +25,6 @@ public class Declaracion_Fusion implements Instruccion {
         this.tipo2 = tipo2;
         this.line = line;
         this.column = column;
-        this.reservar_memoria = true;
     }
 
     @Override
@@ -56,32 +44,25 @@ public class Declaracion_Fusion implements Instruccion {
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-
-        if (reservar_memoria == true) {
-            if (!tipo.equals(tipo2)) {
-                Principal.add_error("El tipo: " + tipo2 + " con la fusion: " + tipo2, tipo, line, column);
-                return;
-            }
-            Principal.on_struck = true;
+        if (!tipo.equals(tipo2)) {
+            Principal.add_error("El tipo: " + tipo2 + " con la fusion: " + tipo2, "Semantico", line, column);
+            return;
         }
-
         if (ts.getPadre() == null) {
             if (Principal.exist_struct(tipo)) {
-                TablaDeSimbolos local = Principal.get_struct(tipo);
                 if (!ts.existeSimbolo(id)) {
+                    TablaDeSimbolos local = Principal.get_struct(tipo);
                     ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
-                    if (Principal.on_struck == true) {
-                        ts.setValor(id, local);
-                    }
+                    ts.setValor(id, local);
                 } else {
                     Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
-                    //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 }
-
             } else {
                 Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
             }
+
         }
+
     }
 
     @Override

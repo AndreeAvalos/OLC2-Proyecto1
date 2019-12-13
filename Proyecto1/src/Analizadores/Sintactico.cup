@@ -94,7 +94,7 @@ INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
 			;
 
 FUSION::= Tfusion Tid:a Tllave_a DECLARACIONES:b Tllave_c Tpycoma
-            {: RESULT = new Declaracion_Struct(a,b,aleft,bleft); :}
+            {: RESULT = new Struct(a,b,aleft,bleft); :}
             ;
 
 DECLARACIONES::= DECLARACIONES:a DECLARACION_STRUCT:b {: a.add(b); RESULT = a; :}
@@ -104,15 +104,16 @@ DECLARACIONES::= DECLARACIONES:a DECLARACION_STRUCT:b {: a.add(b); RESULT = a; :
 DECLARACION_STRUCT::=   TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
                     |   TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tpycoma
                         {: RESULT = new Arreglo(a,b,c,bleft,bright); :}
-                    |   Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
+                    |   Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
                     ;
 
 ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA:c Tpycoma {: RESULT = new Asignacion_Fusion(a,b,c,aleft,aright); :}
-                    
+                    |Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
+                    {:RESULT = new Asignacion_Fusion(id,tipo2,idleft,idright);:}
                     ;
-DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
+DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
                     | Tid:tipo Tid:id  Tigual OPERACION_RELACIONAL:valor Tpycoma
-                    |  Tid:tipo Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
+                    | Tid:tipo Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
                     {:RESULT = new Declaracion_Fusion(tipo,id,tipo2,idleft,idright);:}
                     ;
 
@@ -174,6 +175,8 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | LLAMADA:a Tpycoma {:RESULT = a; :}
         | IMPRIMIR:a {:RESULT = a; :}
         | REFERENCIA:a {: RESULT = a; :}
+        | ASIGNACION_FUSION:a {: RESULT = a; :}
+        | DECLARACION_FUSION:a {: RESULT = a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};

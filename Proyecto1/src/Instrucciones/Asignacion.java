@@ -19,6 +19,7 @@ public class Asignacion implements Instruccion {
     Operacion valor;
     int line, column;
     TablaDeSimbolos local = new TablaDeSimbolos();
+    TablaDeSimbolos local_2 = new TablaDeSimbolos();
 
     /**
      *
@@ -48,14 +49,15 @@ public class Asignacion implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
         Object resultado = valor.Ejecutar(ts);
         if (ts.existeSimbolo(id)) {
+            Object aux = resultado;
             if (ts.asignValor(id, resultado)) {
-                ts.setValor(id, resultado);
+                ts.setValor(id, aux);
                 local = ts.getEntorno(id);
                 if (ts.equals(ts)) {
                     local = ts;
                 }
                 if (local.existReferencia(id)) {
-                    ArrayList<String> lst = local.getListaReferencia(id);   
+                    ArrayList<String> lst = local.getListaReferencia(id);
                     System.out.println(lst);
                     if (lst.size() > 1) {
                         lst.forEach((item) -> {
@@ -63,7 +65,7 @@ public class Asignacion implements Instruccion {
                         });
                     }
                 }
-                
+
                 return true;
             } else {
                 //error porque no se puede hacer el casteo explicito

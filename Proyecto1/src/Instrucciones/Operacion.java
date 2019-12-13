@@ -6,8 +6,10 @@
 package Instrucciones;
 
 import Arbol.Arbol;
+import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.Objects;
+import proyecto1.Principal;
 
 /**
  *
@@ -103,14 +105,22 @@ public class Operacion implements Instruccion {
                 return Double.parseDouble(valor.toString());
             case IDENTIFICADOR:
                 Object val = ts.getValor(valor.toString());
-                if (ts.getSimbolo(valor.toString()).getTipo_instruccion() == Tipo.ARREGLO) {
-
-                    Arbol aux = (Arbol) val;
-                    return aux;
-                } else {
-                    aux2 = Double.parseDouble(val.toString());
-                    return aux2;
+                Simbolo sim = ts.getSimbolo(valor.toString());
+                if (sim != null) {
+                    if (sim.getTipo_instruccion() == Tipo.ARREGLO) {
+                        Arbol aux = (Arbol) val;
+                        return aux;
+                    } else if (sim.getTipo_instruccion() == Tipo.FUSION) {
+                        String tipo_struct = sim.getTipo().getAsignado();
+                        if (Principal.exist_struct(tipo_struct)) {
+                            return val;
+                        }
+                    } else {
+                        aux2 = Double.parseDouble(val.toString());
+                        return aux2;
+                    }
                 }
+                return null;
             case CADENA:
                 return valor.toString();
             case MAYOR_QUE:

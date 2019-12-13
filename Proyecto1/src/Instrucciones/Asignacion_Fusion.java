@@ -5,7 +5,9 @@
  */
 package Instrucciones;
 
+import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.TipoSimbolo;
 import java.util.ArrayList;
 import proyecto1.Principal;
 
@@ -18,40 +20,73 @@ public class Asignacion_Fusion implements Instruccion {
     String id;
     ArrayList<String> accesos;
     Operacion valor;
+    String tipo;
     int line, column;
+    boolean reservar_memoria = false;
 
     public Asignacion_Fusion(String id, ArrayList<String> accesos, Operacion valor, int line, int column) {
         this.id = id;
         this.accesos = accesos;
+        this.valor = valor;
         this.line = line;
         this.column = column;
-        this.valor = valor;
+    }
+
+    public Asignacion_Fusion(String id, String tipo, int line, int column) {
+        this.id = id;
+        this.tipo = tipo;
+        this.line = line;
+        this.column = column;
+        this.reservar_memoria = true;
     }
 
     @Override
     public int getLine() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return line;
     }
 
     @Override
     public int getColumn() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return column;
     }
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-
-        if (ts.existeAcceso(id, accesos)) {
-            TablaDeSimbolos local = ts.getTable(id, accesos);
-            if (local != null) {
-                Asignacion aux = new Asignacion(accesos.get(accesos.size() - 1), valor, line, column);
-                aux.Ejecutar(local);
-            }
+        if (reservar_memoria) {
+            Ejecutar_Memoria(ts);
+        } else {
+            Ejecutar_Accesos(ts);
         }
-        ts.lst.forEach((item) -> {
-            Principal.add_error(item, "Semantico", line, column);
-        });
         return null;
+
+    }
+
+    private void Ejecutar_Accesos(TablaDeSimbolos ts) {
+        if (ts.existeAcceso(id, accesos)) {
+           //vamos y le damos el valor al objeto
+           
+        } else {
+            ts.lst.forEach((item) -> {
+                Principal.add_error(item, "Semantico", line, column);
+            });
+        }
+
+    }
+
+    private void Ejecutar_Memoria(TablaDeSimbolos ts) {
+        Simbolo sim = ts.getSimbolo(id);
+        String tipo_struct = sim.getTipo().getAsignado();
+        if (Principal.exist_struct(tipo_struct)) {
+            if (ts.existeSimbolo(id)) {
+                TablaDeSimbolos local = Principal.get_struct(tipo_struct);
+                ts.setValor(id, local);
+            } else {
+                Principal.add_error("La varaible \'" + id + "\' no esta declarada", "Semantico", line, column);
+            }
+        } else {
+            Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
+        }
+
     }
 
     @Override

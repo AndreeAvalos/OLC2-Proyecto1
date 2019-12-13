@@ -41,6 +41,19 @@ public class Declaracion_Struct implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+        definiciones = new TablaDeSimbolos();
+        Principal.on_struck = true;
+        if (ts.getPadre() == null) {
+            if (Principal.exist_struct(id)) {
+                declaraciones.forEach((item) -> {
+                    item.Recolectar(definiciones);
+                });
+                Principal.replace_struct(id, definiciones);
+            } else {
+                Principal.add_error("La varaible \'" + id + "\' no esta declarada", "Semantico", line, column);
+            }
+        }
+        Principal.on_struck = false;
         return null;
     }
 
@@ -48,16 +61,15 @@ public class Declaracion_Struct implements Instruccion {
     public void Recolectar(TablaDeSimbolos ts) {
         definiciones = new TablaDeSimbolos();
         Principal.on_struck = true;
+        Principal.struck_recursivo = true;
         if (ts.getPadre() == null) {
             if (!Principal.exist_struct(id)) {
-                declaraciones.forEach((item) -> {
-                    item.Recolectar(definiciones);
-                });
-                Principal.add_struct(id, definiciones);
+                Principal.add_struct(id, new TablaDeSimbolos());
             } else {
                 Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
             }
         }
+        Principal.struck_recursivo = false;
         Principal.on_struck = false;
     }
 
