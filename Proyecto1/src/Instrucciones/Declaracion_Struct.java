@@ -47,6 +47,7 @@ public class Declaracion_Struct implements Instruccion {
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
         definiciones = new TablaDeSimbolos();
+        Principal.on_struck = true;
         if (ts.getPadre() == null) {
             if (!Principal.exist_struct(id)) {
                 declaraciones.forEach((item) -> {
@@ -57,6 +58,7 @@ public class Declaracion_Struct implements Instruccion {
                 Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
             }
         }
+        Principal.on_struck = false;
     }
 
     @Override

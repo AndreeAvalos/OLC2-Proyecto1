@@ -24,6 +24,7 @@ public class Principal extends javax.swing.JFrame {
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
     public static Hashtable<String, TablaDeSimbolos> Estructuras = new Hashtable<String, TablaDeSimbolos>();
+    public static boolean on_struck = false;
 
     /**
      * Creates new form Principal
@@ -358,7 +359,7 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public static void add_error(String error, String tipo, int line, int column) {
-        Lista_Errores_Semanticos.add(new Error(error, tipo, line+1, column+1));
+        Lista_Errores_Semanticos.add(new Error(error, tipo, line + 1, column + 1));
     }
 
     public static void add_struct(String id, TablaDeSimbolos struct) {

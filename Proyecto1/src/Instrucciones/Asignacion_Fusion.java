@@ -56,7 +56,6 @@ public class Asignacion_Fusion implements Instruccion {
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-
     }
 
     @Override

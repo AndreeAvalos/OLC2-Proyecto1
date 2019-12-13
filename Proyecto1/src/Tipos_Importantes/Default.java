@@ -9,6 +9,6 @@ package Tipos_Importantes;
  *
  * @author Andree
  */
-public interface Tipo_Case {
+public class Default implements Tipo_Case {
     
 }

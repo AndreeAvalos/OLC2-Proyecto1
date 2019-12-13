@@ -49,6 +49,44 @@ public class Referencia implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+
+        if (tipo_simbolo != null) {
+            if (ts.getPadre() != null) {
+                if (!ts.existeSimbolo(origen)) {
+                    ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), origen, Tipo.VARIABLE));
+                } else {
+                    System.out.println("La varaible \'" + origen + "\' ya esta declarada");
+                    //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                }
+            }
+            if (ts.compararTipos(origen, destino)) {
+                String result = new Operacion(destino, TipoOperacion.IDENTIFICADOR, line, column).Ejecutar(ts).toString();
+                ts.setValor(origen, result);
+
+                ts.setValorReferencias(origen, ts);
+
+                ts.setReferencia(origen, destino);
+                ts.setReferencia(destino, origen);
+                
+            } else {
+                System.out.println("No puede referenciar a otro tipo de dato");
+            }
+
+        } else {
+            if (ts.compararTipos(origen, destino)) {
+                String result = new Operacion(destino, TipoOperacion.IDENTIFICADOR, line, column).Ejecutar(ts).toString();
+                ts.setValor(origen, result);
+
+                ts.setValorReferencias(origen, ts);
+
+                ts.setReferencia(origen, destino);
+                ts.setReferencia(destino, origen);
+
+            } else {
+                System.out.println("No puede referenciar a otro tipo de dato");
+            }
+
+        }
         return null;
     }
 
@@ -72,7 +110,6 @@ public class Referencia implements Instruccion {
 
                 ts.setReferencia(origen, destino);
                 ts.setReferencia(destino, origen);
-                
 
             } else {
                 System.out.println("No puede referenciar a otro tipo de dato");

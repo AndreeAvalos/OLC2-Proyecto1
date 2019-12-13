@@ -107,10 +107,13 @@ DECLARACION_STRUCT::=   TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a
                     |   Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
                     ;
 
-ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA:c Tpycoma {: RESULT = new Asignacion_Fusion(a,b,c,aleft,aright); :};
-
+ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA:c Tpycoma {: RESULT = new Asignacion_Fusion(a,b,c,aleft,aright); :}
+                    
+                    ;
 DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Fusion(tipo,id,idleft,idright);:}
                     | Tid:tipo Tid:id  Tigual OPERACION_RELACIONAL:valor Tpycoma
+                    |  Tid:tipo Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
+                    {:RESULT = new Declaracion_Fusion(tipo,id,tipo2,idleft,idright);:}
                     ;
 
 LISTA_ACCESOS_FUSION::= LISTA_ACCESOS_FUSION:a Tpunto Tid:b {: a.add(b); RESULT = a; :}
@@ -137,6 +140,8 @@ ASIGNACION::= Tid:a Tigual OPERACION_RELACIONAL:b Tpycoma{: RESULT = new Asignac
         ;
 
 CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,aleft,aright); :}
+        |    Tdefinir Tid:a Tllave_a VALORES_PARAMETROS:b Tllave_c
+            {: RESULT = new Arreglo(a,b,aleft,aright); :}
         ;
 
 FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
@@ -168,6 +173,7 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | RETORNAR:a {:RESULT = a; :}
         | LLAMADA:a Tpycoma {:RESULT = a; :}
         | IMPRIMIR:a {:RESULT = a; :}
+        | REFERENCIA:a {: RESULT = a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};

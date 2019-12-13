@@ -10,6 +10,8 @@ import Instrucciones.Tipo;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
+import proyecto1.Principal;
+
 /**
  *
  * @author Andree
@@ -239,6 +241,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                             case Bool:
                                 val_aux = Boolean.valueOf(valor.toString());
                                 return true;
+                            case Struct:
+                                TablaDeSimbolos obtenida = (TablaDeSimbolos) valor;
+                                TablaDeSimbolos struct = (TablaDeSimbolos) Principal.get_struct(id);
+                                return true;
                             default:
                                 return false;
                         }
@@ -301,14 +307,16 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     private ArrayList<String> getListaReferencia(String id, ArrayList<String> lista, TablaDeSimbolos padre) {
-        ArrayList<String> lista_referencias = padre.getSimbolo(id, padre).getReferencias();
-        for (String item : lista_referencias) {
-            if (!lista.contains(item)) {
-                lista.add(item);
-                getListaReferencia(item, lista, padre);
+
+        if (padre.getSimbolo(id, padre) != null) {
+            ArrayList<String> lista_referencias = padre.getSimbolo(id, padre).getReferencias();
+            for (String item : lista_referencias) {
+                if (!lista.contains(item)) {
+                    lista.add(item);
+                    getListaReferencia(item, lista, padre);
+                }
             }
         }
-
         if (padre.getPadre() != null) {
             return getListaReferencia(id, lista, padre.getPadre());
         } else {
@@ -327,7 +335,6 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                 return item;
             }
         }
-
         if (padre.getPadre() != null) {
             return getSimbolo(id, padre.getPadre());
         } else {
@@ -650,41 +657,60 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             add_error("La variable " + id + " no es una fusion. ");
             return false;
         }
-        add_error("La variable " + id + " no existe. ");
+        add_error("La variable " + id + " no existe4. ");
         return false;
     }
 
     private boolean existeAcceso(ArrayList<String> identificadores, int nivel, TablaDeSimbolos padre) {
-        for (Simbolo item : padre) {
-            if (item.getId().equals(identificadores.get(nivel))) {
-                if ((nivel + 1) < identificadores.size()) {
-                    if (item.getTipo().getTipo() == Tipo.Struct) {
-                        return existeAcceso(identificadores, nivel + 1, (TablaDeSimbolos) item.getValor());
+        if (padre != null) {
+            for (Simbolo item : padre) {
+                if (item.getId().equals(identificadores.get(nivel))) {
+                    if ((nivel + 1) < identificadores.size()) {
+                        if (item.getTipo().getTipo() == Tipo.Struct) {
+                            return existeAcceso(identificadores, nivel + 1, (TablaDeSimbolos) item.getValor());
+                        } else {
+                            add_error(identificadores.get(nivel) + " no es tipo fusion");
+                            return false;
+                        }
                     } else {
-                        add_error(identificadores.get(nivel) + " no es tipo fusion");
-                        return false;
+                        return true;
                     }
-                } else {
-                    return true;
                 }
             }
+            add_error("La ruta de accesos no existe");
+        } else {
+            add_error("No se ha instanciado el objeto");
         }
-        add_error("La ruta de accesos no existe");
         return false;
     }
 
     public TablaDeSimbolos getTable(String id, ArrayList<String> identificadores) {
         lst.clear();
+        if (identificadores.size() == 1) {
+            for (Simbolo item : this) {
+                if (item.getTipo_instruccion() == Tipo.FUSION) {
+                    TablaDeSimbolos laux = (TablaDeSimbolos) item.getValor();
+                    for (Simbolo item2 : laux) {
+                        if (item2.getId().equals(identificadores.get(0))) {
+                            return laux;
+                        }
+                    }
+                }
+            }
+        }
+
         Simbolo simbol = getSimbolo(id, this);
+
         if (simbol != null) {
+
             if (simbol.getTipo().getTipo() == Tipo.Struct) {
                 return getTable(identificadores, 0, (TablaDeSimbolos) simbol.getValor());
             }
             add_error("La variable " + id + " no es una fusion. ");
             return null;
         }
-        add_error("La variable " + id + " no existe. ");
-        return null;
+
+        return this;
     }
 
     private TablaDeSimbolos getTable(ArrayList<String> identificadores, int nivel, TablaDeSimbolos padre) {
@@ -698,7 +724,26 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     //-------------------------------------Fin  para Accesos a structs recursivos--------------------------------------
+    //-------------------------------------ACCESOS A REFERENCIAS-------------------------------------------------------
+    public TablaDeSimbolos getEntorno(String id) {
+        return getEntorno(id, this);
+    }
 
+    private TablaDeSimbolos getEntorno(String id, TablaDeSimbolos padre) {
+
+        for (Simbolo item : padre) {
+            if (item.getId().equals(id)) {
+                return padre;
+            }
+        }
+
+        if (padre.getPadre() != null) {
+            return getEntorno(id, padre.getPadre());
+        }
+        return null;
+    }
+
+    //-----------------------------------------------------------------------------------------------------------------
     private void add_error(String mensaje) {
         lst.add(mensaje);
     }

@@ -21,6 +21,7 @@ import proyecto1.Principal;
 public class Arreglo implements Instruccion {
 
     public enum TipoArreglo {
+        DEFINIR_ARREGLO,
         SIMPLE_DECLARACION,
         SIMPLE_SININDICE_VALORES,
         SIMPLE_INDICE_VALORES,
@@ -131,6 +132,23 @@ public class Arreglo implements Instruccion {
         this.column = column;
         this.tipo_arreglo = TipoArreglo.SIMPLE_SININDICE_CADENA;
     }
+    
+    /**
+     * Constructor para el metodo definir un arreglo simple
+     * @param id
+     * @param valores
+     * @param line
+     * @param column
+     */
+    public Arreglo(String id, LinkedList<Operacion> valores, int line, int column) {
+        this.id = id;
+        this.valores = valores;
+        this.line = line;
+        this.column = column;
+        this.tipo_arreglo = TipoArreglo.DEFINIR_ARREGLO;
+    }
+    
+    
 
     @Override
     public int getLine() {
@@ -153,7 +171,7 @@ public class Arreglo implements Instruccion {
                 return null;
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
-            
+
             ArrayList<ArrayList<Celda>> celdas = new ArrayList<>();
             ArrayList<Celda> celda = new ArrayList<>();
             String resultado = "";
@@ -204,10 +222,16 @@ public class Arreglo implements Instruccion {
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
         if (ts.getPadre() == null) {
+            
+            if (tipo_arreglo == TipoArreglo.DEFINIR_ARREGLO) {
+                this.tipo = ts.getTipo(valores.get(0).Ejecutar(ts).toString());
+                tipo_arreglo = TipoArreglo.SIMPLE_SININDICE_VALORES;
+            }
+           
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo, ""), id, Tipo.ARREGLO));
             } else {
-                Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 return;
             }
@@ -237,7 +261,7 @@ public class Arreglo implements Instruccion {
 
                     } catch (NumberFormatException ex) {
                         ts.eliminarSimbolo(id);
-                        Principal.add_error("El valor del indice no es un entero","Semantico",line,column);
+                        Principal.add_error("El valor del indice no es un entero", "Semantico", line, column);
                     }
 
                     break;
@@ -251,7 +275,7 @@ public class Arreglo implements Instruccion {
                             celda.add(new Celda(contador_indices, val));
                         } else {
                             ts.eliminarSimbolo(id);
-                           Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo","Semantico",line,column);
+                            Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo", "Semantico", line, column);
 
                         }
                         contador_indices++;
@@ -275,7 +299,7 @@ public class Arreglo implements Instruccion {
                                     celda.add(new Celda(contador_indices, val));
                                 } else {
                                     ts.eliminarSimbolo(id);
-                                    Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo","Semantico",line,column);
+                                    Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo", "Semantico", line, column);
 
                                 }
                                 contador_indices++;
@@ -287,11 +311,11 @@ public class Arreglo implements Instruccion {
 
                         } else {
                             ts.eliminarSimbolo(id);
-                            Principal.add_error("Indice fuera de limite","Semantico",line,column);
+                            Principal.add_error("Indice fuera de limite", "Semantico", line, column);
                         }
                     } catch (Exception e) {
                         ts.eliminarSimbolo(id);
-                        Principal.add_error("El valor del indice no es un entero","Semantico",line,column);
+                        Principal.add_error("El valor del indice no es un entero", "Semantico", line, column);
                     }
 
                     break;
@@ -319,7 +343,7 @@ public class Arreglo implements Instruccion {
 
                         } else {
                             ts.eliminarSimbolo(id);
-                            Principal.add_error("Indice fuera de limite","Semantico",line,column);
+                            Principal.add_error("Indice fuera de limite", "Semantico", line, column);
                         }
                     }
 
