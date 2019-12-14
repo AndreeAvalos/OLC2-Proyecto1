@@ -5,7 +5,9 @@
  */
 package Instrucciones;
 
+import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.TipoSimbolo;
 import java.util.LinkedList;
 import proyecto1.Principal;
 
@@ -44,22 +46,27 @@ public class Struct implements Instruccion {
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
         //declaramos el tipo 
-        if (!Principal.exist_struct(id)) {
-            Principal.add_struct(id, new TablaDeSimbolos());
-        } else {
-            Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
-            return;
+        if (ts.getPadre() == null) {
+            if (!ts.existeSimbolo(id)) {
+                ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, id), id, Tipo.OBJETO));
+
+            } else {
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                return;
+            }
+
+            TablaDeSimbolos definiciones = new TablaDeSimbolos();
+            declaraciones.forEach((item) -> {
+                item.Recolectar(definiciones);
+            });
+            ts.replace(id, definiciones);
         }
-        TablaDeSimbolos definiciones = new TablaDeSimbolos();
-        declaraciones.forEach((item) -> {
-            item.Recolectar(definiciones);
-        });
-        Principal.replace_struct(id, definiciones);
     }
 
     @Override
     public Tipo getType() {
-        return Tipo.DEF_STRUCT;
+        return Tipo.FUSION;
     }
 
 }

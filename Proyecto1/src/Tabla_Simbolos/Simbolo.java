@@ -25,6 +25,18 @@ public class Simbolo {
     private ArrayList<String> referidos; // id a los cual esta referida
     private boolean PorReferencia; // si esta referenciada
 
+    public Simbolo copy(Simbolo sim) {
+        this.tipo = sim.getTipo();
+        this.id = sim.getId();
+        this.valor = sim.getValor();
+        this.contenido = sim.getContenido();
+        this.declarado = false;
+        this.tipo_instruccion = sim.getTipo_instruccion();
+        this.referencias = sim.getReferencias();
+        this.PorReferencia = sim.PorReferencia;
+        return this;
+    }
+
     /**
      * Constructor para declarar una variable
      *
@@ -52,6 +64,17 @@ public class Simbolo {
         this.id = id;
         this.valor = valor;
         this.tipo_instruccion = tipo_instruccion;
+    }
+
+    /**
+     * Constructor para tipos de estructuras
+     *
+     * @param id
+     * @param valor
+     */
+    public Simbolo(String id, Object valor) {
+        this.id = id;
+        this.valor = valor;
     }
 
     public TipoSimbolo getTipo() {

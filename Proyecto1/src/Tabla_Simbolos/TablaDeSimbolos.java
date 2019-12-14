@@ -100,6 +100,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 //asignamos la tabla de simbolos;
                                 item.setValor(valor);
                                 return;
+                            case OBJETO:
+                                //error ya que no se puede asignar un valor al objeto
+                                break;
                             case ARREGLO:
                                 item.setValor(valor);
                                 break;
@@ -245,33 +248,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                             case Struct:
 
                                 TablaDeSimbolos obtenida = (TablaDeSimbolos) valor;
-                                if (Principal.struck_recursivo == false) {
-                                    if (obtenida.size()==0) {
-                                        return true;
-                                    }
-                                }
-                                String tipo_struct = padre.getSimbolo(id).getTipo().getAsignado();
-                                TablaDeSimbolos struct = (TablaDeSimbolos) Principal.get_struct(tipo_struct);
-                                boolean todo_ok = true;
-                                if (obtenida.size() == struct.size()) {
-                                    for (Simbolo item2 : obtenida) {
-                                        todo_ok = true;
-                                        for (Simbolo item3 : struct) {
-                                            if (item2.getId().equals(item3.getId())) {
-                                                todo_ok = true;
-                                                break;
-                                            } else {
-                                                todo_ok = false;
-                                            }
-                                        }
-                                        if (todo_ok == false) {
-                                            return false;
-                                        }
-                                    }
-                                    return true;
-                                } else {
-                                    return false;
-                                }
+                                System.out.println("******************************" + id + "************************");
+                                item.setValor(valor);
+                                return true;
                             default:
                                 return false;
                         }
@@ -706,71 +685,78 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             }
             add_error("La ruta de accesos no existe");
         } else {
-            add_error("No se ha instanciado el objeto "+identificadores.get(nivel-1));
+            add_error("No se ha instanciado el objeto " + identificadores.get(nivel - 1));
         }
         return false;
     }
 
+    public void print() {
+        System.out.println("==================================================================");
+        this.forEach((item) -> {
+            System.out.println("ID: " + item.getId() + " VALOR: " + item.getValor());
+        });
+        System.out.println("==================================================================");
+    }
+
+    public void setValorAccesos(String id, ArrayList<String> identificadores, Object valor) {
+
+        //tabla donde se desea guardar el valor
+        Simbolo sim = getSimbolo(id);
+        TablaDeSimbolos tabla_actual = (TablaDeSimbolos) sim.getValor();
+
+        for (Simbolo item : tabla_actual) {
+            if (item.getId().equals(identificadores.get(0))) {
+                if (item.getTipo().getTipo() == Tipo.Struct) {
+                    //tabla que contiene el siguiente valor
+                    TablaDeSimbolos tabla_resultado = (TablaDeSimbolos) valor;
+                    tabla_resultado.print();
+                    item.setValor(tabla_resultado);
+                } else {
+                    item.setValor(valor);
+                }
+            }
+        }
+
+    }
+
+    private void setValorAccesos(ArrayList<String> identificadores, Object valor, int nivel, TablaDeSimbolos padre) {
+
+    }
+
     public TablaDeSimbolos getTable(String id, ArrayList<String> identificadores) {
         lst.clear();
+        Simbolo sim = getSimbolo(id);
+        TablaDeSimbolos tabla_actual = (TablaDeSimbolos) sim.getValor();
         if (identificadores.size() == 1) {
-            for (Simbolo item : this) {
-                if (item.getTipo_instruccion() == Tipo.FUSION) {
-                    TablaDeSimbolos laux = (TablaDeSimbolos) item.getValor();
-                    for (Simbolo item2 : laux) {
-                        if (item2.getId().equals(identificadores.get(0))) {
-                            return laux;
-                        }
-                    }
+            for (Simbolo item : tabla_actual) {
+                if (item.getId().equals(identificadores.get(0))) {
+                    return tabla_actual;
                 }
             }
-            if (this.getPadre() != null) {
-                return getTable(identificadores, this.getPadre());
-            }
         }
-
-        Simbolo simbol = getSimbolo(id, this);
-
-        if (simbol != null) {
-
-            if (simbol.getTipo().getTipo() == Tipo.Struct) {
-                return getTable(identificadores, 0, (TablaDeSimbolos) simbol.getValor());
-            }
-            add_error("La variable " + id + " no es una fusion. ");
-            return null;
-        }
-
-        return this;
+        return getTable(sim, identificadores, 0);
     }
 
-    public TablaDeSimbolos getTable(ArrayList<String> identificadores, TablaDeSimbolos padre) {
-        lst.clear();
-        if (identificadores.size() == 1) {
-            for (Simbolo item : padre) {
-                if (item.getTipo_instruccion() == Tipo.FUSION) {
-                    TablaDeSimbolos laux = (TablaDeSimbolos) item.getValor();
-                    for (Simbolo item2 : laux) {
-                        if (item2.getId().equals(identificadores.get(0))) {
-                            return laux;
-                        }
-                    }
-                }
-            }
-            if (this.getPadre() != null) {
-                return getTable(identificadores, padre.getPadre());
-            }
-        }
-        return null;
-    }
-
-    private TablaDeSimbolos getTable(ArrayList<String> identificadores, int nivel, TablaDeSimbolos padre) {
-        for (Simbolo item : padre) {
+    private TablaDeSimbolos getTable(Simbolo sim, ArrayList<String> identificadores, int nivel) {
+        TablaDeSimbolos tabla_actual = (TablaDeSimbolos) sim.getValor();
+        for (Simbolo item : tabla_actual) {
             if (item.getId().equals(identificadores.get(nivel))) {
-                return (TablaDeSimbolos) item.getValor();
+                if ((nivel + 1) < identificadores.size()) {
+                    if (item.getTipo().getTipo() == Tipo.Struct) {
+                        return getTable(item, identificadores, nivel + 1);
+
+                    } else {
+                        lst.add("La variable " + identificadores.get(nivel) + " no es un objeto");
+                        return new TablaDeSimbolos();
+                    }
+                } else {
+                    return tabla_actual;
+
+                }
             }
         }
-        add_error("La ruta de accesos no existe");
-        return null;
+
+        return new TablaDeSimbolos();
     }
 
     //-------------------------------------Fin  para Accesos a structs recursivos--------------------------------------
@@ -797,4 +783,61 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private void add_error(String mensaje) {
         lst.add(mensaje);
     }
+//-------------------------------------------------------------------------------------------------------------------------------------------
+    //Metodos para estructuras
+
+    public void replace(String id, TablaDeSimbolos tabla) {
+
+        for (Simbolo item : this) {
+            if (item.getId().equals(id)) {
+                item.setValor(tabla);
+                return;
+            }
+        }
+    }
+
+    public void remove_struct(String id) {
+        boolean find = false;
+        int index = 0;
+        for (Simbolo item : this) {
+            if (item.getId().equals(id)) {
+                find = true;
+            }
+            if (find) {
+                this.remove(index);
+                return;
+            }
+            index++;
+        }
+
+    }
+
+    public boolean containsKey(String id) {
+        for (Simbolo item : this) {
+            if (item.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public TablaDeSimbolos get_struct(String id) {
+        int index = 0;
+        for (Simbolo item : this) {
+            if (item.getId().equals(id)) {
+                return (TablaDeSimbolos) this.get(index).getValor();
+            }
+            index++;
+        }
+        return null;
+    }
+
+    private Simbolo new_simbolo(Simbolo sim) {
+        Simbolo new_simbolo = new Simbolo("", null);
+        new_simbolo.copy(sim);
+        return new_simbolo;
+
+    }
+
+    //-------------------------------------------------------------------------------------------------------------------------
 }

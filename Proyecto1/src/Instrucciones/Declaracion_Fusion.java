@@ -44,23 +44,33 @@ public class Declaracion_Fusion implements Instruccion {
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-        if (!tipo.equals(tipo2)) {
-            Principal.add_error("El tipo: " + tipo2 + " con la fusion: " + tipo2, "Semantico", line, column);
-            return;
-        }
         if (ts.getPadre() == null) {
-            if (Principal.exist_struct(tipo)) {
-                if (!ts.existeSimbolo(id)) {
-                    TablaDeSimbolos local = Principal.get_struct(tipo);
-                    ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
-                    ts.setValor(id, local);
-                } else {
-                    Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
-                }
-            } else {
-                Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
+            if (!tipo.equals(tipo2)) {
+                Principal.add_error("El tipo: " + tipo2 + " con la fusion: " + tipo2, "Semantico", line, column);
+                return;
             }
+            if (ts.getPadre() == null) {
+                if (ts.existeSimbolo(tipo)) {
+                    if (!ts.existeSimbolo(id)) {
+                        TablaDeSimbolos local = ts.get_struct(tipo);
 
+                        TablaDeSimbolos nueva = new TablaDeSimbolos();
+
+                        for (Simbolo item : local) {
+                            Simbolo new_simbol = new Simbolo("", ")");
+                            nueva.add(new_simbol.copy(item));
+                        }
+                        nueva.nombre = id;
+                        ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
+                        ts.setValor(id, nueva);
+                    } else {
+                        Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                    }
+                } else {
+                    Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
+                }
+
+            }
         }
 
     }

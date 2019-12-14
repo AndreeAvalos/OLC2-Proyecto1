@@ -62,9 +62,26 @@ public class Asignacion_Fusion implements Instruccion {
     }
 
     private void Ejecutar_Accesos(TablaDeSimbolos ts) {
+
         if (ts.existeAcceso(id, accesos)) {
-           //vamos y le damos el valor al objeto
-           
+            //vamos y le damos el valor al objeto
+
+//            Object val = valor.Ejecutar(ts);
+            TablaDeSimbolos local = ts.getTable(id, accesos);
+            System.out.println("AMBIENTE: " + local.nombre + " AMBIENTE DESEADO: " + id);
+            if (local != null) {
+                Asignacion aux = new Asignacion(accesos.get(accesos.size() - 1), valor, line, column);
+                local.setPadre(ts);
+                aux.Ejecutar(local);
+            }
+            ts.lst.forEach((item) -> {
+                Principal.add_error(item, "Semantico", line, column);
+            });
+//            System.out.println("Valor: " + accesos.get(accesos.size() - 1) + " valor: " + val);
+//            ts.setValorAccesos(id, accesos, val);
+//            System.out.println("Valor: " + accesos.get(accesos.size() - 1) + " valor: " + val);
+//            System.out.println("----");
+
         } else {
             ts.lst.forEach((item) -> {
                 Principal.add_error(item, "Semantico", line, column);
@@ -74,11 +91,12 @@ public class Asignacion_Fusion implements Instruccion {
     }
 
     private void Ejecutar_Memoria(TablaDeSimbolos ts) {
+
         Simbolo sim = ts.getSimbolo(id);
         String tipo_struct = sim.getTipo().getAsignado();
-        if (Principal.exist_struct(tipo_struct)) {
+        if (ts.existeSimbolo(tipo_struct)) {
             if (ts.existeSimbolo(id)) {
-                TablaDeSimbolos local = Principal.get_struct(tipo_struct);
+                TablaDeSimbolos local = ts.get_struct(tipo_struct);
                 ts.setValor(id, local);
             } else {
                 Principal.add_error("La varaible \'" + id + "\' no esta declarada", "Semantico", line, column);

@@ -7,6 +7,7 @@ package proyecto1;
 
 import Analizadores.*;
 import Instrucciones.*;
+import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -23,8 +24,7 @@ public class Principal extends javax.swing.JFrame {
 
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
-    public static Hashtable<String, TablaDeSimbolos> Estructuras = new Hashtable<String, TablaDeSimbolos>();
-    public static boolean on_struck = false, struck_recursivo=false;
+    public static boolean on_struck = false, struck_recursivo = false;
 
     /**
      * Creates new form Principal
@@ -271,7 +271,6 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
         String input = jTextArea1.getText();
         Lista_Errores_Semanticos.clear();
-        Estructuras.clear();
         salida.clear();
         Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(input))));
         try {
@@ -360,25 +359,6 @@ public class Principal extends javax.swing.JFrame {
 
     public static void add_error(String error, String tipo, int line, int column) {
         Lista_Errores_Semanticos.add(new Error(error, tipo, line + 1, column + 1));
-    }
-
-    public static void add_struct(String id, TablaDeSimbolos ts) {
-        Estructuras.put(id, ts);
-    }
-
-    public static void replace_struct(String id, TablaDeSimbolos tabla) {
-        Estructuras.replace(id, tabla);
-    }
-    
-    public static void delete_struct(String id){
-        Estructuras.remove(id);
-    }
-    public static boolean exist_struct(String id) {
-        return Estructuras.containsKey(id);
-    }
-
-    public static TablaDeSimbolos get_struct(String id) {
-        return Estructuras.get(id);
     }
 
     public static void setMensaje(String mensaje) {

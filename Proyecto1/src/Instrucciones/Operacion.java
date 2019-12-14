@@ -112,7 +112,7 @@ public class Operacion implements Instruccion {
                         return aux;
                     } else if (sim.getTipo_instruccion() == Tipo.FUSION) {
                         String tipo_struct = sim.getTipo().getAsignado();
-                        if (Principal.exist_struct(tipo_struct)) {
+                        if (ts.existeSimbolo(tipo_struct)) {
                             return val;
                         }
                     } else {
