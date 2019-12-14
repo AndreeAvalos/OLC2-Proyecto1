@@ -57,6 +57,7 @@ public class Imprimir implements Instruccion {
         if ((cadena.length - 1) == parametros.size()) {
             if (cadena.length == 1) {
                 Principal.setMensaje(palabra);
+                return null;
             } else {
                 char letra;
                 String salida = cadena[0];

@@ -69,7 +69,8 @@ public class Declaracion implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
 
         if (ts.getPadre() != null) {
-            if (!ts.existeSimbolo(id)) {
+            
+            if (!ts.existeSimboloAmbienteActual(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, Tipo.VARIABLE));
 
             } else {

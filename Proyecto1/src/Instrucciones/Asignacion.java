@@ -58,7 +58,6 @@ public class Asignacion implements Instruccion {
                 }
                 if (local.existReferencia(id)) {
                     ArrayList<String> lst = local.getListaReferencia(id);
-                    System.out.println(lst);
                     if (lst.size() > 1) {
                         lst.forEach((item) -> {
                             local.setValor(item, resultado);

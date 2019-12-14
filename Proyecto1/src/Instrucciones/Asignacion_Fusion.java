@@ -68,7 +68,7 @@ public class Asignacion_Fusion implements Instruccion {
 
 //            Object val = valor.Ejecutar(ts);
             TablaDeSimbolos local = ts.getTable(id, accesos);
-            System.out.println("AMBIENTE: " + local.nombre + " AMBIENTE DESEADO: " + id);
+            
             if (local != null) {
                 Asignacion aux = new Asignacion(accesos.get(accesos.size() - 1), valor, line, column);
                 local.setPadre(ts);

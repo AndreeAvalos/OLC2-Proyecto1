@@ -91,6 +91,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                     case Bool:
                                         item.setValor(Boolean.valueOf(valor.toString()));
                                         return;
+                                    case Struct:
+                                        item.setValor(valor);
+                                        break;
                                     default:
                                         //deberia tirar error ya que no existe el ID
                                         break;
@@ -246,10 +249,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 val_aux = Boolean.valueOf(valor.toString());
                                 return true;
                             case Struct:
-
                                 TablaDeSimbolos obtenida = (TablaDeSimbolos) valor;
-                                System.out.println("******************************" + id + "************************");
-                                item.setValor(valor);
                                 return true;
                             default:
                                 return false;
@@ -299,6 +299,8 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             case Bool:
                 item.setValor(Boolean.valueOf(valor.toString()));
                 break;
+            case Struct:
+                item.setValor(valor);
             default:
                 //deberia tirar error ya que no existe el ID
                 break;
@@ -377,6 +379,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                     return true;
                 case Bool:
                     val_aux = Boolean.valueOf(valor.toString());
+                    return true;
+                case Struct:
+                    val_aux = (TablaDeSimbolos) valor;
                     return true;
                 default:
                     return false;
@@ -794,22 +799,22 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                 return;
             }
         }
-    }
-
-    public void remove_struct(String id) {
-        boolean find = false;
-        int index = 0;
-        for (Simbolo item : this) {
-            if (item.getId().equals(id)) {
-                find = true;
-            }
-            if (find) {
-                this.remove(index);
-                return;
-            }
-            index++;
+        if (this.getPadre() != null) {
+            replace(id, tabla, this.getPadre());
         }
 
+    }
+
+    private void replace(String id, TablaDeSimbolos tabla, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getId().equals(id)) {
+                item.setValor(tabla);
+                return;
+            }
+        }
+        if (this.getPadre() != null) {
+            replace(id, tabla, padre.getPadre());
+        }
     }
 
     public boolean containsKey(String id) {
@@ -817,6 +822,22 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             if (item.getId().equals(id)) {
                 return true;
             }
+        }
+        if (this.getPadre() != null) {
+            return containsKey(id, this.getPadre());
+        }
+
+        return false;
+    }
+
+    private boolean containsKey(String id, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getId().equals(id)) {
+                return true;
+            }
+        }
+        if (this.getPadre() != null) {
+            return containsKey(id, padre.getPadre());
         }
         return false;
     }
@@ -829,6 +850,24 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             }
             index++;
         }
+        if (this.getPadre() != null) {
+            return get_struct(id, this.getPadre());
+        }
+        return null;
+    }
+
+    private TablaDeSimbolos get_struct(String id, TablaDeSimbolos padre) {
+        int index = 0;
+        for (Simbolo item : padre) {
+            if (item.getId().equals(id)) {
+                return (TablaDeSimbolos) padre.get(index).getValor();
+            }
+            index++;
+        }
+
+        if (this.getPadre() != null) {
+            return get_struct(id, padre.getPadre());
+        }
         return null;
     }
 
@@ -840,4 +879,16 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     }
 
     //-------------------------------------------------------------------------------------------------------------------------
+    public boolean existeSimboloAmbienteActual(String id) {
+        return existeSimboloAmbienteActual(id, this);
+    }
+
+    private boolean existeSimboloAmbienteActual(String id, TablaDeSimbolos padre) {
+        for (Simbolo item : padre) {
+            if (item.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

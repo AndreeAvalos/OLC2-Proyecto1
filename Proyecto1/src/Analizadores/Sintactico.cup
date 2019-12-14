@@ -113,6 +113,7 @@ ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA
                     ;
 DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
                     | Tid:tipo Tid:id  Tigual OPERACION_RELACIONAL:valor Tpycoma
+                    {: RESULT = new Declaracion_Fusion(tipo,id,valor,idleft,idright); :}
                     | Tid:tipo Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
                     {:RESULT = new Declaracion_Fusion(tipo,id,tipo2,idleft,idright);:}
                     ;
@@ -145,12 +146,16 @@ CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,a
             {: RESULT = new Arreglo(a,b,aleft,aright); :}
         ;
 
-FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
-            RESULT= new Funcion(a,b,c,d,bleft,bright);
-        :}
-        |TIPODATO:a Tid:b Tpar_a Tpar_c Tllave_a CONTENIDO:d Tllave_c {:
-            RESULT= new Funcion(a,b,d,bleft,bright);
-        :};
+FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c
+            {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
+        |TIPODATO:a Tid:b Tpar_a Tpar_c Tllave_a CONTENIDO:d Tllave_c 
+            {: RESULT= new Funcion(a,b,d,bleft,bright); :}
+        |Tid:a Tid:b Tpar_a Tpar_c Tllave_a CONTENIDO:d Tllave_c
+            {: RESULT= new Funcion(a,b,d,bleft,bright); :}
+        |Tid:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c
+            {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
+        ;
+
 
 METODO::= Tzro Tid:a Tpar_a PARAMETROS:b Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
             RESULT= new Metodo(a,b,c,aleft,aright);
@@ -163,6 +168,7 @@ PARAMETROS::= PARAMETROS:a Tcoma PARAMETRO:b {: a.add(b); RESULT = a; :}
             | PARAMETRO:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
             ;
 PARAMETRO::= TIPODATO:a Tid:b {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
+            | Tid:tipo Tid:id{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
         ;
 
 CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
@@ -250,6 +256,7 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
+        |Tpesode Tpar_a Tid:a Tpar_c {:RESULT = new Operacion(a, TipoOperacion.PESODE, aleft,aright); :}
         ;
 		
 
