@@ -10,10 +10,11 @@ per.edad =55;
 ent ab=7;
 ent a=0;
 ent b=*a;
-ent c=*b;
+ent dd=*b;
 
-c=3;
+dd=3;
 ent arreglo1[3];
+arreglo1 = {1,2,3};
 chr cadena[10] = "hola";
 ent arreglo2[]={2,3};
 ent arreglo3[3]={6,6,6};
@@ -26,7 +27,7 @@ Metodo();
 }
 ent Funcion(ent c, ent d){
 
-_imp("FUNCION CON VALORES, c: %e d: %e",c,d);
+_imp("FUNCION CON VALORES, c: %e d: %e",a,dd);
 
 regresar d;
 }

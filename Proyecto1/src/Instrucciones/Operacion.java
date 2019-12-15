@@ -166,6 +166,8 @@ public class Operacion implements Instruccion {
                         funcion.Ejecutar(ts);
                         if (simbolo.getTipo().getTipo() == Tipo.Struct) {
                             return ts.getValor(id_funcion);
+                        } else if (simbolo.getTipo().getAsignado().equals("arreglo")) {
+                            return ts.getValor(id_funcion);
                         } else {
                             aux2 = Double.parseDouble(ts.getValor(id_funcion).toString());
                             return aux2;
@@ -190,10 +192,10 @@ public class Operacion implements Instruccion {
 
             }
         } catch (Exception e) {
-            Principal.add_error("No es posible hacer la operacionxx.", "Semantico", line, column);
+            Principal.add_error("No es posible hacer la operacion.", "Semantico", line, column);
             return null;
         }
-        
+
     }
 
     @Override

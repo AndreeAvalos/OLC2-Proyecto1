@@ -5,9 +5,12 @@
  */
 package Instrucciones;
 
+import Arbol.Arbol;
+import Arbol.Celda;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import proyecto1.Principal;
 
@@ -18,16 +21,17 @@ import proyecto1.Principal;
 public class Funcion implements Instruccion {
 
     public enum TipoFuncion {
-        ARREGLO_SIMPLE,
-        ARREGLO_MULTI,
+        ARREGLO,
         STRUCT,
         NORMAL
     }
     Tipo tipo_simbolo;//numero,cadena,identificador etc
+    ArrayList<Integer> num_niveles;
     String tipo_struct = "";
     String id;//nombre de variable;
     LinkedList<Instruccion> parametros, contenido;
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
+    Arbol arreglo = new Arbol();
     TablaDeSimbolos local = new TablaDeSimbolos();
     TipoFuncion tipo_funcion;
 
@@ -76,6 +80,27 @@ public class Funcion implements Instruccion {
         this.tipo_funcion = TipoFuncion.STRUCT;
     }
 
+    public Funcion(Tipo tipo_simbolo, ArrayList<Integer> num_niveles, String id, LinkedList<Instruccion> contenido, int line, int column) {
+        this.tipo_simbolo = tipo_simbolo;
+        this.num_niveles = num_niveles;
+        this.id = id;
+        this.contenido = contenido;
+        this.tipo_funcion = TipoFuncion.ARREGLO;
+        this.line = line;
+        this.column = column;
+    }
+
+    public Funcion(Tipo tipo_simbolo, ArrayList<Integer> num_niveles, String id, LinkedList<Instruccion> parametros, LinkedList<Instruccion> contenido, int line, int column) {
+        this.tipo_simbolo = tipo_simbolo;
+        this.num_niveles = num_niveles;
+        this.id = id;
+        this.parametros = parametros;
+        this.contenido = contenido;
+        this.tipo_funcion = TipoFuncion.ARREGLO;
+        this.line = line;
+        this.column = column;
+    }
+
     @Override
     public int getLine() {
         return this.line;
@@ -105,16 +130,18 @@ public class Funcion implements Instruccion {
                 return null;
             }
             if (tipo_funcion == TipoFuncion.NORMAL) {
-                EjecutarNorma(ts);
+                EjecutarNormal(ts);
             } else if (tipo_funcion == TipoFuncion.STRUCT) {
                 EjecutarStruct(ts);
+            } else if (tipo_funcion == TipoFuncion.ARREGLO) {
+                EjecutarArreglo(ts);
             }
         }
         //aun no se como hacer esto.
         return null;
     }
 
-    private void EjecutarNorma(TablaDeSimbolos ts) {
+    private void EjecutarNormal(TablaDeSimbolos ts) {
 
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
@@ -172,14 +199,37 @@ public class Funcion implements Instruccion {
         Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);
     }
 
+    private void EjecutarArreglo(TablaDeSimbolos ts) {
+        for (Instruccion item : contenido) {
+            if (item.getType() == Tipo.RETURN) {
+                //Obtenemos el valor que da de retorno
+                Object resultado = item.Ejecutar(local);
+                try {
+                    Arbol arreglo_resultado = (Arbol) resultado;
+                    if (arreglo.getNiveles() == arreglo_resultado.getNiveles()) {
+                        ts.setValor(id, arreglo_resultado);
+                    } else {
+                        Principal.add_error("No coinciden las dimensiones", "Semantico", line, column);
+                    }
+                } catch (Exception e) {
+                    Principal.add_error("La valor retornado no concuerda con el arreglo", "Semantico", line, column);
+                }
+                return;
+            } else {
+                item.Ejecutar(local);
+            }
+        }
+        Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);
+    }
+
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
 
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                if (tipo_struct.equals("")) {
+                if (tipo_funcion == TipoFuncion.NORMAL) {
                     ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, tipo_struct), id, this, Tipo.FUNCION));
-                } else {
+                } else if (tipo_funcion == TipoFuncion.STRUCT) {
                     if (ts.existeSimbolo(tipo_struct)) {
                         Simbolo sim = ts.getSimbolo(tipo_struct);
                         if (sim.getTipo_instruccion() == Tipo.OBJETO) {
@@ -192,6 +242,10 @@ public class Funcion implements Instruccion {
                         Principal.add_error("El tipo: \'" + tipo_struct + "\' no esta declarada", "Semantico", line, column);
                         return;
                     }
+                } else if (tipo_funcion == TipoFuncion.ARREGLO) {
+                    arreglo = new Arbol();
+                    arreglo.setNivel(num_niveles.size());
+                    ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, "arreglo"), id, arreglo, this, Tipo.FUNCION));
                 }
             } else {
                 Principal.add_error("La funcion \'" + id + "\' ya esta declarada", "Semantico", line, column);

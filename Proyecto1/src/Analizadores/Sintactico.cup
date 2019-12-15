@@ -50,11 +50,15 @@ non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
-                          DECLARACION_FUSION;
+                          DECLARACION_FUSION, ASIGNACION_ARREGLO;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO;
-non terminal LinkedList<Operacion> VALORES_PARAMETROS;
+non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
+non terminal LinkedList<Object> LLAVES;
+non terminal Object LLAVE; 
 non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
 non terminal Tipo TIPODATO;
+non terminal Integer DIMENSION_VACIA, DIMENSION;
+non terminal ArrayList<Integer> DIMENSIONES_VACIAS;
 
 
 //Procedencia 
@@ -91,6 +95,7 @@ INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
             | FUSION:a {: RESULT = a; :}
             | ASIGNACION_FUSION:a {: RESULT = a; :}
             | DECLARACION_FUSION:a {: RESULT = a; :}
+            | ASIGNACION_ARREGLO:a {:RESULT =a; :}
 			;
 
 FUSION::= Tfusion Tid:a Tllave_a DECLARACIONES:b Tllave_c Tpycoma
@@ -111,7 +116,7 @@ ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA
                     |Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
                     {:RESULT = new Asignacion_Fusion(id,tipo2,idleft,idright);:}
                     ;
-DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
+DECLARACION_FUSION::= Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright); :}
                     | Tid:tipo Tid:id  Tigual OPERACION_RELACIONAL:valor Tpycoma
                     {: RESULT = new Declaracion_Fusion(tipo,id,valor,idleft,idright); :}
                     | Tid:tipo Tid:id Tigual Treservar Tpar_a Tpesode Tpar_a Tid:tipo2 Tpar_c Tpar_c Tpycoma
@@ -132,7 +137,7 @@ TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 		|	Tdec:a{: RESULT = Tipo.Decimal; :}
 		|	Tchr:a{: RESULT = Tipo.Char; :}
 		|	Tbul:a{: RESULT = Tipo.Bool; :}
-        |   Trstring:a{: RESULT = Tipo.Cadena; :}
+        |   Trstring:a{: RESULT = Tipo.String; :}
 		;
 
 REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(origen,destino,origenleft,origenright);  :}
@@ -140,6 +145,18 @@ REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referen
 	
 ASIGNACION::= Tid:a Tigual OPERACION_RELACIONAL:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
         ;
+ASIGNACION_ARREGLO::= Tid:a Tigual Tllave_a LLAVES:b Tllave_c Tpycoma
+                    {: RESULT = new Asignacion_Arreglo(a,b, aleft,aright); :}
+                    ;
+
+LLAVES::= LLAVES:a Tcoma LLAVE:b {:LinkedList<Object> lst = a; lst.add(b); RESULT = lst; :}
+        | LLAVE:a 
+        {: LinkedList<Object> lst = new LinkedList<>(); lst.add(a); RESULT = lst; :}
+        ;
+
+LLAVE::=Tllave_a LLAVES:a Tllave_c {: RESULT = a; :}
+    | VALOR_PARAMETRO:a {: RESULT = a; :}
+    ;
 
 CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,aleft,aright); :}
         |    Tdefinir Tid:a Tllave_a VALORES_PARAMETROS:b Tllave_c
@@ -154,8 +171,15 @@ FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tlla
             {: RESULT= new Funcion(a,b,d,bleft,bright); :}
         |Tid:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c
             {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
+        | TIPODATO:a DIMENSIONES_VACIAS:b Tid:c Tpar_a PARAMETROS:d Tpar_c Tllave_a CONTENIDO:e Tllave_c
+        {: RESULT= new Funcion(a,b,c,d,e,bleft,bright);:}
+        | TIPODATO:a DIMENSIONES_VACIAS:b Tid:c Tpar_a Tpar_c Tllave_a CONTENIDO:d Tllave_c
+        {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
         ;
-
+DIMENSIONES_VACIAS::= DIMENSIONES_VACIAS:a DIMENSION_VACIA{: a.add(1); RESULT = a; :}
+                    | DIMENSION_VACIA {:ArrayList<Integer> lst = new ArrayList<>(); lst.add(1); RESULT = lst; :}
+                    ;
+DIMENSION_VACIA::= Tcorchete_a Tcorchete_c ;
 
 METODO::= Tzro Tid:a Tpar_a PARAMETROS:b Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
             RESULT= new Metodo(a,b,c,aleft,aright);
@@ -183,6 +207,7 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | REFERENCIA:a {: RESULT = a; :}
         | ASIGNACION_FUSION:a {: RESULT = a; :}
         | DECLARACION_FUSION:a {: RESULT = a; :}
+        | ARREGLO:a {: RESULT = a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
@@ -203,7 +228,6 @@ IMPRIMIR::= Timp Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Imprimir(new Oper
         ;
 
 ARREGLO::= ARREGLO_SIMPLE:a {:RESULT = a ; :}
-        | ARREGLO_MULTI:a {:RESULT = a ; :}
         ;
 
 ARREGLO_SIMPLE::= TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tpycoma
@@ -217,8 +241,6 @@ ARREGLO_SIMPLE::= TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c 
             | TIPODATO:a Tid:b Tcorchete_a Tcorchete_c Tigual Tcadena:c Tpycoma
             {: RESULT = new Arreglo(a,b,new Operacion(c,TipoOperacion.CADENA,cleft,cright),bleft,bright,0); :}
             ;
-
-ARREGLO_MULTI::=Tigual Tpycoma;
 
 OPERACION_LOGICA::= OPERACION_LOGICA:a Tor OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.OR, aleft, aright); :}
                 |   OPERACION_LOGICA:a Tand OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.AND, aleft, aright); :}

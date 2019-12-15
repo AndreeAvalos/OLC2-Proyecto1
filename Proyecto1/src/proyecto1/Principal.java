@@ -7,12 +7,10 @@ package proyecto1;
 
 import Analizadores.*;
 import Instrucciones.*;
-import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
 
@@ -24,7 +22,6 @@ public class Principal extends javax.swing.JFrame {
 
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
-    public static boolean on_struck = false, struck_recursivo = false;
 
     /**
      * Creates new form Principal

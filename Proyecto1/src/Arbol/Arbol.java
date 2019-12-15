@@ -5,7 +5,11 @@
  */
 package Arbol;
 
+import Instrucciones.Operacion;
+import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -14,12 +18,24 @@ import java.util.ArrayList;
 public class Arbol {
 
     private NodoArbol raiz;
+
     private int size;
     private int niveles;
     private String salida = "";
+    public boolean valido = true;
+    // nivel, numero de celdas por nivel;
+    public HashMap<Integer, Integer> mapa = new HashMap<>();
+
+    public void setRaiz(NodoArbol raiz) {
+        this.raiz = raiz;
+    }
 
     public int getNiveles() {
         return this.niveles;
+    }
+
+    public void setNivel(int nivel) {
+        this.niveles = nivel;
     }
 
     public int getSize() {
@@ -39,6 +55,7 @@ public class Arbol {
         this.size = 0;
         this.niveles = indices.size();
         crear(raiz, indices, 0);
+        mapa.put(0, size);
     }
 
     private void crear(NodoArbol padre, ArrayList<ArrayList<Celda>> indices, int nivel) {
@@ -51,6 +68,7 @@ public class Arbol {
                 crear(nuevo, indices, nivel + 1);
             }
         }
+
     }
 
     public Object getDato(ArrayList<Integer> indices) {
@@ -63,7 +81,7 @@ public class Arbol {
                 if ((nivel + 1) < indices.size()) {
                     return getDato(indices, padre, nivel + 1);
                 } else {
-                    return item.getDato();
+                    return item.hijos.get(0).getDato();
                 }
             }
         }
@@ -98,6 +116,93 @@ public class Arbol {
             print(hijo);
         });
 
+    }
+
+    //-------------------------------------------------------
+    private String id = "";
+
+    public Object get(ArrayList<Integer> indices) {
+        return get(indices, 0, raiz);
+    }
+
+    private Object get(ArrayList<Integer> indices, int nivel, NodoArbol padre) {
+        for (NodoArbol item : padre.hijos) {
+            if (item.getIndex() == indices.get(nivel)) {
+                if ((nivel + 1) < indices.size()) {
+                    return get(indices, nivel + 1, item);
+                } else {
+                    return item.getDato();
+
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean existeIndice(ArrayList<Integer> indices) {
+        try {
+            return existeIndice(indices, 0, raiz);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean existeIndice(ArrayList<Integer> indices, int nivel, NodoArbol padre) {
+        for (NodoArbol item : padre.hijos) {
+            if (item.getIndex() == indices.get(nivel)) {
+                if ((nivel + 1) < indices.size()) {
+                    return existeIndice(indices, nivel + 1, item);
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public NodoArbol recorrerArbol(String id, LinkedList<Object> valores, TablaDeSimbolos ts) {
+        this.id = id;
+        raiz = new NodoArbol(-1, -1, null, -1);
+        this.valido = true;
+        return recorrerArbol(raiz, valores, 0, ts, 0);
+    }
+
+    private NodoArbol recorrerArbol(NodoArbol padre, Object valores, int indice, TablaDeSimbolos ts, int nivel) {
+        try {
+            //si se puede castear es porque es una lista
+            int index = 0;
+
+            LinkedList<Object> hijos = (LinkedList<Object>) valores;
+
+            if (mapa.containsKey(nivel)) {
+                mapa.replace(nivel, mapa.get(nivel) + hijos.size());
+            } else {
+                mapa.put(nivel, hijos.size());
+            }
+            indice = 0;
+            for (Object item : hijos) {
+
+                NodoArbol nuevo = new NodoArbol(index, null, padre, nivel);
+                padre.hijos.add(recorrerArbol(nuevo, item, indice, ts, nivel + 1));
+                index++;
+                indice++;
+            }
+            return padre;
+
+        } catch (Exception e) {
+            //de lo contrario es un hijo
+            Operacion operacion = (Operacion) valores;
+            Object resultado = operacion.Ejecutar(ts);
+            try {
+                String val = ts.castearValor(id, resultado).toString();
+                size++;
+                return new NodoArbol(indice, val, padre, nivel);
+            } catch (Exception e2) {
+                this.valido = false;
+                return null;
+            }
+
+        }
     }
 
 }

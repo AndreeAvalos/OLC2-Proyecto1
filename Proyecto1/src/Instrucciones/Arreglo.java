@@ -11,6 +11,7 @@ import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import proyecto1.Principal;
 
@@ -36,6 +37,7 @@ public class Arreglo implements Instruccion {
     Operacion cadena;
     int line, column;
     TipoArreglo tipo_arreglo;
+
 
     /**
      * Constructor para declaracion de arreglos simples del tipo int a[1];
@@ -132,9 +134,10 @@ public class Arreglo implements Instruccion {
         this.column = column;
         this.tipo_arreglo = TipoArreglo.SIMPLE_SININDICE_CADENA;
     }
-    
+
     /**
      * Constructor para el metodo definir un arreglo simple
+     *
      * @param id
      * @param valores
      * @param line
@@ -147,8 +150,6 @@ public class Arreglo implements Instruccion {
         this.column = column;
         this.tipo_arreglo = TipoArreglo.DEFINIR_ARREGLO;
     }
-    
-    
 
     @Override
     public int getLine() {
@@ -164,12 +165,18 @@ public class Arreglo implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
         //Simpre se declara la variable
         if (ts.getPadre() != null) {
+
+            if (tipo_arreglo == TipoArreglo.DEFINIR_ARREGLO) {
+                this.tipo = ts.getTipo(valores.get(0).Ejecutar(ts).toString());
+                tipo_arreglo = TipoArreglo.SIMPLE_SININDICE_VALORES;
+            }
+
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo, ""), id, Tipo.ARREGLO));
             } else {
-                System.out.println("YA SE DECLARO LA VARIABLE");
-                return null;
+                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+                return null;
             }
 
             ArrayList<ArrayList<Celda>> celdas = new ArrayList<>();
@@ -178,6 +185,8 @@ public class Arreglo implements Instruccion {
             int num_indice = 0;
             Arbol new_arreglo = new Arbol();
             int contador_indices = 0;
+            int num_caracteres = 0;
+            char[] caracteres = {1, 2};
             switch (tipo_arreglo) {
                 case SIMPLE_DECLARACION:
                     try {
@@ -188,46 +197,135 @@ public class Arreglo implements Instruccion {
                         }
                         celdas.add(celda);
                         new_arreglo.crearArbol(celdas);
+                        new_arreglo.print();
+//                        System.out.println("El numero de celdas es: "+new_arreglo.getSize());
+//                        System.out.println("El numero de niveles es: "+new_arreglo.getNiveles());
                         ts.setValor(id, new_arreglo);
 
-                    } catch (Exception ex) {
-                        System.out.println("El valor no es un entero");
+                    } catch (NumberFormatException ex) {
+                        ts.eliminarSimbolo(id);
+                        Principal.add_error("El valor del indice no es un entero", "Semantico", line, column);
                         return null;
                     }
+
+                    break;
+
                 case SIMPLE_SININDICE_VALORES:
-                    if (tipo == Tipo.Char) {
-                        for (Operacion item : valores) {
-                            resultado = item.Ejecutar(ts).toString();
-                            if (ts.asignValor(id, resultado)) {
-                                celda.add(new Celda(contador_indices, resultado));
-                            } else {
-                                System.out.println("El valor: " + resultado + " no es del mismo tipo del arreglo");
-                                return null;
+
+                    for (Operacion item : valores) {
+                        resultado = item.Ejecutar(ts).toString();
+                        if (ts.asignValor(id, resultado)) {
+                            String val = ts.castearValor(id, resultado).toString();
+                            celda.add(new Celda(contador_indices, val));
+                        } else {
+                            ts.eliminarSimbolo(id);
+                            Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo", "Semantico", line, column);
+                            return null;
+
+                        }
+                        contador_indices++;
+                    }
+                    celdas.add(celda);
+                    new_arreglo.crearArbol(celdas);
+                    new_arreglo.print();
+                    ts.setValor(id, new_arreglo);
+
+                    break;
+
+                case SIMPLE_INDICE_VALORES:
+                    resultado = indice.Ejecutar(ts).toString();
+                    try {
+                        num_indice = (int) Double.parseDouble(resultado);
+                        if (valores.size() == num_indice) {
+                            for (Operacion item : valores) {
+                                resultado = item.Ejecutar(ts).toString();
+                                if (ts.asignValor(id, resultado)) {
+                                    String val = ts.castearValor(id, resultado).toString();
+                                    celda.add(new Celda(contador_indices, val));
+                                } else {
+                                    ts.eliminarSimbolo(id);
+                                    Principal.add_error("El valor: " + resultado + " no es del mismo tipo del arreglo", "Semantico", line, column);
+                                    return null;
+                                }
+                                contador_indices++;
                             }
+                            celdas.add(celda);
+                            new_arreglo.crearArbol(celdas);
+                            new_arreglo.print();
+                            ts.setValor(id, new_arreglo);
+
+                        } else {
+                            ts.eliminarSimbolo(id);
+                            Principal.add_error("Indice fuera de limite", "Semantico", line, column);
+                            return null;
+                        }
+                    } catch (Exception e) {
+                        ts.eliminarSimbolo(id);
+                        Principal.add_error("El valor del indice no es un entero", "Semantico", line, column);
+                    }
+
+                    break;
+
+                case SIMPLE_INDICE_CADENA:
+                    if (tipo == Tipo.Char) {
+                        resultado = indice.Ejecutar(ts).toString();
+                        num_indice = (int) Double.parseDouble(resultado);
+
+                        caracteres = cadena.Ejecutar(ts).toString().replace("\"", "").toCharArray();
+                        if (caracteres.length <= num_indice) {
+                            for (char item : caracteres) {
+                                resultado = String.valueOf(item);
+                                celda.add(new Celda(contador_indices, resultado));
+
+                                contador_indices++;
+                            }
+                            for (int i = contador_indices; i < num_indice; i++) {
+                                celda.add(new Celda(i, null));
+                            }
+                            celdas.add(celda);
+                            new_arreglo.crearArbol(celdas);
+                            new_arreglo.print();
+                            ts.setValor(id, new_arreglo);
+
+                        } else {
+                            ts.eliminarSimbolo(id);
+                            Principal.add_error("Indice fuera de limite", "Semantico", line, column);
+                            return null;
+                        }
+                    }
+
+                    break;
+
+                case SIMPLE_SININDICE_CADENA:
+                    if (tipo == Tipo.Char) {
+                        caracteres = cadena.Ejecutar(ts).toString().replace("\"", "").toCharArray();
+
+                        for (char item : caracteres) {
+                            resultado = String.valueOf(item);
+                            celda.add(new Celda(contador_indices, resultado));
+
                             contador_indices++;
                         }
                         celdas.add(celda);
                         new_arreglo.crearArbol(celdas);
                         new_arreglo.print();
                         ts.setValor(id, new_arreglo);
-                    } else {
-                        System.out.println("NO ES UNA CADENA");
                     }
+                    break;
             }
         }
-
         return null;
     }
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
         if (ts.getPadre() == null) {
-            
+
             if (tipo_arreglo == TipoArreglo.DEFINIR_ARREGLO) {
                 this.tipo = ts.getTipo(valores.get(0).Ejecutar(ts).toString());
                 tipo_arreglo = TipoArreglo.SIMPLE_SININDICE_VALORES;
             }
-           
+
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo, ""), id, Tipo.ARREGLO));
             } else {
@@ -372,7 +470,7 @@ public class Arreglo implements Instruccion {
 
     @Override
     public Tipo getType() {
-        return Tipo.ARREGLO;
+        return Tipo.ARREGLO_SIMPLE_DECLARACION;
     }
 
 }

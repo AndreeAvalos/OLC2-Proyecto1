@@ -10,6 +10,7 @@ import Instrucciones.Tipo;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import proyecto1.Principal;
 
 /**
@@ -890,5 +891,14 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
             }
         }
         return false;
+    }
+
+    public void removeReferencias(String id) {
+        Simbolo sim = getSimbolo(id);
+        for (String item : sim.getReferencias()) {
+            Simbolo aux = getSimbolo(item);
+            aux.removeReferencia(id);
+        }
+        sim.setReferencias(new ArrayList<>());
     }
 }

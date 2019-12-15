@@ -58,6 +58,15 @@ public class Simbolo {
         this.contenido = contenido;
         this.tipo_instruccion = tipo_instruccion;
     }
+//Simbolo para los arreglos 
+
+    public Simbolo(TipoSimbolo tipo, String id, Object valor, Instruccion contenido, Tipo tipo_instruccion) {
+        this.tipo = tipo;
+        this.id = id;
+        this.valor = valor;
+        this.contenido = contenido;
+        this.tipo_instruccion = tipo_instruccion;
+    }
 
     public Simbolo(TipoSimbolo tipo, String id, Object valor, Tipo tipo_instruccion) {
         this.tipo = tipo;
@@ -151,6 +160,10 @@ public class Simbolo {
 
     public void setReferidos(ArrayList<String> referidos) {
         this.referidos = referidos;
+    }
+
+    public void removeReferencia(String id) {
+        referencias.remove(id);
     }
 
 }

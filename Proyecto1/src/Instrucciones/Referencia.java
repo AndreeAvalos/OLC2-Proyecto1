@@ -62,8 +62,7 @@ public class Referencia implements Instruccion {
             if (ts.compararTipos(origen, destino)) {
                 String result = new Operacion(destino, TipoOperacion.IDENTIFICADOR, line, column).Ejecutar(ts).toString();
                 ts.setValor(origen, result);
-
-                ts.setValorReferencias(origen, ts);
+                
 
                 ts.setReferencia(origen, destino);
                 ts.setReferencia(destino, origen);
@@ -77,8 +76,8 @@ public class Referencia implements Instruccion {
                 String result = new Operacion(destino, TipoOperacion.IDENTIFICADOR, line, column).Ejecutar(ts).toString();
                 ts.setValor(origen, result);
 
-                ts.setValorReferencias(origen, ts);
-
+                ts.removeReferencias(origen);
+                
                 ts.setReferencia(origen, destino);
                 ts.setReferencia(destino, origen);
 

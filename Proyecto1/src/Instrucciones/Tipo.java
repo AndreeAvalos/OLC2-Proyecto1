@@ -11,18 +11,16 @@ package Instrucciones;
  */
 public enum Tipo {
     //region Tipos Sentencias
-    WHILE,IF,BREAK,DOWHILE,FOR,FUNCION,METODO,
-    ASIGNACION,DECLARACION,IMPRIMIR,OPERACION,
-    RETURN, SWITCH,OPERADOR,VARIABLE,CONSTANTE,
-    DEFINIR, LLAMADA, ARREGLO,REFERENCIA, FUSION,
-     DECLARACION_FUSION ,
+    WHILE, IF, BREAK, DOWHILE, FOR, FUNCION, METODO,
+    ASIGNACION, DECLARACION, IMPRIMIR, OPERACION,
+    RETURN, SWITCH, OPERADOR, VARIABLE, CONSTANTE,
+    DEFINIR, LLAMADA, REFERENCIA, FUSION,
+    DECLARACION_FUSION, ASIGNACION_FUSION,
+    DEF_STRUCT, OBJETO,
     //endregion
-    
-    Entero,Decimal,Cadena,Char,Bool,Identificador,
-    Incremento,Decremento, Struct, ASIGNACION_FUSION, DEF_STRUCT, OBJETO,
-    
-    
-    //
 
-    
+    Entero, Decimal, Cadena, Char, Bool, Identificador,
+    Incremento, Decremento, Struct, String, ASIGNACION_ARREGLO, ARREGLO, ARREGLO_SIMPLE_DECLARACION,
+
+    //
 }
