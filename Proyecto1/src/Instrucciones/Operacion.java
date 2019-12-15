@@ -8,6 +8,8 @@ package Instrucciones;
 import Arbol.Arbol;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Objects;
 import proyecto1.Principal;
 
@@ -41,15 +43,21 @@ public class Operacion implements Instruccion {
         AND,
         OR,
         FUNCION,
-        PESODE
+        PESODE,
+        ACCESO_ARREGLO,
+        ACCESO_STRUCT
     }
+
+    String id_objeto;
+    LinkedList<Operacion> accesos;
+    ArrayList<String> identificadores;
     Operacion operadorDer;
     Operacion operadorIzq;
     TipoOperacion tipo;
     Object valor;
     int line, column;
 
-    public Operacion(Operacion operadorDer, Operacion operadorIzq, TipoOperacion tipo, int line, int column) {
+    public Operacion(Operacion operadorIzq, Operacion operadorDer, TipoOperacion tipo, int line, int column) {
         this.operadorDer = operadorDer;
         this.operadorIzq = operadorIzq;
         this.tipo = tipo;
@@ -76,6 +84,22 @@ public class Operacion implements Instruccion {
         this.line = line;
         this.column = column;
         this.tipo = TipoOperacion.NUMERO;
+    }
+
+    public Operacion(String id_objeto, LinkedList<Operacion> accesos, TipoOperacion tipo, int line, int column) {
+        this.id_objeto = id_objeto;
+        this.accesos = accesos;
+        this.tipo = tipo;
+        this.line = line;
+        this.column = column;
+    }
+
+    public Operacion(String id_objeto, ArrayList<String> identificadores, TipoOperacion tipo, int line, int column) {
+        this.id_objeto = id_objeto;
+        this.identificadores = identificadores;
+        this.tipo = tipo;
+        this.line = line;
+        this.column = column;
     }
 
     @Override
@@ -124,7 +148,9 @@ public class Operacion implements Instruccion {
                     }
                     return null;
                 case CADENA:
-                    return valor.toString();
+                    Arbol arbol_aux2 = new Arbol();
+                    arbol_aux2.convertirString(valor.toString());
+                    return arbol_aux2;
                 case MAYOR_QUE:
                     return ((Double) operadorIzq.Ejecutar(ts)) > ((Double) operadorDer.Ejecutar(ts));
                 case MENOR_QUE:
@@ -179,6 +205,10 @@ public class Operacion implements Instruccion {
                         Simbolo simbolo_aux = ts.getSimbolo(id);
                         if (simbolo_aux.getTipo().getTipo() == Tipo.Struct) {
                             return ((TablaDeSimbolos) simbolo_aux.getValor()).size();
+                        } else if (simbolo_aux.getTipo_instruccion() == Tipo.ARREGLO) {
+                            Arbol arbol_aux = (Arbol) simbolo_aux.getValor();
+                            return arbol_aux.getSize();
+
                         } else {
                             Principal.add_error("No es un tipo struct. ", "Semantico", line, column);
                             return null;
@@ -187,6 +217,40 @@ public class Operacion implements Instruccion {
                         Principal.add_error("No existe el tipo: " + id, "Semantico", line, column);
                         return null;
                     }
+                case ACCESO_ARREGLO:
+                    ArrayList<Integer> rutas = new ArrayList<>();
+                    for (Operacion item : accesos) {
+                        String result = item.Ejecutar(ts).toString();
+                        int indice = (int) Double.parseDouble(result);
+                        rutas.add(indice);
+                    }
+                    if (ts.existeSimbolo(id_objeto)) {
+                        Simbolo simbolo_aux = ts.getSimbolo(id_objeto);
+
+                        Arbol arbol = (Arbol) simbolo_aux.getValor();
+                        return arbol.get(rutas);
+
+                    } else {
+                        Principal.add_error("No existe el tipo: " + id_objeto, "Semantico", line, column);
+                        return null;
+                    }
+                case ACCESO_STRUCT:
+                    if (ts.existeAcceso(id_objeto, identificadores)) {
+                        //vamos y le damos el valor al objeto
+
+//            Object val = valor.Ejecutar(ts);
+                        TablaDeSimbolos local = ts.getTable(id_objeto, identificadores);
+                        return local.getValor(identificadores.get(identificadores.size() - 1));
+//            System.out.println("Valor: " + accesos.get(accesos.size() - 1) + " valor: " + val);
+//            ts.setValorAccesos(id, accesos, val);
+//            System.out.println("Valor: " + accesos.get(accesos.size() - 1) + " valor: " + val);
+//            System.out.println("----");
+                    } else {
+                        ts.lst.forEach((item) -> {
+                            Principal.add_error(item, "Semantico", line, column);
+                        });
+                    }
+
                 default:
                     return null;
 

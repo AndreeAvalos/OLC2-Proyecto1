@@ -43,7 +43,7 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
-                Tcarpeta, Tnombre, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
+                Tcarpeta, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
 
 // Producciones				
 non terminal String S;
@@ -51,13 +51,13 @@ non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLA
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
                           DECLARACION_FUSION, ASIGNACION_ARREGLO;
-non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO;
+non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Object> LLAVES;
 non terminal Object LLAVE; 
 non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
 non terminal Tipo TIPODATO;
-non terminal Integer DIMENSION_VACIA, DIMENSION;
+non terminal Integer DIMENSION_VACIA;
 non terminal ArrayList<Integer> DIMENSIONES_VACIAS;
 
 
@@ -107,9 +107,9 @@ DECLARACIONES::= DECLARACIONES:a DECLARACION_STRUCT:b {: a.add(b); RESULT = a; :
             ;
 
 DECLARACION_STRUCT::=   TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
-                    |   TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tpycoma
-                        {: RESULT = new Arreglo(a,b,c,bleft,bright); :}
                     |   Tid:tipo Tid:id Tpycoma{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
+                    |   TIPODATO:a Tid:b DIMENSIONES:d Tpycoma
+                    {: RESULT = new Arreglo(a,b,d,bleft, bright); :}
                     ;
 
 ASIGNACION_FUSION::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b Tigual OPERACION_LOGICA:c Tpycoma {: RESULT = new Asignacion_Fusion(a,b,c,aleft,aright); :}
@@ -147,6 +147,8 @@ ASIGNACION::= Tid:a Tigual OPERACION_RELACIONAL:b Tpycoma{: RESULT = new Asignac
         ;
 ASIGNACION_ARREGLO::= Tid:a Tigual Tllave_a LLAVES:b Tllave_c Tpycoma
                     {: RESULT = new Asignacion_Arreglo(a,b, aleft,aright); :}
+                    | Tid:a DIMENSIONES:b Tigual OPERACION_RELACIONAL:c Tpycoma
+                    {: RESULT = new Asignacion_Arreglo(a,b,c, bleft, bright); :}
                     ;
 
 LLAVES::= LLAVES:a Tcoma LLAVE:b {:LinkedList<Object> lst = a; lst.add(b); RESULT = lst; :}
@@ -159,9 +161,9 @@ LLAVE::=Tllave_a LLAVES:a Tllave_c {: RESULT = a; :}
     ;
 
 CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,aleft,aright); :}
-        |    Tdefinir Tid:a Tllave_a VALORES_PARAMETROS:b Tllave_c
-            {: RESULT = new Arreglo(a,b,aleft,aright); :}
-        ;
+        | Tdefinir Tid:a Tllave_a LLAVES:b Tllave_c {: RESULT = new Arreglo(a,b,aleft,aright); :} 
+
+;
 
 FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c
             {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
@@ -193,6 +195,7 @@ PARAMETROS::= PARAMETROS:a Tcoma PARAMETRO:b {: a.add(b); RESULT = a; :}
             ;
 PARAMETRO::= TIPODATO:a Tid:b {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
             | Tid:tipo Tid:id{: RESULT = new Declaracion_Objeto(tipo,id,idleft,idright);:}
+            | TIPODATO:a Tid:b DIMENSIONES_VACIAS:c {: RESULT = new Declaracion_Arreglo(a,b,c,bleft,bright); :}
         ;
 
 CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
@@ -208,6 +211,7 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | ASIGNACION_FUSION:a {: RESULT = a; :}
         | DECLARACION_FUSION:a {: RESULT = a; :}
         | ARREGLO:a {: RESULT = a; :}
+        | ASIGNACION_ARREGLO:a {:RESULT =a; :}
         ;
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
@@ -215,6 +219,8 @@ RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, 
 LLAMADA::=Tid:a Tpar_a Tpar_c {: RESULT = new Llamada(a,aleft,aright); :}
         | Tid:a Tpar_a VALORES_PARAMETROS:b Tpar_c {: RESULT = new Llamada(a,b,aleft,aright); :}
         ;
+ACCESO_ARREGLO::= Tid:a DIMENSIONES:b {: RESULT = new Operacion(a,b,TipoOperacion.ACCESO_ARREGLO, aleft,aright); :};
+ACCESO_STRUCT::= Tid:a Tpunto LISTA_ACCESOS_FUSION:b {: RESULT = new Operacion(a,b,TipoOperacion.ACCESO_STRUCT, aleft,aright); :};
 
 VALORES_PARAMETROS::=VALORES_PARAMETROS:a Tcoma VALOR_PARAMETRO:b {: a.add(b); RESULT = a; :}
                     |VALOR_PARAMETRO:a {: LinkedList<Operacion> b = new LinkedList<>(); b.add(a); RESULT = b; :}
@@ -230,17 +236,23 @@ IMPRIMIR::= Timp Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Imprimir(new Oper
 ARREGLO::= ARREGLO_SIMPLE:a {:RESULT = a ; :}
         ;
 
-ARREGLO_SIMPLE::= TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tpycoma
-            {: RESULT = new Arreglo(a,b,c,bleft,bright); :}
-            | TIPODATO:a Tid:b Tcorchete_a Tcorchete_c Tigual Tllave_a VALORES_PARAMETROS:c Tllave_c Tpycoma
-            {: RESULT = new Arreglo(a,b,c,bleft,bright); :}
-            | TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tigual Tllave_a VALORES_PARAMETROS:d Tllave_c Tpycoma
+ARREGLO_SIMPLE::= TIPODATO:a Tid:b DIMENSIONES:d Tpycoma
+            {: RESULT = new Arreglo(a,b,d,bleft, bright); :}
+            | TIPODATO:a Tid:b DIMENSIONES_VACIAS:c Tigual Tllave_a LLAVES:d Tllave_c Tpycoma
             {: RESULT = new Arreglo(a,b,c,d,bleft,bright); :}
-            | TIPODATO:a Tid:b Tcorchete_a OPERACION_NUMERICA:c Tcorchete_c Tigual Tcadena:d Tpycoma
-            {: RESULT = new Arreglo(a,b,c,new Operacion(d,TipoOperacion.CADENA,cleft,cright),bleft,bright); :}
-            | TIPODATO:a Tid:b Tcorchete_a Tcorchete_c Tigual Tcadena:c Tpycoma
-            {: RESULT = new Arreglo(a,b,new Operacion(c,TipoOperacion.CADENA,cleft,cright),bleft,bright,0); :}
+            | TIPODATO:a Tid:b DIMENSIONES:c Tigual Tllave_a LLAVES:d Tllave_c Tpycoma
+            {: RESULT = new Arreglo(a,b,c,d,bleft,bright); :}
+            | TIPODATO:a Tid:b DIMENSIONES:c Tigual OPERACION_RELACIONAL:d Tpycoma
+            {: RESULT = new Arreglo(a,b,c,d,bleft,bright); :}
+            | TIPODATO:a Tid:b DIMENSIONES_VACIAS:c Tigual OPERACION_RELACIONAL:d Tpycoma
+            {: RESULT = new Arreglo(a,b,c,d,bleft,bright);:}
+
             ;
+DIMENSIONES::= DIMENSIONES:a DIMENSION:b {: LinkedList<Operacion> lst = (LinkedList<Operacion>) a; lst.add(b); RESULT = lst; :}
+            | DIMENSION:a {:LinkedList<Operacion> lst = new LinkedList<>(); lst.add(a); RESULT = lst; :}
+            ;
+
+DIMENSION::= Tcorchete_a OPERACION_NUMERICA:a Tcorchete_c {: RESULT = a;:} ;
 
 OPERACION_LOGICA::= OPERACION_LOGICA:a Tor OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.OR, aleft, aright); :}
                 |   OPERACION_LOGICA:a Tand OPERACION_LOGICA:b{: RESULT = new Operacion(a,b,TipoOperacion.AND, aleft, aright); :}
@@ -279,6 +291,8 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
         |Tpesode Tpar_a Tid:a Tpar_c {:RESULT = new Operacion(a, TipoOperacion.PESODE, aleft,aright); :}
+        |ACCESO_ARREGLO:a {: RESULT = a; :}
+        |ACCESO_STRUCT:a {:RESULT = a; :}
         ;
 		
 

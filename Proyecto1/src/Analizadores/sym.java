@@ -32,16 +32,16 @@ public class sym {
   public static final int Tpesode = 35;
   public static final int Tsetancho = 77;
   public static final int Tromper = 45;
-  public static final int Tcadena = 96;
+  public static final int Tcadena = 95;
   public static final int Telse = 59;
   public static final int Tdecremento = 28;
   public static final int Tmod = 21;
   public static final int Tdiferente = 6;
-  public static final int Trstring = 98;
+  public static final int Trstring = 97;
   public static final int Tsetalto = 78;
   public static final int Tzro = 37;
   public static final int Taltoyancho = 75;
-  public static final int Tfechamod = 92;
+  public static final int Tfechamod = 91;
   public static final int Tlbl = 66;
   public static final int Treservar = 36;
   public static final int Tmenorigual = 23;
@@ -59,11 +59,11 @@ public class sym {
   public static final int Taldarclick = 74;
   public static final int Tgetancho = 81;
   public static final int Twf = 63;
-  public static final int Tdecimal = 94;
+  public static final int Tdecimal = 93;
   public static final int Tcase = 43;
   public static final int Trtxta = 68;
   public static final int Tpycoma = 17;
-  public static final int Tconfiguracion = 91;
+  public static final int Tconfiguracion = 90;
   public static final int Tbul = 33;
   public static final int Tent = 30;
   public static final int Tclose = 64;
@@ -79,27 +79,26 @@ public class sym {
   public static final int Tmayor = 10;
   public static final int Tdefault = 44;
   public static final int Tmayorigual = 22;
-  public static final int Tcaracter = 97;
+  public static final int Tcaracter = 96;
   public static final int Tread = 65;
   public static final int Tarchivo = 86;
   public static final int Tor = 11;
   public static final int error = 1;
   public static final int Tiniciarventana = 73;
   public static final int Tsettexto = 76;
-  public static final int Tentero = 95;
+  public static final int Tentero = 94;
   public static final int Tand = 12;
   public static final int Tsetpos = 79;
   public static final int Tif = 38;
-  public static final int Tid = 93;
+  public static final int Tid = 92;
   public static final int Tfalse = 53;
   public static final int Trmensage = 72;
   public static final int Tregresar = 50;
-  public static final int Tcorrer = 90;
+  public static final int Tcorrer = 89;
   public static final int Tgetpos = 83;
   public static final int Tconc = 55;
   public static final int Trbton = 71;
   public static final int Tfusion = 48;
-  public static final int Tnombre = 89;
   public static final int Tproyecto = 85;
   public static final int Twrite = 61;
   public static final int Tatxt = 54;
@@ -197,7 +196,6 @@ public class sym {
   "Tarchivo",
   "Truta",
   "Tcarpeta",
-  "Tnombre",
   "Tcorrer",
   "Tconfiguracion",
   "Tfechamod",

@@ -47,7 +47,9 @@ public class Imprimir implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        String palabra = contenido.Ejecutar(ts).toString();
+        Arbol aux2 = (Arbol) contenido.Ejecutar(ts);
+        aux2.print();
+        String palabra = aux2.getSalida();
         ArrayList<Object> valores = new ArrayList<>();
         parametros.forEach((item) -> {
             valores.add(item.Ejecutar(ts));
@@ -71,6 +73,7 @@ public class Imprimir implements Instruccion {
 
                             try {
                                 Arbol aux = (Arbol) valores.get(i - 1);
+                                aux.print();
                                 salida += aux.getSalida();
                                 break;
                             } catch (Exception ex) {

@@ -20,7 +20,7 @@ public enum Tipo {
     //endregion
 
     Entero, Decimal, Cadena, Char, Bool, Identificador,
-    Incremento, Decremento, Struct, String, ASIGNACION_ARREGLO, ARREGLO, ARREGLO_SIMPLE_DECLARACION,
+    Incremento, Decremento, Struct, String, ASIGNACION_ARREGLO, ARREGLO, ARREGLO_SIMPLE_DECLARACION, DECLARACION_ARREGLO,
 
     //
 }

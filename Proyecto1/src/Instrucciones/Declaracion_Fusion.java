@@ -72,25 +72,26 @@ public class Declaracion_Fusion implements Instruccion {
                         }
 
                         if (!ts.existeSimboloAmbienteActual(id)) {
-                            TablaDeSimbolos local = ts.get_struct(tipo);
+
                             TablaDeSimbolos nueva = new TablaDeSimbolos();
 
-                            for (Simbolo item : local) {
+                            for (Simbolo item : resultado) {
                                 Simbolo new_simbol = new Simbolo("", ")");
                                 nueva.add(new_simbol.copy(item));
                             }
                             nueva.nombre = id;
                             ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                             ts.setValor(id, nueva);
+                            return null;
                         } else {
                             Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                            return null;
                         }
 
                     } catch (Exception e) {
                         Principal.add_error("No es posible hacer el casteo al tipo2: " + tipo, "Semantico", line, column);
                         return null;
                     }
-                    Principal.add_error("No es posible hacer el casteo al tipo3: " + tipo, "Semantico", line, column);
                 }
 
             } else {
@@ -100,10 +101,9 @@ public class Declaracion_Fusion implements Instruccion {
                 }
                 if (ts.existeSimbolo(tipo)) {
                     if (!ts.existeSimboloAmbienteActual(id)) {
+
                         TablaDeSimbolos local = ts.get_struct(tipo);
-
                         TablaDeSimbolos nueva = new TablaDeSimbolos();
-
                         for (Simbolo item : local) {
                             Simbolo new_simbol = new Simbolo("", ")");
                             nueva.add(new_simbol.copy(item));
@@ -111,6 +111,7 @@ public class Declaracion_Fusion implements Instruccion {
                         nueva.nombre = id;
                         ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                         ts.setValor(id, nueva);
+                        return null;
                     } else {
                         Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
                     }
@@ -145,11 +146,14 @@ public class Declaracion_Fusion implements Instruccion {
                             nueva.nombre = id;
                             ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                             ts.setValor(id, nueva);
+                            return;
                         } else {
                             Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                            return;
                         }
                     } else {
                         Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
+                        return;
                     }
                 }
             } else {
@@ -176,16 +180,15 @@ public class Declaracion_Fusion implements Instruccion {
                                 }
                             }
                             if (!encontrada) {
-                                Principal.add_error("No es posible hacer el casteo al tipo1: " + tipo, "Semantico", line, column);
+                                Principal.add_error("No es posible hacer el casteo al tipo: " + tipo, "Semantico", line, column);
                                 return;
                             }
                         }
 
                         if (!ts.existeSimboloAmbienteActual(id)) {
-                            TablaDeSimbolos local = ts.get_struct(tipo);
                             TablaDeSimbolos nueva = new TablaDeSimbolos();
 
-                            for (Simbolo item : local) {
+                            for (Simbolo item : resultado) {
                                 Simbolo new_simbol = new Simbolo("", ")");
                                 nueva.add(new_simbol.copy(item));
                             }
@@ -194,13 +197,14 @@ public class Declaracion_Fusion implements Instruccion {
                             ts.setValor(id, nueva);
                         } else {
                             Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                            return;
                         }
 
                     } catch (Exception e) {
-                        Principal.add_error("No es posible hacer el casteo al tipo2: " + tipo, "Semantico", line, column);
+                        Principal.add_error("No es posible hacer el casteo al tipo: " + tipo, "Semantico", line, column);
+                        return;
 
                     }
-                    Principal.add_error("No es posible hacer el casteo al tipo3: " + tipo, "Semantico", line, column);
                 }
             }
 

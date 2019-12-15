@@ -6,7 +6,6 @@
 package Instrucciones;
 
 import Arbol.Arbol;
-import Arbol.Celda;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
@@ -33,6 +32,7 @@ public class Funcion implements Instruccion {
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
     Arbol arreglo = new Arbol();
     TablaDeSimbolos local = new TablaDeSimbolos();
+    TablaDeSimbolos local2 = new TablaDeSimbolos();
     TipoFuncion tipo_funcion;
 
     ;
@@ -115,6 +115,12 @@ public class Funcion implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
 
         if (Llamada == true) {
+            local = new TablaDeSimbolos();
+            for (Simbolo item : local2) {
+                Simbolo new_simbol = new Simbolo("", "");
+                new_simbol.copy(item);
+                local.add(new_simbol);
+            }
 
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
@@ -126,7 +132,7 @@ public class Funcion implements Instruccion {
                     }
                 }
             } else {
-                Principal.add_error("El numero de parametros no coincide2.", "Semantico", line, column);
+                Principal.add_error("El numero de parametros no coincide.", "Semantico", line, column);
                 return null;
             }
             if (tipo_funcion == TipoFuncion.NORMAL) {
@@ -147,6 +153,7 @@ public class Funcion implements Instruccion {
             if (item.getType() == Tipo.RETURN) {
                 //aqui ponemos el valor en la funcion
                 Object resultado = item.Ejecutar(local);
+
                 if (local.asignValor(id, resultado)) {
                     local.setValor(id, resultado);
                 } else {
@@ -253,7 +260,7 @@ public class Funcion implements Instruccion {
                 return;
             }
             parametros.forEach((item) -> {
-                item.Recolectar(local);
+                item.Recolectar(local2);
             });
         }
     }

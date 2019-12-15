@@ -121,7 +121,6 @@ Tproyecto = "proyecto"
 Tarchivo = "archivo"
 Tcarpeta = "carpeta"
 Truta = "ruta"
-Tnombre = "nombre"
 Tcorrer = "correr"
 Tconfiguracion = "configuracion"
 Tfechamod = "fecha_mod"
@@ -206,7 +205,6 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tarchivo}      { return new Symbol(sym.Tarchivo, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tcarpeta}      { return new Symbol(sym.Tcarpeta, yyline, yycolumn,yytext());}
 <YYINITIAL> {Truta}      { return new Symbol(sym.Truta, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tnombre}      { return new Symbol(sym.Tnombre, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tcorrer}      { return new Symbol(sym.Tcorrer, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tconfiguracion}      { return new Symbol(sym.Tconfiguracion, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tfechamod}      { return new Symbol(sym.Tfechamod, yyline, yycolumn,yytext());}

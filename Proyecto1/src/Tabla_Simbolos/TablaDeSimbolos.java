@@ -5,6 +5,7 @@
  */
 package Tabla_Simbolos;
 
+import Arbol.Arbol;
 import Instrucciones.Instruccion;
 import Instrucciones.Tipo;
 import java.util.ArrayList;
@@ -93,6 +94,8 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         item.setValor(Boolean.valueOf(valor.toString()));
                                         return;
                                     case Struct:
+                                        Object val_aux = new Object();
+
                                         item.setValor(valor);
                                         break;
                                     default:
@@ -228,6 +231,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                 if (item.getId().equals(id)) {
                     try {
                         Object val_aux = null;
+                        if (item.getTipo_instruccion() == Tipo.ARREGLO) {
+                            val_aux = (Arbol) valor;
+                            return true;
+                        }
                         switch (item.getTipo().getTipo()) {
                             case Entero:
                                 val_aux = (int) Double.parseDouble(valor.toString());
@@ -284,6 +291,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private void setValorByIndex(int index, Object valor, TablaDeSimbolos tsPadre) {
 
         Simbolo item = tsPadre.get(index);
+        if (item.getTipo_instruccion() == Tipo.ARREGLO) {
+            item.setValor(valor);
+            return;
+        }
         switch (item.getTipo().getTipo()) {
             case Entero:
                 item.setValor((int) Double.parseDouble(valor.toString()));
@@ -361,6 +372,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
         Simbolo item = tsPadre.get(index);
         try {
             Object val_aux = null;
+            if (item.getTipo_instruccion() == Tipo.ARREGLO) {
+                val_aux = (Arbol) valor;
+                return true;
+            }
             switch (item.getTipo().getTipo()) {
                 case Entero:
                     val_aux = (int) Double.parseDouble(valor.toString());
@@ -450,35 +465,34 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
     private boolean castearFuncion(String id, Object valor, TablaDeSimbolos padre) {
         for (Simbolo item : padre) {
             if (item.getTipo_instruccion() != null) {
-                if (item.getTipo_instruccion() == Tipo.FUNCION) {
-                    if (item.getId().equals(id)) {
-                        try {
-                            Object val_aux = null;
-                            switch (item.getTipo().getTipo()) {
-                                case Entero:
-                                    val_aux = (int) Double.parseDouble(valor.toString());
-                                    return true;
-                                case Decimal:
-                                    val_aux = Double.parseDouble(valor.toString());
-                                    return true;
-                                case Cadena:
-                                    val_aux = valor.toString();
-                                    return true;
-                                case Char:
-                                    val_aux = (char) Double.parseDouble(valor.toString());
-                                    return true;
-                                case Bool:
-                                    val_aux = Boolean.valueOf(valor.toString());
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        } catch (Exception e) {
-                            return false;
+                if (item.getId().equals(id)) {
+                    try {
+                        Object val_aux = null;
+                        switch (item.getTipo().getTipo()) {
+                            case Entero:
+                                val_aux = (int) Double.parseDouble(valor.toString());
+                                return true;
+                            case Decimal:
+                                val_aux = Double.parseDouble(valor.toString());
+                                return true;
+                            case Cadena:
+                                val_aux = valor.toString();
+                                return true;
+                            case Char:
+                                val_aux = (char) Double.parseDouble(valor.toString());
+                                return true;
+                            case Bool:
+                                val_aux = Boolean.valueOf(valor.toString());
+                                return true;
+                            default:
+                                return false;
                         }
+                    } catch (Exception e) {
+                        return false;
                     }
                 }
             }
+
         }
         if (padre.getPadre() != null) {
             return castearFuncion(id, valor, padre.getPadre());

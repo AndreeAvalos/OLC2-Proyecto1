@@ -269,6 +269,7 @@ public class Principal extends javax.swing.JFrame {
         String input = jTextArea1.getText();
         Lista_Errores_Semanticos.clear();
         salida.clear();
+        consola.setText("");
         Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(input))));
         try {
             parser.parse();
