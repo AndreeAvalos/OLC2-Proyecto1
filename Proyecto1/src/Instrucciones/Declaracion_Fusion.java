@@ -84,7 +84,7 @@ public class Declaracion_Fusion implements Instruccion {
                             ts.setValor(id, nueva);
                             return null;
                         } else {
-                            Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                            Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
                             return null;
                         }
 
@@ -113,7 +113,7 @@ public class Declaracion_Fusion implements Instruccion {
                         ts.setValor(id, nueva);
                         return null;
                     } else {
-                        Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                        Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
                     }
                 } else {
                     Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
@@ -146,14 +146,14 @@ public class Declaracion_Fusion implements Instruccion {
                             nueva.nombre = id;
                             ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                             ts.setValor(id, nueva);
-                            return;
+
                         } else {
-                            Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
-                            return;
+                            Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
+
                         }
                     } else {
                         Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);
-                        return;
+       
                     }
                 }
             } else {
@@ -196,7 +196,7 @@ public class Declaracion_Fusion implements Instruccion {
                             ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                             ts.setValor(id, nueva);
                         } else {
-                            Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                            Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
                             return;
                         }
 

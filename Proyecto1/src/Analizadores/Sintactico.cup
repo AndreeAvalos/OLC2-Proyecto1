@@ -80,7 +80,8 @@ precedence left Tpotencia;
 //Inicio de Gramatica
 start with S;
 
-S::=INSTRUCCIONES:a{: AST= a; :};
+S::=INSTRUCCIONES:a{: AST= a; :}
+ | {: AST = new LinkedList<Instruccion>();:};
 
 INSTRUCCIONES::= INSTRUCCIONES:Lista1 INSTRUCCION:instru
 			{: 	Lista1.add(instru);
@@ -207,6 +208,7 @@ PARAMETRO::= TIPODATO:a Tid:b {: RESULT = new Declaracion(a,a,b, bleft, bright);
 
 CONTENIDO::= CONTENIDO:a SENTENCIA:b {: a.add(b); RESULT = a; :}
             | SENTENCIA:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
+
             ;
 
 SENTENCIA::= DECLARACION:a {: RESULT = a; :}
@@ -223,7 +225,7 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | WHILE:a {: RESULT = a; :}
         | SEGUIR {: RESULT = new Siguiente(); :}
         | BREAK {:RESULT = new Break(); :}
-        |SWITCH:a {: RESULT = a; :}
+        | SWITCH:a {: RESULT = a; :}
         ;
 
 SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;

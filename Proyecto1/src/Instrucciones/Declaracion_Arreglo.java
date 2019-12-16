@@ -56,7 +56,7 @@ public class Declaracion_Arreglo implements Instruccion {
                 arbol_declaracion.crearArbol(num_dimensiones);
                 ts.setValor(id, arbol_declaracion);
             } else {
-                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }

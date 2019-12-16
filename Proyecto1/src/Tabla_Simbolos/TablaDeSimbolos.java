@@ -50,7 +50,6 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                     try {
                         switch (item.getTipo_instruccion()) {
                             case VARIABLE:
-
                                 switch (item.getTipo().getTipo()) {
                                     case Entero:
                                         item.setValor((int) Double.parseDouble(valor.toString()));
@@ -59,7 +58,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         item.setValor(Double.parseDouble(valor.toString()));
                                         return;
                                     case Char:
-                                        item.setValor((char) Double.parseDouble(valor.toString()));
+                                        item.setValor((char) valor.toString().charAt(0));
                                         return;
                                     case Cadena:
                                         item.setValor((String) valor.toString());
@@ -76,6 +75,10 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
                                 break;
                             case FUNCION:
+                                if (item.getTipo().getAsignado().equals("arreglo")) {
+                                    item.setValor(valor);
+                                    return;
+                                }
                                 // le damos el valor resultante al metodo
                                 switch (item.getTipo().getTipo()) {
                                     case Entero:
@@ -85,7 +88,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         item.setValor(Double.parseDouble(valor.toString()));
                                         return;
                                     case Char:
-                                        item.setValor((char) Double.parseDouble(valor.toString()));
+                                        item.setValor((char) valor.toString().charAt(0));
                                         return;
                                     case Cadena:
                                         item.setValor((String) valor.toString());
@@ -103,6 +106,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         break;
                                 }
                             // ponemos valor de struct
+
                             case FUSION:
                                 //asignamos la tabla de simbolos;
                                 item.setValor(valor);
@@ -125,14 +129,16 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                 }
             }
         }
-        if (padre.getPadre() != null) {
+
+        if (padre.getPadre()
+                != null) {
             setValor(id, valor, padre.getPadre());
         }
 
     }
-    // -------------------------------METODO PARA DAR VALOR SIMPLE-----------------------------
+// -------------------------------METODO PARA DAR VALOR SIMPLE-----------------------------
 
-    // -------------------------------METODO PARA Eliminar SIMBOLO-----------------------------
+// -------------------------------METODO PARA Eliminar SIMBOLO-----------------------------
     public void eliminarSimbolo(String id) {
         eliminarSimbolo(id, this);
     }
@@ -303,7 +309,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                 item.setValor(Double.parseDouble(valor.toString()));
                 break;
             case Char:
-                item.setValor((char) Double.parseDouble(valor.toString()));
+                item.setValor((char) valor.toString().charAt(0));
                 break;
             case Cadena:
                 item.setValor((String) valor.toString());
@@ -391,7 +397,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                         return false;
                     }
                 case Char:
-                    val_aux = (char) Double.parseDouble(valor.toString());
+                    val_aux = (char) valor.toString().charAt(0);
                     return true;
                 case Bool:
                     val_aux = Boolean.valueOf(valor.toString());
@@ -479,7 +485,7 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 val_aux = valor.toString();
                                 return true;
                             case Char:
-                                val_aux = (char) Double.parseDouble(valor.toString());
+                                val_aux = (char) valor.toString().charAt(0);
                                 return true;
                             case Bool:
                                 val_aux = Boolean.valueOf(valor.toString());

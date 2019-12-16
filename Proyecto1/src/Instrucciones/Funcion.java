@@ -174,7 +174,7 @@ public class Funcion implements Instruccion {
                                 local.setValor(id, etiqueta.getResultado());
                             } else {
                                 //error porque no se puede hacer el casteo explicito
-                                Principal.add_error("La valor"+ etiqueta.getResultado()+" no concuerda con el tipo", "Semantico", line, column);
+                                Principal.add_error("El valor" + etiqueta.getResultado() + " no concuerda con el tipo", "Semantico", line, column);
                             }
                         }
                     } catch (Exception e) {
@@ -190,8 +190,8 @@ public class Funcion implements Instruccion {
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
                 //aqui ponemos el valor en la funcion
-                Object aux_val = item.Ejecutar(local);
-                TablaDeSimbolos resultado = (TablaDeSimbolos) aux_val;
+                Tipo_Retorno result = (Tipo_Retorno) item.Ejecutar(local);
+                TablaDeSimbolos resultado = (TablaDeSimbolos) result.getResultado();
 
                 Simbolo sim = ts.getSimbolo(tipo_struct);
                 TablaDeSimbolos modelo = (TablaDeSimbolos) sim.getValor();
@@ -213,7 +213,7 @@ public class Funcion implements Instruccion {
                     local.setValor(id, resultado);
                 } else {
                     //error porque no se puede hacer el casteo explicito
-                    Principal.add_error("La valor retornado no concuerda con el tipo", "Semantico", line, column);
+                    Principal.add_error("El valor retornado no concuerda con el tipo", "Semantico", line, column);
                 }
                 return;
             } else {
@@ -227,16 +227,17 @@ public class Funcion implements Instruccion {
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
                 //Obtenemos el valor que da de retorno
-                Object resultado = item.Ejecutar(local);
+                Tipo_Retorno result = (Tipo_Retorno) item.Ejecutar(local);
                 try {
-                    Arbol arreglo_resultado = (Arbol) resultado;
-                    if (arreglo.getNiveles() == arreglo_resultado.getNiveles()) {
+                    Arbol arreglo_resultado = (Arbol) result.getResultado();
+                    if (arreglo.getNiveles() == arreglo_resultado.mapa.size()) {
                         ts.setValor(id, arreglo_resultado);
+                        return;
                     } else {
                         Principal.add_error("No coinciden las dimensiones", "Semantico", line, column);
                     }
                 } catch (Exception e) {
-                    Principal.add_error("La valor retornado no concuerda con el arreglo", "Semantico", line, column);
+                    Principal.add_error("El valor retornado no concuerda con el arreglo ", "Semantico", line, column);
                 }
                 return;
             } else {

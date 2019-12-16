@@ -69,15 +69,13 @@ public class Imprimir implements Instruccion {
                     letra = trozo.charAt(0);
                     switch (letra) {
                         case 's':
-                            int linea = line;
-
                             try {
                                 Arbol aux = (Arbol) valores.get(i - 1);
                                 aux.print();
                                 salida += aux.getSalida();
                                 break;
                             } catch (Exception ex) {
-                                Principal.add_error("Tipo " + valores.get(i - 1) + " con chr[]", "Semantico", linea, this.column);
+                                Principal.add_error("Tipo " + valores.get(i - 1) + " con chr[]", "Semantico", line, this.column);
                                 return null;
                             }
                         case 'e':
@@ -118,6 +116,7 @@ public class Imprimir implements Instruccion {
                     }
                 }
                 Principal.setMensaje(salida);
+                salida = "";
                 return null;
             }
         }

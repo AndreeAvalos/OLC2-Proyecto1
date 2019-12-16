@@ -74,6 +74,7 @@ public class Principal extends javax.swing.JFrame {
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Primer Proyecto OLC2");
 
         jButton1.setText("Nuevo Archivo");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

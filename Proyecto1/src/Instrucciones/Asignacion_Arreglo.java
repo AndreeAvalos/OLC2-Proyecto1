@@ -124,7 +124,7 @@ public class Asignacion_Arreglo implements Instruccion {
                     Principal.add_error("La ruta a la que desea acceder no existe", "Semantico", line, column);
                 }
             } else {
-                Principal.add_error("La varaible \'" + id + "\' no es un arreglo", "Semantico", line, column);
+                Principal.add_error("La variable \'" + id + "\' no es un arreglo", "Semantico", line, column);
             }
         }
 

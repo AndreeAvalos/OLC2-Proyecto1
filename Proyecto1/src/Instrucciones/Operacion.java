@@ -192,7 +192,8 @@ public class Operacion implements Instruccion {
                         if (simbolo.getTipo().getTipo() == Tipo.Struct) {
                             return ts.getValor(id_funcion);
                         } else if (simbolo.getTipo().getAsignado().equals("arreglo")) {
-                            return ts.getValor(id_funcion);
+                            Arbol ar =(Arbol) ts.getValor(id_funcion);
+                            return ar;
                         } else {
                             return ts.getValor(id_funcion).toString();
 

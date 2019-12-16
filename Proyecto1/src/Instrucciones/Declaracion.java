@@ -71,10 +71,10 @@ public class Declaracion implements Instruccion {
         if (ts.getPadre() != null) {
             
             if (!ts.existeSimboloAmbienteActual(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, Tipo.VARIABLE));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id,0, Tipo.VARIABLE));
 
             } else {
-                Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);
+                Principal.add_error("La variable \'" + id + "\' ya esta declarada","Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 return null;
             }
@@ -103,7 +103,7 @@ public class Declaracion implements Instruccion {
 
         if (ts.getPadre() == null) {
             if (!ts.existeSimbolo(id)) {
-                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, Tipo.VARIABLE));
+                ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id,0, Tipo.VARIABLE));
 
             } else {
                 Principal.add_error("La varaible \'" + id + "\' ya esta declarada","Semantico",line,column);

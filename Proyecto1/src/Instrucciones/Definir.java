@@ -52,7 +52,7 @@ public class Definir implements Instruccion {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), id, valor.Ejecutar(ts), Tipo.CONSTANTE));
             } else {
-                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico",line,column);
+                Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico",line,column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }

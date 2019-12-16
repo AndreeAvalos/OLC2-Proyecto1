@@ -124,6 +124,7 @@ public class Arbol {
     }
 
     public void print() {
+        salida="";
         print(raiz);
     }
 
@@ -170,9 +171,8 @@ public class Arbol {
                 if ((nivel + 1) < indices.size()) {
                     set(indices, valor, nivel + 1, item);
                 } else {
-                    if (item.getDato() != null) {
-                        item.setDato(valor);
-                    }
+                    item.setDato(valor);
+
                 }
             }
         }

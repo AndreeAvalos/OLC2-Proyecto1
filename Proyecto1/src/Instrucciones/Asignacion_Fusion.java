@@ -99,7 +99,7 @@ public class Asignacion_Fusion implements Instruccion {
                 TablaDeSimbolos local = ts.get_struct(tipo_struct);
                 ts.setValor(id, local);
             } else {
-                Principal.add_error("La varaible \'" + id + "\' no esta declarada", "Semantico", line, column);
+                Principal.add_error("La variable \'" + id + "\' no esta declarada", "Semantico", line, column);
             }
         } else {
             Principal.add_error("No existe el tipo: " + tipo, "Semantico", line, column);

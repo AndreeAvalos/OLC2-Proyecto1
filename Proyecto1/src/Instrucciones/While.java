@@ -50,12 +50,11 @@ public class While implements Instruccion {
             TablaDeSimbolos tabla_local = new TablaDeSimbolos();
             tabla_local.setPadre(ts);
             for (Instruccion item : contenido) {
-                siguiente = false;
+
                 switch (item.getType()) {
                     case BREAK:
                         return null;
                     case SEGUIR:
-                        siguiente = true;
                         break;
                     case RETURN:
                         return item.Ejecutar(tabla_local);
@@ -68,7 +67,8 @@ public class While implements Instruccion {
                                     return etiqueta;
                                 }
                                 if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_SIGUE) {
-                                    siguiente = true;
+
+                                    break;
                                 } else {
                                     return null;
                                 }
@@ -79,10 +79,6 @@ public class While implements Instruccion {
                 }
             }
             maximo_iteraciones++;
-            if (siguiente == false) {
-                Principal.add_error("No se encontro la instruccion siguiente", "Semantico", line, column);
-                return null;
-            }
         }
 
         return null;

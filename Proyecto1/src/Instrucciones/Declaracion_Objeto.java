@@ -50,7 +50,7 @@ public class Declaracion_Objeto implements Instruccion {
                 ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
                 ts.setValor(id, null);
             } else {
-                Principal.add_error("La varaible \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }
