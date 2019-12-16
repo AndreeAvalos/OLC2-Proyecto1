@@ -233,6 +233,8 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
 
 INCREMENTO::= Tid:a Tmas Tmas Tpycoma {: RESULT = new Operador(a, Tipo.INCREMENTO,aleft,aright);:};
 DECREMENTO::= Tid:a Tmenos Tmenos Tpycoma {: RESULT = new Operador(a, Tipo.DECREMENTO,aleft,aright);:};
+
+
 SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
 
 ELSE_IF::= Telseif Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {: c.add( new Sentencia_IF(a,b,aleft,aright)); RESULT=c;  :}
@@ -248,12 +250,13 @@ SEGUIR::= Tsiga Tpycoma ;
 
 BREAK::= Tromper Tpycoma;
 
-DO_WHILE::= Trepeat Tllave_a CONTENIDO Tllave_c Twhen Tpar_a OPERACION_LOGICA Tpar_c Tpycoma
-
+DO_WHILE::= Trepeat Tllave_a CONTENIDO:a Tllave_c Twhen Tpar_a OPERACION_LOGICA:b Tpar_c Tpycoma
+        {: RESULT = new DoWhile(b,a ,bleft,bright); :}
         ;
+        
 
 SWITCH::= Tswitch Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CASOS:b Tllave_c 
-        {: RESULT= new Sentencia_Switch(a,b,aleft,bleft); :}
+        {: RESULT= new Sentencia_Switch(a,b,aleft,aleft); :}
         ;
 
 CASOS::= CASOS:a CASO:b {: a.add(b); RESULT=a; :}

@@ -6,7 +6,9 @@
 package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.Tipo_Retorno;
 import java.util.LinkedList;
+import proyecto1.Principal;
 
 /**
  *
@@ -37,21 +39,48 @@ public class DoWhile implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-
+        
+        int maximo_iteraciones = 0;
+         boolean siguiente = false;
         do {
+            if (maximo_iteraciones == 5000) {
+                Principal.add_error("Stack over flow", "Semantico", line, column);
+                return null;
+            }
             TablaDeSimbolos tabla_local = new TablaDeSimbolos();
             tabla_local.setPadre(ts);
-
             for (Instruccion item : contenido) {
                 switch (item.getType()) {
                     case BREAK:
                         return null;
+                    case SEGUIR:
+                        return new Tipo_Retorno(Tipo.ETIQUETA_SIGUE, null);
                     case RETURN:
                         return item.Ejecutar(tabla_local);
                     default:
-                        item.Ejecutar(tabla_local);
+                        Object result = item.Ejecutar(tabla_local);
+                        if (result != null) {
+                            try {
+                                Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                                if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+                                    return etiqueta;
+                                }
+                                if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_SIGUE) {
+                                    siguiente = true;
+                                    break;
+                                } else {
+                                    return null;
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                        break;
+                }
+                if(siguiente){
+                    return null;
                 }
             }
+            maximo_iteraciones++;
         } while ((boolean) expresion.Ejecutar(ts));
 
         return null;
