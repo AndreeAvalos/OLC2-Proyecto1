@@ -23,7 +23,7 @@ parser code
         +s.value + " no reconocido." );
     }
 
-    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de errores.*/
+   ////////////////////////////
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
         System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.left+1)+ " Columna "+(s.right+1)+". Identificador " +
         s.value + " no reconocido.");            
@@ -52,7 +52,7 @@ non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
-                          DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH;
+                          DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH, DO_WHILE,FOR, INCREMENTO,DECREMENTO;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -226,8 +226,13 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | SEGUIR {: RESULT = new Siguiente(); :}
         | BREAK {:RESULT = new Break(); :}
         | SWITCH:a {: RESULT = a; :}
+        | DO_WHILE:a {:RESULT = a; :}
+        | INCREMENTO:a{:RESULT = a; :}
+        | DECREMENTO:a{:RESULT = a; :}
         ;
 
+INCREMENTO::= Tid:a Tmas Tmas Tpycoma {: RESULT = new Operador(a, Tipo.INCREMENTO,aleft,aright);:};
+DECREMENTO::= Tid:a Tmenos Tmenos Tpycoma {: RESULT = new Operador(a, Tipo.DECREMENTO,aleft,aright);:};
 SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
 
 ELSE_IF::= Telseif Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {: c.add( new Sentencia_IF(a,b,aleft,aright)); RESULT=c;  :}
@@ -243,7 +248,9 @@ SEGUIR::= Tsiga Tpycoma ;
 
 BREAK::= Tromper Tpycoma;
 
+DO_WHILE::= Trepeat Tllave_a CONTENIDO Tllave_c Twhen Tpar_a OPERACION_LOGICA Tpar_c Tpycoma
 
+        ;
 
 SWITCH::= Tswitch Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CASOS:b Tllave_c 
         {: RESULT= new Sentencia_Switch(a,b,aleft,bleft); :}
@@ -337,6 +344,7 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
+        | Tnlo:a {: RESULT = new Operacion(TipoOperacion.NULO,aleft,aright); :}
         ;
 		
 

@@ -45,7 +45,8 @@ public class Operacion implements Instruccion {
         FUNCION,
         PESODE,
         ACCESO_ARREGLO,
-        ACCESO_STRUCT
+        ACCESO_STRUCT,
+        NULO
     }
 
     String id_objeto;
@@ -102,6 +103,12 @@ public class Operacion implements Instruccion {
         this.column = column;
     }
 
+    public Operacion(TipoOperacion tipo, int line, int column) {
+        this.tipo = tipo;
+        this.line = line;
+        this.column = column;
+    }
+
     @Override
     public int getLine() {
         return this.line;
@@ -117,8 +124,10 @@ public class Operacion implements Instruccion {
         try {
             double aux2 = 0.0;
             switch (tipo) {
+                case NULO:
+                    return null;
                 case DIVISION:
-                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) / (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()) ;
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) / (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case MULTIPLICACION:
                     return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) * (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case RESTA:
@@ -159,9 +168,23 @@ public class Operacion implements Instruccion {
                 case MENOR_IGUAL:
                     return ((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString())) <= ((Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case IGUAL_IGUAL:
-                    return Objects.equals((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()), (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
+                    Object ope1 = operadorIzq.Ejecutar(ts);
+                    Object ope2 = operadorDer.Ejecutar(ts);
+
+                    if (ope1 == null || ope2 == null) {
+                        return ope1 == ope2;
+                    }
+
+                    return Objects.equals((Double) Double.parseDouble(ope1.toString()), (Double) Double.parseDouble(ope2.toString()));
                 case DIFERENTE:
-                    return !Objects.equals((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()), (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
+                    ope1 = operadorIzq.Ejecutar(ts);
+                    ope2 = operadorDer.Ejecutar(ts);
+
+                    if (ope1 == null || ope2 == null) {
+                        return ope1 != ope2;
+                    }
+
+                    return !Objects.equals((Double) Double.parseDouble(ope1.toString()), (Double) Double.parseDouble(ope2.toString()));
                 case CONCATENACION:
                     return operadorIzq.Ejecutar(ts).toString() + operadorDer.Ejecutar(ts).toString();
                 case CARACTER:
@@ -192,7 +215,7 @@ public class Operacion implements Instruccion {
                         if (simbolo.getTipo().getTipo() == Tipo.Struct) {
                             return ts.getValor(id_funcion);
                         } else if (simbolo.getTipo().getAsignado().equals("arreglo")) {
-                            Arbol ar =(Arbol) ts.getValor(id_funcion);
+                            Arbol ar = (Arbol) ts.getValor(id_funcion);
                             return ar;
                         } else {
                             return ts.getValor(id_funcion).toString();

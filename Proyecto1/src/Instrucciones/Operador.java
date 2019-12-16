@@ -36,12 +36,17 @@ public class Operador implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        if (tipo == Tipo.Incremento) {
-            ts.incrementarValor(id);
-        } else if (tipo == Tipo.Decremento) {
-            ts.decrementarValor(id);
-        }else{
-        //error jejeje
+        if (null == tipo) {
+            //error jejeje
+        } else switch (tipo) {
+            case INCREMENTO:
+                ts.incrementarValor(id);
+                break;
+            case DECREMENTO:
+                ts.decrementarValor(id);
+                break;
+            default:
+                break;
         }
         return null;
     }
