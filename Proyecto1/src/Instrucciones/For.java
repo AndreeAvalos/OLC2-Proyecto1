@@ -6,6 +6,7 @@
 package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.Tipo_Retorno;
 import java.util.LinkedList;
 
 /**
@@ -14,33 +15,22 @@ import java.util.LinkedList;
  */
 public class For implements Instruccion {
 
-    Instruccion declaracion;//variable al principio
-    Instruccion asignacion;//asigna el valor a la variable
+    Instruccion declaracion;//variable al principio que declara
     Operacion expresion;// por ejemplo i<8, i>3, i<=2, etc.
-    Operador operador;// incremento o decremento de varaible
+    Instruccion operador;// incremento o decremento de varaible
     LinkedList<Instruccion> contenido;
     int line, column;
 
-    /**
-     * Constructor para una sentencia for
-     *
-     * @param declaracion int i,int j,int k, etc
-     * @param asignacion i=0, i=100, etc
-     * @param expresion i<7,i>10
-     * @param operador i++, i--
-     * @param contenido instrucciones que puedan venir dentro
-     * @param line
-     * @param column
-     */
-    public For(Instruccion declaracion, Instruccion asignacion, Operacion expresion, Operador operador, LinkedList<Instruccion> contenido, int line, int column) {
+    public For(Instruccion declaracion, Operacion expresion, Instruccion operador, LinkedList<Instruccion> contenido, int line, int column) {
         this.declaracion = declaracion;
-        this.asignacion = asignacion;
         this.expresion = expresion;
         this.operador = operador;
         this.contenido = contenido;
         this.line = line;
         this.column = column;
     }
+
+    
 
     @Override
     public int getLine() {
@@ -58,18 +48,40 @@ public class For implements Instruccion {
         tabla_local.setPadre(ts);
 
         declaracion.Ejecutar(tabla_local);
-        asignacion.Ejecutar(tabla_local);
+        boolean siguiente = false;
 
-        while ((boolean) expresion.Ejecutar(ts)) {
+        while ((boolean) expresion.Ejecutar(tabla_local)) {
 
             for (Instruccion item : contenido) {
+
                 switch (item.getType()) {
                     case BREAK:
                         return null;
+                    case SEGUIR:
+                        return new Tipo_Retorno(Tipo.ETIQUETA_SIGUE, null);
                     case RETURN:
                         return item.Ejecutar(tabla_local);
                     default:
-                        item.Ejecutar(tabla_local);
+                        Object result = item.Ejecutar(tabla_local);
+                        if (result != null) {
+                            try {
+                                Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                                if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+                                    return etiqueta;
+                                }
+                                if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_SIGUE) {
+                                    siguiente = true;
+                                    break;
+                                } else {
+                                    return null;
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                        break;
+                }
+                if (siguiente) {
+                    return null;
                 }
             }
             operador.Ejecutar(tabla_local);

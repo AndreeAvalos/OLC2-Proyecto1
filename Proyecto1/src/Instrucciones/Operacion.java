@@ -46,7 +46,9 @@ public class Operacion implements Instruccion {
         PESODE,
         ACCESO_ARREGLO,
         ACCESO_STRUCT,
-        NULO
+        NULO,
+        MASMAS,
+        MENOSMENOS
     }
 
     String id_objeto;
@@ -108,6 +110,7 @@ public class Operacion implements Instruccion {
         this.line = line;
         this.column = column;
     }
+
 
     @Override
     public int getLine() {
@@ -273,6 +276,27 @@ public class Operacion implements Instruccion {
                             Principal.add_error(item, "Semantico", line, column);
                         });
                     }
+                case MASMAS:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        try {
+                            int valor_operador = (int) Double.parseDouble(ts.getValor(valor.toString()).toString());
+                            ts.setValor(valor.toString(), valor_operador + 1);
+                        } catch (Exception e) {
+                            Principal.add_error("La variable " + valor.toString() + " no es tipo entero", "Semantico", line, column);
+                        }
+                    }
+                    break;
+                case MENOSMENOS:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        try {
+                            int valor_operador = (int) Double.parseDouble(ts.getValor(valor.toString()).toString());
+                            ts.setValor(valor.toString(), valor_operador - 1);
+                        } catch (Exception e) {
+                            Principal.add_error("La variable " + valor.toString() + " no es tipo entero", "Semantico", line, column);
+                        }
+                        return null;
+                    }
+                    break;
 
                 default:
                     return null;
@@ -282,7 +306,7 @@ public class Operacion implements Instruccion {
             Principal.add_error("No es posible hacer la operacion.", "Semantico", line, column);
             return null;
         }
-
+        return null;
     }
 
     @Override
