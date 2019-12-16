@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Tipos_Importantes;
+package Instrucciones;
 
 /**
  *
  * @author Andree
  */
-public class Tipo_Switch {
+public class Case {
     
 }

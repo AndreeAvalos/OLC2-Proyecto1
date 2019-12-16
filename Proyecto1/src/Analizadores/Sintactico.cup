@@ -52,7 +52,7 @@ non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
-                          DECLARACION_FUSION, ASIGNACION_ARREGLO;
+                          DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH,CASO;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -63,6 +63,7 @@ non terminal Sentencia_IF ELSE;
 non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
 non terminal Tipo TIPODATO;
 non terminal Integer DIMENSION_VACIA;
+non terminal LinkedList<Case> CASOS;
 non terminal ArrayList<Integer> DIMENSIONES_VACIAS;
 
 
@@ -148,11 +149,11 @@ TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(origen,destino,origenleft,origenright);  :}
             | TIPODATO:a Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(a,origen,destino,origenleft,origenright);  :};
 	
-ASIGNACION::= Tid:a Tigual OPERACION_RELACIONAL:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
+ASIGNACION::= Tid:a Tigual OPERACION_LOGICA:b Tpycoma{: RESULT = new Asignacion(a,b,aleft,aright); :}
         ;
 ASIGNACION_ARREGLO::= Tid:a Tigual Tllave_a LLAVES:b Tllave_c Tpycoma
                     {: RESULT = new Asignacion_Arreglo(a,b, aleft,aright); :}
-                    | Tid:a DIMENSIONES:b Tigual OPERACION_RELACIONAL:c Tpycoma
+                    | Tid:a DIMENSIONES:b Tigual OPERACION_LOGICA:c Tpycoma
                     {: RESULT = new Asignacion_Arreglo(a,b,c, bleft, bright); :}
                     ;
 
@@ -165,7 +166,7 @@ LLAVE::=Tllave_a LLAVES:a Tllave_c {: RESULT = a; :}
     | VALOR_PARAMETRO:a {: RESULT = a; :}
     ;
 
-CONSTANTE::= Tdefinir Tid:a OPERACION_RELACIONAL:b {: RESULT = new Definir(a,b,aleft,aright); :}
+CONSTANTE::= Tdefinir Tid:a OPERACION_LOGICA:b {: RESULT = new Definir(a,b,aleft,aright); :}
         | Tdefinir Tid:a Tllave_a LLAVES:b Tllave_c {: RESULT = new Arreglo(a,b,aleft,aright); :} 
 
 ;
@@ -218,17 +219,38 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | ARREGLO:a {: RESULT = a; :}
         | ASIGNACION_ARREGLO:a {:RESULT = a; :}
         | SENTENCIA_IF:a {: RESULT = new If(a,aleft,aright); :}
+        | WHILE:a {: RESULT = a; :}
+        | SEGUIR {: RESULT = new Siguiente(); :}
+        | BREAK {:RESULT = new Break(); :}
+        |SWITCH {: RESULT = a; :}
         ;
 
-SENTENCIA_IF::= Tif Tpar_a OPERACION_RELACIONAL:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
+SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
 
-ELSE_IF::= Telseif Tpar_a OPERACION_RELACIONAL:a Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {: c.add( new Sentencia_IF(a,b,aleft,aright)); RESULT=c;  :}
+ELSE_IF::= Telseif Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {: c.add( new Sentencia_IF(a,b,aleft,aright)); RESULT=c;  :}
         | ELSE:a {: LinkedList<Sentencia_IF> lst =  new LinkedList<>(); lst.add(a);  RESULT = lst; :}
         ;
 ELSE::= Telse Tllave_a CONTENIDO:a Tllave_c {: RESULT = new Sentencia_IF(a,aleft,aright); :}
         | /* empty */ {: RESULT= new Sentencia_IF(); :}
         ;
+WHILE::= Twhile Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CONTENIDO:b Tllave_c 
+        {: RESULT = new While(a,b,aleft,aright); :}
+        ;
+SEGUIR::= Tsiga Tpycoma ;
 
+BREAK::= Tromper Tpycoma;
+
+
+
+SWITCH::= Tswitch Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CASOS:b Tllave_c 
+        {: RESULT= new Sentencia_Switch(a,b,aleft,bleft); :}
+
+CASOS::= CASOS:a CASO:b {:a.add(b); RESULT=a; :}
+    | CASO:a {: LinkedList<Case> lst = new LinkedList<>(); lst.add(a); RESULT = lst; :}
+    ;
+
+CASO::= Tcase VALOR:a Tdospuntos CONTENIDO:b {: RESULT = new Case(a,b,aleft,aright); :}
+    | Tdefault Tdospuntos CONTENIDO:a {: RESULT = new Case(a,aleft,aright); :}
 
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};

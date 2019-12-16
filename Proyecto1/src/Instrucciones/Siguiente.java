@@ -11,36 +11,36 @@ import Tabla_Simbolos.TablaDeSimbolos;
  *
  * @author Andree
  */
-public class Break implements Instruccion {
+public class Siguiente implements Instruccion {
 
-    int line, column;
-
-    public Break() {
+    public Siguiente() {
     }
-
+    
+    
 
     @Override
     public int getLine() {
-        return this.line;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getColumn() {
-        return this.column;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        return null;
+       return null;
     }
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
+       
     }
 
     @Override
     public Tipo getType() {
-        return Tipo.BREAK;
+        return Tipo.SEGUIR;
     }
-
+    
 }
