@@ -67,6 +67,7 @@ public class sym {
   public static final int Tbul = 33;
   public static final int Tent = 30;
   public static final int Tclose = 65;
+  public static final int CONCAT = 99;
   public static final int Tdospuntos = 26;
   public static final int Tdefinir = 47;
   public static final int Tcarpeta = 89;
@@ -206,7 +207,8 @@ public class sym {
   "Tentero",
   "Tcadena",
   "Tcaracter",
-  "Trstring"
+  "Trstring",
+  "CONCAT"
   };
 }
 
