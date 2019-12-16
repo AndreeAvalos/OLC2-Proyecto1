@@ -52,11 +52,12 @@ non terminal String S;
 non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
-                          DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH,CASO;
+                          DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
 non terminal Tipo_IF SENTENCIA_IF;
+non terminal Case CASO;
 non terminal LinkedList<Object> LLAVES;
 non terminal Object LLAVE; 
 non terminal Sentencia_IF ELSE;
@@ -222,7 +223,7 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | WHILE:a {: RESULT = a; :}
         | SEGUIR {: RESULT = new Siguiente(); :}
         | BREAK {:RESULT = new Break(); :}
-        |SWITCH {: RESULT = a; :}
+        |SWITCH:a {: RESULT = a; :}
         ;
 
 SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
@@ -244,13 +245,15 @@ BREAK::= Tromper Tpycoma;
 
 SWITCH::= Tswitch Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CASOS:b Tllave_c 
         {: RESULT= new Sentencia_Switch(a,b,aleft,bleft); :}
+        ;
 
-CASOS::= CASOS:a CASO:b {:a.add(b); RESULT=a; :}
+CASOS::= CASOS:a CASO:b {: a.add(b); RESULT=a; :}
     | CASO:a {: LinkedList<Case> lst = new LinkedList<>(); lst.add(a); RESULT = lst; :}
     ;
 
 CASO::= Tcase VALOR:a Tdospuntos CONTENIDO:b {: RESULT = new Case(a,b,aleft,aright); :}
     | Tdefault Tdospuntos CONTENIDO:a {: RESULT = new Case(a,aleft,aright); :}
+    ;
 
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
@@ -316,6 +319,10 @@ OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,Tip
         | OPERACION_NUMERICA:a Tmod OPERACION_NUMERICA:b{: RESULT = new Operacion(a,b,TipoOperacion.MODULAR, aleft, aright); :}
         | OPERACION_NUMERICA:a Tpotencia OPERACION_NUMERICA:b {: RESULT = new Operacion(a,b,TipoOperacion.POTENCIA, aleft, aright); :}
         | Tpar_a OPERACION_LOGICA:a Tpar_c {: RESULT = a; :}
+        | LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
+        | Tpesode Tpar_a Tid:a Tpar_c {:RESULT = new Operacion(a, TipoOperacion.PESODE, aleft,aright); :}
+        | ACCESO_ARREGLO:a {: RESULT = a; :}
+        | ACCESO_STRUCT:a {:RESULT = a; :}
         | VALOR:a {: RESULT = a;:}
         ;
 
@@ -328,10 +335,6 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
-        |LLAMADA:a {:RESULT = new Operacion(a,TipoOperacion.FUNCION,aleft,aright); :}
-        |Tpesode Tpar_a Tid:a Tpar_c {:RESULT = new Operacion(a, TipoOperacion.PESODE, aleft,aright); :}
-        |ACCESO_ARREGLO:a {: RESULT = a; :}
-        |ACCESO_STRUCT:a {:RESULT = a; :}
         ;
 		
 
