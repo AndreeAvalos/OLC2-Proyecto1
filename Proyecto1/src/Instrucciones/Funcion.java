@@ -9,6 +9,7 @@ import Arbol.Arbol;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
+import Tabla_Simbolos.Tipo_Retorno;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import proyecto1.Principal;
@@ -152,17 +153,33 @@ public class Funcion implements Instruccion {
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
                 //aqui ponemos el valor en la funcion
-                Object resultado = item.Ejecutar(local);
+                Tipo_Retorno resultado = (Tipo_Retorno) item.Ejecutar(local);
 
-                if (local.asignValor(id, resultado)) {
-                    local.setValor(id, resultado);
+                if (local.asignValor(id, resultado.getResultado())) {
+                    local.setValor(id, resultado.getResultado());
                 } else {
                     //error porque no se puede hacer el casteo explicito
-                    Principal.add_error("La valor retornado no concuerda con el tipo", "Semantico", line, column);
+                    Principal.add_error("El valor retornado no concuerda con el tipo", "Semantico", line, column);
                 }
                 return;
             } else {
-                item.Ejecutar(local);
+
+                Object result = item.Ejecutar(local);
+                if (result != null) {
+                    try {
+                        Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                        if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+
+                            if (local.asignValor(id, etiqueta.getResultado())) {
+                                local.setValor(id, etiqueta.getResultado());
+                            } else {
+                                //error porque no se puede hacer el casteo explicito
+                                Principal.add_error("La valor"+ etiqueta.getResultado()+" no concuerda con el tipo", "Semantico", line, column);
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
         }
         Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);

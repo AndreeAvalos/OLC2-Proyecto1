@@ -92,6 +92,7 @@ Taent = "_aent"
 Tadec = "_adec"
 Teqls = "_eqls"
 Telse = "else"
+Telseif = "else if"
 Timp = "_imp"
 Twrite = "_write"
 Tapend = "_apend"
@@ -176,6 +177,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tadec}      { return new Symbol(sym.Tadec, yyline, yycolumn,yytext());}
 <YYINITIAL> {Teqls}      { return new Symbol(sym.Teqls, yyline, yycolumn,yytext());}
 <YYINITIAL> {Telse}      { return new Symbol(sym.Telse, yyline, yycolumn,yytext());}
+<YYINITIAL> {Telseif}      { return new Symbol(sym.Telseif, yyline, yycolumn,yytext());}
 <YYINITIAL> {Timp}      { return new Symbol(sym.Timp, yyline, yycolumn,yytext());}
 <YYINITIAL> {Twrite}      { return new Symbol(sym.Twrite, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tapend}      { return new Symbol(sym.Tapend, yyline, yycolumn,yytext());}
@@ -219,7 +221,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tdiv}     {return new Symbol(sym.Tdiv, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tdiferente}     {return new Symbol(sym.Tdiferente, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tigual}     {return new Symbol(sym.Tigual, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tigualigual}     {return new Symbol(sym.Tigual, yyline, yycolumn,yytext());}
+<YYINITIAL> {Tigualigual}     {return new Symbol(sym.Tigualigual, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmenor}     {return new Symbol(sym.Tmenor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tmayor}     {return new Symbol(sym.Tmayor, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tand}     {return new Symbol(sym.Tand, yyline, yycolumn,yytext());}

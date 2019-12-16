@@ -6,7 +6,9 @@
 package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.Tipo_Retorno;
 import Tipos_Importantes.Tipo_IF;
+import java.util.LinkedList;
 
 /**
  *
@@ -37,47 +39,100 @@ public class If implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
         TablaDeSimbolos tabla_local = new TablaDeSimbolos();
         tabla_local.setPadre(ts);
-
-        if ((boolean) instruccion_if.getExpresion().Ejecutar(ts)) {
-
-            for (Instruccion item : instruccion_if.getInstrucciones_if()) {
-                switch (item.getType()) {
-                    case BREAK:
-                        return null;
-                    case RETURN:
-                        return item.Ejecutar(tabla_local);
-                    default:
-                        item.Ejecutar(tabla_local);
-                }
+        Operacion expresion = instruccion_if.getExpresion();
+        LinkedList<Sentencia_IF> else_if = instruccion_if.getElse_if();
+        LinkedList<Instruccion> sentencias_if = instruccion_if.getSentencias_if();
+        Sentencia_IF sentencia_else = new Sentencia_IF();
+        for (Instruccion item : else_if) {
+            Sentencia_IF objeto = (Sentencia_IF) item;
+            if (objeto.tipo_sentencia == Sentencia_IF.TipoIf.TIPO_ELSE) {
+                sentencia_else = objeto;
+                break;
             }
-        } else {
-            for (Tipo_IF item2 : instruccion_if.getElse_if()) {
-                if ((boolean) item2.getExpresion().Ejecutar(ts)) {
-                    for (Instruccion item : item2.getInstrucciones_if()) {
-                        switch (item.getType()) {
-                            case BREAK:
-                                return null;
-                            case RETURN:
-                                return item.Ejecutar(tabla_local);
-                            default:
-                                item.Ejecutar(tabla_local);
+        }
+
+        try {
+            if ((boolean) expresion.Ejecutar(ts)) {
+                for (Instruccion item : sentencias_if) {
+                    switch (item.getType()) {
+                        case BREAK:
+                            return new Tipo_Retorno(Tipo.ETIQUETA_RETURN, null);
+                        case SEGUIR:
+                            return new Tipo_Retorno(Tipo.ETIQUETA_SIGUE, null);
+                        case RETURN:
+                            return item.Ejecutar(tabla_local);
+                        default:
+                            Object result = item.Ejecutar(tabla_local);
+                            if (result != null) {
+                                try {
+                                    Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                                    return etiqueta;
+                                } catch (Exception e) {
+                                }
+                            }
+                            break;
+                    }
+                }
+            } else {
+                for (Sentencia_IF item2 : else_if) {
+                    if (item2.tipo_sentencia != Sentencia_IF.TipoIf.TIPO_ELSE) {
+                        if ((boolean) item2.expresion.Ejecutar(ts)) {
+                            for (Instruccion item : item2.sentencias) {
+                                switch (item.getType()) {
+                                    case BREAK:
+                                        return new Tipo_Retorno(Tipo.ETIQUETA_RETURN, null);
+                                    case SEGUIR:
+                                        return new Tipo_Retorno(Tipo.ETIQUETA_SIGUE, null);
+                                    case RETURN:
+                                        return item.Ejecutar(tabla_local);
+                                    default:
+                                        Object result = item.Ejecutar(tabla_local);
+                                        if (result != null) {
+                                            try {
+                                                Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                                                return etiqueta;
+                                            } catch (Exception e) {
+                                            }
+                                        }
+                                        break;
+                                }
+                            }
+                            return null;
                         }
+                    }
+                }
+                if (sentencia_else.sentencias == null) {
+                    return null;
+                }
+                //de lo contrario si encontro un else
+
+                for (Instruccion item : sentencia_else.sentencias) {
+                    switch (item.getType()) {
+                        case BREAK:
+                            return new Tipo_Retorno(Tipo.ETIQUETA_RETURN, null);
+                        case SEGUIR:
+                            return new Tipo_Retorno(Tipo.ETIQUETA_SIGUE, null);
+                        case RETURN:
+                            return item.Ejecutar(tabla_local);
+                        default:
+                            Object result = item.Ejecutar(tabla_local);
+                            if (result != null) {
+                                try {
+                                    Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                                    return etiqueta;
+                                } catch (Exception e) {
+                                }
+                            }
+                            break;
                     }
                     return null;
                 }
+
             }
-            for (Instruccion item : instruccion_if.getInstrucciones_else()) {
-                switch (item.getType()) {
-                    case BREAK:
-                        return null;
-                    case RETURN:
-                        return item.Ejecutar(tabla_local);
-                    default:
-                        item.Ejecutar(tabla_local);
-                }
-            }
-            return null;
+        } catch (Exception e) {
+
         }
+
         return null;
     }
 

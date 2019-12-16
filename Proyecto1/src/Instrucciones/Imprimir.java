@@ -82,7 +82,7 @@ public class Imprimir implements Instruccion {
                             }
                         case 'e':
                             try {
-                                val = (int) Double.parseDouble(valores.get(i - 1).toString());
+                                val = (int) Integer.parseInt(valores.get(i - 1).toString());
                                 salida += val.toString();
                                 break;
                             } catch (NumberFormatException ex) {
@@ -100,7 +100,7 @@ public class Imprimir implements Instruccion {
                             break;
                         case 'c':
                             try {
-                                val = (char) Double.parseDouble(valores.get(i - 1).toString());
+                                val = (char) valores.get(i - 1).toString().charAt(0);
                                 salida += val.toString();
                             } catch (NumberFormatException ex) {
                                 Principal.add_error("Tipo " + valores.get(i - 1) + " con chr", "Semantico", line, column);

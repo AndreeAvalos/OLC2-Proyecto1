@@ -27,7 +27,7 @@ Metodo("ESTO ES UNA PRUEBA DE CONCATENACION DE STRINGS");
 }
 ent Funcion(ent c, ent d){
 
-_imp("FUNCION CON VALORES, c: %e d: %e",a,dd);
+_imp("FUNCION CON VALORES, c: %e d: %e",ab,dd);
 
 regresar d;
 }

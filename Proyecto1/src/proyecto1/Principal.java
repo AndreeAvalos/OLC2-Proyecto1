@@ -5,6 +5,7 @@
  */
 package proyecto1;
 
+import Libreria.NumeroLinea;
 import Analizadores.*;
 import Instrucciones.*;
 import Tabla_Simbolos.TablaDeSimbolos;
@@ -22,12 +23,16 @@ public class Principal extends javax.swing.JFrame {
 
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
+    NumeroLinea numerolinea ;
 
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
+        numerolinea = new NumeroLinea(jTextArea2);
+        jScrollPane4.setRowHeaderView(numerolinea);
+        
     }
 
     /**
@@ -50,8 +55,8 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
@@ -121,11 +126,11 @@ public class Principal extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(jTree1);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        jScrollPane4.setViewportView(jTextArea2);
 
-        jTabbedPane1.addTab("Default", jScrollPane2);
+        jTabbedPane1.addTab("tab1", jScrollPane4);
 
         consola.setBackground(new java.awt.Color(0, 0, 0));
         consola.setColumns(20);
@@ -266,7 +271,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        String input = jTextArea1.getText();
+        String input = jTextArea2.getText();
         Lista_Errores_Semanticos.clear();
         salida.clear();
         consola.setText("");
@@ -386,10 +391,10 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 }

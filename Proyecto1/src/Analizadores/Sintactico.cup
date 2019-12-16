@@ -6,11 +6,13 @@ import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 import Instrucciones.Operacion.TipoOperacion;
+import Tipos_Importantes.*;
 
 parser code
 {:
 	public LinkedList<Instruccion> AST = new LinkedList<Instruccion>();
 	public static ArrayList<String> ErroresSintacticos = new ArrayList<>();
+    
     public String salida = "" ; 
        
     public void syntax_error(Symbol s)
@@ -40,7 +42,7 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Tcorchete_a, Tcorchete_c, Tpycoma, Tpar_a, Tpar_c, Tcoma, Tmod, Tmayorigual, Tmenorigual, Tnot,Tpotencia,
                 Tdospuntos, Tincremento, Tdecremento, Tpunto,Tent, Tdec, Tchr, Tbul, Tnlo, Tpesode, Treservar, Tzro, Tif,
                 Twhile, Tfor, Trepeat, Tswitch, Tcase, Tdefault, Tromper, Tsiga, Tdefinir, Tfusion, Timportar, Tregresar,
-                Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
+                Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Telseif, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
                 Tcarpeta, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
@@ -53,8 +55,11 @@ non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCI
                           DECLARACION_FUSION, ASIGNACION_ARREGLO;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
+non terminal LinkedList<Sentencia_IF> ELSE_IF;
+non terminal Tipo_IF SENTENCIA_IF;
 non terminal LinkedList<Object> LLAVES;
 non terminal Object LLAVE; 
+non terminal Sentencia_IF ELSE;
 non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
 non terminal Tipo TIPODATO;
 non terminal Integer DIMENSION_VACIA;
@@ -211,8 +216,20 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | ASIGNACION_FUSION:a {: RESULT = a; :}
         | DECLARACION_FUSION:a {: RESULT = a; :}
         | ARREGLO:a {: RESULT = a; :}
-        | ASIGNACION_ARREGLO:a {:RESULT =a; :}
+        | ASIGNACION_ARREGLO:a {:RESULT = a; :}
+        | SENTENCIA_IF:a {: RESULT = new If(a,aleft,aright); :}
         ;
+
+SENTENCIA_IF::= Tif Tpar_a OPERACION_RELACIONAL:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
+
+ELSE_IF::= Telseif Tpar_a OPERACION_RELACIONAL:a Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {: c.add( new Sentencia_IF(a,b,aleft,aright)); RESULT=c;  :}
+        | ELSE:a {: LinkedList<Sentencia_IF> lst =  new LinkedList<>(); lst.add(a);  RESULT = lst; :}
+        ;
+ELSE::= Telse Tllave_a CONTENIDO:a Tllave_c {: RESULT = new Sentencia_IF(a,aleft,aright); :}
+        | /* empty */ {: RESULT= new Sentencia_IF(); :}
+        ;
+
+
 
 RETORNAR::= Tregresar OPERACION_LOGICA:a Tpycoma{:RESULT = new Return(a, aleft, aright); :};
 

@@ -118,15 +118,15 @@ public class Operacion implements Instruccion {
             double aux2 = 0.0;
             switch (tipo) {
                 case DIVISION:
-                    return (Double) operadorIzq.Ejecutar(ts) / (Double) operadorDer.Ejecutar(ts);
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) / (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()) ;
                 case MULTIPLICACION:
-                    return (Double) operadorIzq.Ejecutar(ts) * (Double) operadorDer.Ejecutar(ts);
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) * (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case RESTA:
-                    return (Double) operadorIzq.Ejecutar(ts) - (Double) operadorDer.Ejecutar(ts);
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) - (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case SUMA:
-                    return (Double) operadorIzq.Ejecutar(ts) + (Double) operadorDer.Ejecutar(ts);
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) + (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case NEGATIVO:
-                    return (Double) operadorIzq.Ejecutar(ts) * -1;
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) * -1;
                 case NUMERO:
                     return Double.parseDouble(valor.toString());
                 case IDENTIFICADOR:
@@ -142,8 +142,7 @@ public class Operacion implements Instruccion {
                                 return val;
                             }
                         } else {
-                            aux2 = Double.parseDouble(val.toString());
-                            return aux2;
+                            return val;
                         }
                     }
                     return null;
@@ -152,17 +151,17 @@ public class Operacion implements Instruccion {
                     arbol_aux2.convertirString(valor.toString());
                     return arbol_aux2;
                 case MAYOR_QUE:
-                    return ((Double) operadorIzq.Ejecutar(ts)) > ((Double) operadorDer.Ejecutar(ts));
+                    return ((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString())) > ((Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case MENOR_QUE:
-                    return ((Double) operadorIzq.Ejecutar(ts)) < ((Double) operadorDer.Ejecutar(ts));
+                    return ((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString())) < ((Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case MAYOR_IGUAL:
-                    return ((Double) operadorIzq.Ejecutar(ts)) >= ((Double) operadorDer.Ejecutar(ts));
+                    return ((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString())) >= ((Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case MENOR_IGUAL:
-                    return ((Double) operadorIzq.Ejecutar(ts)) <= ((Double) operadorDer.Ejecutar(ts));
+                    return ((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString())) <= ((Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case IGUAL_IGUAL:
-                    return Objects.equals((Double) operadorIzq.Ejecutar(ts), (Double) operadorDer.Ejecutar(ts));
+                    return Objects.equals((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()), (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case DIFERENTE:
-                    return !Objects.equals((Double) operadorIzq.Ejecutar(ts), (Double) operadorDer.Ejecutar(ts));
+                    return !Objects.equals((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()), (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case CONCATENACION:
                     return operadorIzq.Ejecutar(ts).toString() + operadorDer.Ejecutar(ts).toString();
                 case CARACTER:
@@ -171,9 +170,9 @@ public class Operacion implements Instruccion {
                 case BOOL:
                     return Boolean.valueOf(valor.toString());
                 case MODULAR:
-                    return (Double) operadorIzq.Ejecutar(ts) % (Double) operadorDer.Ejecutar(ts);
+                    return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) % (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case POTENCIA:
-                    return Math.pow((Double) operadorIzq.Ejecutar(ts), (Double) operadorDer.Ejecutar(ts));
+                    return Math.pow((Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()), (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString()));
                 case NOT:
                     return !((boolean) operadorIzq.Ejecutar(ts));
                 case OR:
@@ -195,8 +194,8 @@ public class Operacion implements Instruccion {
                         } else if (simbolo.getTipo().getAsignado().equals("arreglo")) {
                             return ts.getValor(id_funcion);
                         } else {
-                            aux2 = Double.parseDouble(ts.getValor(id_funcion).toString());
-                            return aux2;
+                            return ts.getValor(id_funcion).toString();
+
                         }
                     }
                 case PESODE:
@@ -207,7 +206,7 @@ public class Operacion implements Instruccion {
                             return ((TablaDeSimbolos) simbolo_aux.getValor()).size();
                         } else if (simbolo_aux.getTipo_instruccion() == Tipo.ARREGLO) {
                             Arbol arbol_aux = (Arbol) simbolo_aux.getValor();
-                            return arbol_aux.getSize();
+                            return (int) Double.parseDouble(arbol_aux.getSize() + "");
 
                         } else {
                             Principal.add_error("No es un tipo struct. ", "Semantico", line, column);

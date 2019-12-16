@@ -15,13 +15,13 @@ import java.util.LinkedList;
 public class Tipo_IF {
 
     Operacion expresion;
-    LinkedList<Tipo_IF> else_if = new LinkedList<>();
-    LinkedList<Instruccion> instrucciones_if, instrucciones_else;
-
-    public Tipo_IF(Operacion expresion, LinkedList<Instruccion> instrucciones_if, LinkedList<Instruccion> instrucciones_else) {
+    LinkedList<Sentencia_IF> else_if;
+    LinkedList<Instruccion> sentencias_if ;
+    
+    public Tipo_IF(Operacion expresion, LinkedList<Instruccion> instrucciones_if, LinkedList<Sentencia_IF> instrucciones_else_if) {
         this.expresion = expresion;
-        this.instrucciones_if = instrucciones_if;
-        this.instrucciones_else = instrucciones_else;
+        this.sentencias_if = instrucciones_if;
+        this.else_if = instrucciones_else_if;
     }
 
     public Operacion getExpresion() {
@@ -32,28 +32,24 @@ public class Tipo_IF {
         this.expresion = expresion;
     }
 
-    public LinkedList<Tipo_IF> getElse_if() {
+    public LinkedList<Sentencia_IF> getElse_if() {
         return else_if;
     }
 
-    public void setElse_if(LinkedList<Tipo_IF> else_if) {
+    public void setElse_if(LinkedList<Sentencia_IF> else_if) {
         this.else_if = else_if;
     }
 
-    public LinkedList<Instruccion> getInstrucciones_if() {
-        return instrucciones_if;
+    public LinkedList<Instruccion> getSentencias_if() {
+        return sentencias_if;
     }
 
-    public void setInstrucciones_if(LinkedList<Instruccion> instrucciones_if) {
-        this.instrucciones_if = instrucciones_if;
+    public void setSentencias_if(LinkedList<Instruccion> sentencias_if) {
+        this.sentencias_if = sentencias_if;
     }
+    
+    
+    
 
-    public LinkedList<Instruccion> getInstrucciones_else() {
-        return instrucciones_else;
-    }
-
-    public void setInstrucciones_else(LinkedList<Instruccion> instrucciones_else) {
-        this.instrucciones_else = instrucciones_else;
-    }
 
 }

@@ -6,6 +6,7 @@
 package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
+import Tabla_Simbolos.Tipo_Retorno;
 
 /**
  *
@@ -34,7 +35,8 @@ public class Return implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        return contenido.Ejecutar(ts);
+        return new Tipo_Retorno(Tipo.ETIQUETA_RETURN, contenido.Ejecutar(ts));
+
     }
 
     @Override
