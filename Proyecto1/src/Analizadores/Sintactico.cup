@@ -44,8 +44,8 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Twhile, Tfor, Trepeat, Tswitch, Tcase, Tdefault, Tromper, Tsiga, Tdefinir, Tfusion, Timportar, Tregresar,
                 Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Telseif, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
-                Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
-                Tcarpeta, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
+                Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui,
+                Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
 
 // Producciones				
 non terminal String S;
@@ -239,8 +239,8 @@ CONCAT::= Tconc Tpar_a Tid:a Tcoma Tid:b Tpar_c Tpycoma
         {: RESULT = new Conc(a,b,aleft,aright); :}
         ;
 
-INCREMENTO::= Tid:a Tmas Tmas Tpycoma {: RESULT = new Operador(a, Tipo.INCREMENTO,aleft,aright);:};
-DECREMENTO::= Tid:a Tmenos Tmenos Tpycoma {: RESULT = new Operador(a, Tipo.DECREMENTO,aleft,aright);:};
+INCREMENTO::= Tid:a Tincremento Tpycoma {: RESULT = new Operador(a, Tipo.INCREMENTO,aleft,aright);:};
+DECREMENTO::= Tid:a Tdecremento Tpycoma {: RESULT = new Operador(a, Tipo.DECREMENTO,aleft,aright);:};
 
 
 SENTENCIA_IF::= Tif Tpar_a OPERACION_LOGICA:a  Tpar_c Tllave_a CONTENIDO:b Tllave_c ELSE_IF:c {:RESULT= new Tipo_IF(a,b,c); :} ;
@@ -265,8 +265,8 @@ FOR::= Tfor Tpar_a DECLARACION:a OPERACION_RELACIONAL:b Tpycoma TIPO_OPERADOR:c 
     {:RESULT = new For(a,b,c,d,aleft,aright);:}
     ;
 TIPO_OPERADOR::= Tid:a Tigual OPERACION_LOGICA:b{: RESULT = new Asignacion(a,b,aleft,aright); :}
-            | Tid:a Tmas Tmas {:RESULT = new Operacion(a,TipoOperacion.MASMAS,aleft,aright);:}
-            | Tid:a Tmenos Tmenos {:RESULT = new Operacion(a,TipoOperacion.MENOSMENOS,aleft,aright);:}
+            | Tid:a Tincremento {:RESULT = new Operacion(a,TipoOperacion.MASMAS,aleft,aright);:}
+            | Tid:a Tdecremento {:RESULT = new Operacion(a,TipoOperacion.MENOSMENOS,aleft,aright);:}
             ;
             
 SWITCH::= Tswitch Tpar_a OPERACION_LOGICA:a Tpar_c Tllave_a CASOS:b Tllave_c 

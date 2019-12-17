@@ -7,6 +7,9 @@ package proyecto1;
 
 import Libreria.NumeroLinea;
 import Analizadores.*;
+import Configuracion.Lexico_Configuracion;
+import Configuracion.Proyecto;
+import Configuracion.Sintactico_Configuracion;
 import Instrucciones.*;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
@@ -14,6 +17,13 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,10 +33,9 @@ public class Principal extends javax.swing.JFrame {
 
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
-    NumeroLinea numerolinea ;
+    NumeroLinea numerolinea;
     public static boolean escribiendo = false;
-    
-    
+    public static String ruta_estatica = "";
 
     /**
      * Creates new form Principal
@@ -35,7 +44,7 @@ public class Principal extends javax.swing.JFrame {
         initComponents();
         numerolinea = new NumeroLinea(jTextArea2);
         jScrollPane4.setRowHeaderView(numerolinea);
-        
+
     }
 
     /**
@@ -89,6 +98,11 @@ public class Principal extends javax.swing.JFrame {
         jButton2.setText("Nuevo Proyecto");
 
         jButton3.setText("Abrir Proyecto");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Guardar Proyecto");
 
@@ -328,6 +342,45 @@ public class Principal extends javax.swing.JFrame {
         });
 
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+
+        // muestra el cuadro de diálogo de archivos, para que el usuario pueda elegir el archivo a abrir
+//        JFileChooser selectorArchivos = new JFileChooser();
+//        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+//
+//        int resultado = selectorArchivos.showOpenDialog(this);
+//
+//        File archivo = selectorArchivos.getSelectedFile();
+//
+//        if ((archivo == null) || (archivo.getName().equals(""))) {
+//            JOptionPane.showMessageDialog(this, "Nombre de archivo inválido", "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+//        }
+        Scanner scn;
+        String input = jTextArea2.getText();
+        String texto = "";
+        System.out.println(input);
+//        try {
+//            scn = new Scanner(archivo);
+//            while (scn.hasNext()) {
+//                texto += scn.nextLine();
+//            }
+
+        try {
+            Sintactico_Configuracion parser = new Sintactico_Configuracion(new Lexico_Configuracion(new BufferedReader(new StringReader(input))));
+            parser.parse();
+            Proyecto pr = parser.arbol_configuracion;
+            System.out.println(pr);
+        } catch (Exception ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

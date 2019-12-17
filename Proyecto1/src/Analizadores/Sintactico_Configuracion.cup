@@ -1,0 +1,103 @@
+package Configuracion;
+import java_cup.runtime.*; 
+import java.util.ArrayList;
+
+
+parser code
+{:
+	public static ArrayList<String> ErroresSintacticos = new ArrayList<>();
+    public Proyecto arbol_configuracion;
+    public String salida = "" ; 
+       
+    public void syntax_error(Symbol s)
+    {
+        System.err.println("El analizador se recupero tras el error\nError en la Línea " + (s.left+1) +" Columna "+(s.right+1)+ ". Identificador "
+        +s.value + " no reconocido." );  
+        ErroresSintacticos.add("El analizador se recupero tras el error\nError en la Línea " + (s.left+1) +" Columna "+(s.right+1)+ ". Identificador "
+        +s.value + " no reconocido." );
+    }
+
+   ////////////////////////////
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.left+1)+ " Columna "+(s.right+1)+". Identificador " +
+        s.value + " no reconocido.");            
+    }
+    
+    public void setSalida(String cadena)
+    {
+        salida = cadena;
+    }
+
+:}
+
+ terminal Tllave_a, Tllave_c, Tcoma, Tdospuntos, Tproyecto, Tarchivo, Tcarpeta, Truta, Tcorrer, Tconfiguracion, Tfechamod,Tcadena,
+            Tnombre;
+
+    non terminal Proyecto PROYECTO;
+    non terminal Contenido RUTA, NOMBRE, CORRER, CONFIGURACION, CONTENIDO;
+    non terminal ArrayList<Contenido> R1,R2,R4,R6;
+    non terminal Contenido R3,R5,R7,CARPETA, ARCHIVO;
+
+    non terminal String  S;
+
+    start with S;
+
+    S::=  PROYECTO:a  {: arbol_configuracion=a; :};
+
+    PROYECTO::= Tllave_a Tproyecto Tdospuntos Tllave_a R1:a Tllave_c Tllave_c {: RESULT = new Proyecto(a); :};
+
+    R1::= R1:a Tcoma CONTENIDO:b {: a.add(b); RESULT = a; :}
+        | CONTENIDO:a{:ArrayList<Contenido> lst = new ArrayList<>(); lst.add(a);RESULT = lst; :} 
+        ;
+
+    CONTENIDO::= RUTA:a {: RESULT = a; :}
+            |   NOMBRE:a {: RESULT = a; :}
+            |   CORRER:a {: RESULT = a; :}
+            |   CONFIGURACION:a {: RESULT = a; :}
+            ;
+
+    RUTA::= Truta Tdospuntos Tcadena:a
+            {: RESULT= new Contenido(Etiqueta.RUTA,a); :}
+            ;
+    NOMBRE::= Tnombre Tdospuntos Tcadena:a
+            {: RESULT= new Contenido(Etiqueta.NOMBRE,a); :}
+            ;
+    CORRER::= Tcorrer Tdospuntos Tcadena:a
+            {: RESULT= new Contenido(Etiqueta.CORRER,a); :}
+            ;
+
+    CONFIGURACION::=Tconfiguracion Tdospuntos Tllave_a R2:a Tllave_c
+                {: RESULT= new Contenido(Etiqueta.CONFIGURACION,a); :}
+                ;
+
+    R2::= R2:a Tcoma R3:b {: a.add(b); RESULT = a; :}
+        | R3:a {:ArrayList<Contenido> lst = new ArrayList<>(); lst.add(a);RESULT = lst; :} 
+        ;
+    
+    R3::= CARPETA:a {: RESULT = a; :}
+        | ARCHIVO:a {: RESULT = a; :}
+        ;
+
+    CARPETA::= Tcarpeta Tdospuntos Tllave_a R4:a Tllave_c
+            {: RESULT= new Contenido(Etiqueta.CARPETA,a); :}
+            ;
+    ARCHIVO::= Tarchivo Tdospuntos Tllave_a R6:a Tllave_c
+            {: RESULT= new Contenido(Etiqueta.ARCHIVO,a); :}
+            ;
+
+    R4::= R4:a Tcoma R5:b {: a.add(b); RESULT = a; :}
+        | R5:a {:ArrayList<Contenido> lst = new ArrayList<>(); lst.add(a);RESULT = lst; :} ;
+
+    R6::= R6:a Tcoma R7:b {: a.add(b); RESULT = a; :}
+        | R7:a {:ArrayList<Contenido> lst = new ArrayList<>(); lst.add(a);RESULT = lst; :} ;
+    
+    R5::= NOMBRE:a {: RESULT = a; :}
+        | R3:a {: RESULT = a; :}
+        ;
+
+    R7::= NOMBRE:a {: RESULT = a; :}
+        | Tfechamod Tdospuntos Tcadena:a {: RESULT = new Contenido(Etiqueta.FECHA_MOD, a); :}
+        ;
+
+
+ 

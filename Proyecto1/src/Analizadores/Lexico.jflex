@@ -118,13 +118,6 @@ Tgetancho = "getancho"
 Tgetalto = "getalto"
 Tgetpos = "getpos"
 Tnuevogui = "_Nuevo_GUI"
-Tproyecto = "proyecto"
-Tarchivo = "archivo"
-Tcarpeta = "carpeta"
-Truta = "ruta"
-Tcorrer = "correr"
-Tconfiguracion = "configuracion"
-Tfechamod = "fecha_mod"
 
 //expresiones
    
@@ -203,15 +196,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tgetancho}      { return new Symbol(sym.Tgetancho, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tgetalto}      { return new Symbol(sym.Tgetalto, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tgetpos}      { return new Symbol(sym.Tgetpos, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tproyecto}      { return new Symbol(sym.Tproyecto, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tarchivo}      { return new Symbol(sym.Tarchivo, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tcarpeta}      { return new Symbol(sym.Tcarpeta, yyline, yycolumn,yytext());}
-<YYINITIAL> {Truta}      { return new Symbol(sym.Truta, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tcorrer}      { return new Symbol(sym.Tcorrer, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tconfiguracion}      { return new Symbol(sym.Tconfiguracion, yyline, yycolumn,yytext());}
-<YYINITIAL> {Tfechamod}      { return new Symbol(sym.Tfechamod, yyline, yycolumn,yytext());}
 <YYINITIAL> {Trstring}      { return new Symbol(sym.Trstring, yyline, yycolumn,yytext());}
-
 
 
 
@@ -243,6 +228,9 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tpotencia}    {return new Symbol(sym.Tpotencia, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tdospuntos}    {return new Symbol(sym.Tdospuntos, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tpunto}    {return new Symbol(sym.Tpunto, yyline, yycolumn,yytext());}
+<YYINITIAL> {Tincremento}    {return new Symbol(sym.Tincremento, yyline, yycolumn,yytext());}
+<YYINITIAL> {Tdecremento}    {return new Symbol(sym.Tdecremento, yyline, yycolumn,yytext());}
+
 
 
 <YYINITIAL> {Tentero}    { return new Symbol(sym.Tentero, yyline, yycolumn,yytext());}

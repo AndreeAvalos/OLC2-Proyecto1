@@ -21,8 +21,11 @@ public class GenerarLexico {
     public static void main(String[] args) {
         // TODO code application logic here
         String ruta = "src/Analizadores/";
+        String ruta2 = "src/Configuracion/";
         String opcFlex[] = {ruta + "Lexico.jflex", "-d", ruta};
         generar(opcFlex);
+        String opcFlex2[] = {ruta + "Lexico_Configuracion.jflex", "-d", ruta2};
+        generar(opcFlex2);
     }
 
     private static void generar(String[] ruta) {
