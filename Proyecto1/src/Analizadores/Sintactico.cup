@@ -45,7 +45,7 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Telseif, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui, Tproyecto, Tarchivo, Truta,
-                Tcarpeta, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring,CONCAT; 
+                Tcarpeta, Tcorrer, Tconfiguracion, Tfechamod, Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
 
 // Producciones				
 non terminal String S;
@@ -53,7 +53,7 @@ non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLA
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
                           DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH, DO_WHILE,FOR, INCREMENTO,DECREMENTO,
-                          TIPO_OPERADOR;
+                          TIPO_OPERADOR, CONCAT;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -139,6 +139,9 @@ LISTA_ACCESOS_FUSION::= LISTA_ACCESOS_FUSION:a Tpunto Tid:b {: a.add(b); RESULT 
 
 DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft, bright); :}
             | TIPODATO: a Tid:b Tigual OPERACION_NUMERICA:c Tpycoma {: RESULT = new Declaracion(a,a,b, new Asignacion(b,c,bleft,bright) , bleft, bright); :}
+            | Trstring Tid:a Tigual Tcadena:b Tpycoma 
+            {: RESULT = new Declaracion(Tipo.String,Tipo.String,a,new Asignacion(a,new Operacion(b,TipoOperacion.RSTRING,bleft,bright),aleft,aleft), aleft,  aright); :}
+            | Trstring Tid:a Tpycoma {: RESULT = new Declaracion(Tipo.String,Tipo.String,a, aleft, aright); :}
             ;
 
         
@@ -146,7 +149,6 @@ TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 		|	Tdec:a{: RESULT = Tipo.Decimal; :}
 		|	Tchr:a{: RESULT = Tipo.Char; :}
 		|	Tbul:a{: RESULT = Tipo.Bool; :}
-        |   Trstring:a{: RESULT = Tipo.String; :}
 		;
 
 REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(origen,destino,origenleft,origenright);  :}
@@ -230,10 +232,12 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | DO_WHILE:a {:RESULT = a; :}
         | INCREMENTO:a{:RESULT = a; :}
         | DECREMENTO:a{:RESULT = a; :}
-        | FOR: a{:RESULT = a; :}
-        | CONCAT
+        | FOR:a {:RESULT = a; :}
+        | CONCAT:a {:RESULT = a; :}
         ;
-CONCAT::= Tconc Tpar_a Tid:a Tcoma Tid:b Tpar_c Tpycoma;
+CONCAT::= Tconc Tpar_a Tid:a Tcoma Tid:b Tpar_c Tpycoma
+        {: RESULT = new Conc(a,b,aleft,aright); :}
+        ;
 
 INCREMENTO::= Tid:a Tmas Tmas Tpycoma {: RESULT = new Operador(a, Tipo.INCREMENTO,aleft,aright);:};
 DECREMENTO::= Tid:a Tmenos Tmenos Tpycoma {: RESULT = new Operador(a, Tipo.DECREMENTO,aleft,aright);:};
@@ -346,10 +350,10 @@ OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,Tip
         | ACCESO_ARREGLO:a {: RESULT = a; :}
         | ACCESO_STRUCT:a {:RESULT = a; :}
         | VALOR:a {: RESULT = a;:}
-        | Tatxt Tpar_a Tid:a Tpar_c
-        | Teqls Tpar_a Tid:a Tcoma Tid:b Tpar_c
-        | Taent Tpar_a Tid:a Tpar_c
-        | Tadec Tpar_a Tid:a Tpar_c
+        | Tatxt Tpar_a Tid:a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.ATXT, aleft,aright); :}
+        | Teqls Tpar_a Tid:a Tcoma Tid:b Tpar_c{:RESULT = new Operacion(a,b, aleft,aright); :}
+        | Taent Tpar_a Tid:a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.AENT, aleft,aright); :}
+        | Tadec Tpar_a Tid:a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.ADEC, aleft,aright); :}
         ;
 
 
@@ -361,7 +365,7 @@ VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, a
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}
         |Tfalse:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
-        | Tnlo:a {: RESULT = new Operacion(TipoOperacion.NULO,aleft,aright); :}
+        |Tnlo:a {: RESULT = new Operacion(TipoOperacion.NULO,aleft,aright); :}
         ;
 		
 

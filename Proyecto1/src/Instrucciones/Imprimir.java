@@ -105,6 +105,15 @@ public class Imprimir implements Instruccion {
                                 return null;
                             }
                             break;
+                        case 'b':
+                            try {
+                                val = (boolean) Boolean.parseBoolean(valores.get(i - 1).toString());
+                                salida += val.toString();
+                            } catch (NumberFormatException ex) {
+                                Principal.add_error("Tipo " + valores.get(i - 1) + " con bul", "Semantico", line, column);
+                                return null;
+                            }
+                            break;
                         default:
                             Principal.add_error("No existe el parametro " + letra, "Semantico", line, column);
                             return null;

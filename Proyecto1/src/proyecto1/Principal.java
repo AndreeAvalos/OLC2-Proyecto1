@@ -24,6 +24,9 @@ public class Principal extends javax.swing.JFrame {
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
     NumeroLinea numerolinea ;
+    public static boolean escribiendo = false;
+    
+    
 
     /**
      * Creates new form Principal

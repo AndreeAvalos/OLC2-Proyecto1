@@ -66,6 +66,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                     case Bool:
                                         item.setValor(Boolean.valueOf(valor.toString()));
                                         return;
+                                    case String:
+                                        item.setValor(valor.toString());
+                                        return;
                                     default:
                                         //deberia tirar error ya que no existe el ID
                                         break;
@@ -98,7 +101,6 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                         return;
                                     case Struct:
                                         Object val_aux = new Object();
-
                                         item.setValor(valor);
                                         break;
                                     default:
@@ -264,6 +266,8 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 return true;
                             case Struct:
                                 TablaDeSimbolos obtenida = (TablaDeSimbolos) valor;
+                                return true;
+                            case String:
                                 return true;
                             default:
                                 return false;

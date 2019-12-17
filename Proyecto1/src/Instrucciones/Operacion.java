@@ -38,6 +38,7 @@ public class Operacion implements Instruccion {
         DIFERENTE,
         CONCATENACION,
         CARACTER,
+        RSTRING,
         BOOL,
         NOT,
         AND,
@@ -48,7 +49,11 @@ public class Operacion implements Instruccion {
         ACCESO_STRUCT,
         NULO,
         MASMAS,
-        MENOSMENOS
+        MENOSMENOS,
+        EQUALS,
+        ATXT,
+        AENT,
+        ADEC,
     }
 
     String id_objeto;
@@ -58,7 +63,16 @@ public class Operacion implements Instruccion {
     Operacion operadorIzq;
     TipoOperacion tipo;
     Object valor;
+    Object valor_2;
     int line, column;
+
+    public Operacion(Object valor, Object valor_2, int line, int column) {
+        this.valor = valor;
+        this.valor_2 = valor_2;
+        this.line = line;
+        this.column = column;
+        this.tipo = TipoOperacion.EQUALS;
+    }
 
     public Operacion(Operacion operadorIzq, Operacion operadorDer, TipoOperacion tipo, int line, int column) {
         this.operadorDer = operadorDer;
@@ -110,7 +124,6 @@ public class Operacion implements Instruccion {
         this.line = line;
         this.column = column;
     }
-
 
     @Override
     public int getLine() {
@@ -297,7 +310,77 @@ public class Operacion implements Instruccion {
                         return null;
                     }
                     break;
-
+                case RSTRING:
+                    return valor.toString();
+                case ATXT:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        sim = ts.getSimbolo(valor.toString());
+                        Arbol arbol = new Arbol();
+                        if (sim.getTipo_instruccion() == Tipo.VARIABLE) {
+                            if (sim.getTipo().getTipo() == Tipo.Entero) {
+                                arbol.convertirString(sim.getValor().toString());
+                            } else if (sim.getTipo().getTipo() == Tipo.Decimal) {
+                                arbol.convertirString(sim.getValor().toString());
+                            } else if (sim.getTipo().getTipo() == Tipo.String) {
+                                arbol.convertirString(sim.getValor().toString());
+                            } else {
+                                Principal.add_error("No se puede pasar a texto", "Semantico", line, column);
+                                return null;
+                            }
+                            return arbol;
+                        } else {
+                        }
+                    }
+                case EQUALS:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        if (ts.existeSimbolo(valor_2.toString())) {
+                            sim = ts.getSimbolo(valor.toString());
+                            simbolo = ts.getSimbolo(valor_2.toString());
+                            if (sim.getTipo().getAsignado().equals("arreglo") && simbolo.getTipo().getAsignado().equals("arreglo")) {
+                                Arbol arbol = (Arbol) sim.getValor();
+                                Arbol arbol2 = (Arbol) simbolo.getValor();
+                                arbol.print();
+                                arbol2.print();
+                                return arbol.getSalida().equals(arbol2.getSalida());
+                            }
+                            Principal.add_error("Los valores no son una cadena", "Semantico", line, column);
+                            return null;
+                        }
+                    }
+                    Principal.add_error("No existe variable", "Semantico", line, column);
+                    return null;
+                case AENT:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        sim = ts.getSimbolo(valor.toString());
+                        if (sim.getTipo().getTipo() == Tipo.Char) {
+                            if (sim.getTipo().getAsignado().equals("arreglo")) {
+                                Arbol arbol = (Arbol) sim.getValor();
+                                arbol.print();
+                                return (int) Integer.parseInt(arbol.getSalida());
+                            }
+                            Principal.add_error("No es una cadena de caracteres", "Semantico", line, column);
+                            return null;
+                        }
+                        Principal.add_error("No es una cadena", "Semantico", line, column);
+                    }
+                    Principal.add_error("No existe variable", "Semantico", line, column);
+                    return 0;
+                case ADEC:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        sim = ts.getSimbolo(valor.toString());
+                        if (sim.getTipo().getTipo() == Tipo.Char) {
+                            if (sim.getTipo().getAsignado().equals("arreglo")) {
+                                Arbol arbol = (Arbol) sim.getValor();
+                                arbol.print();
+                                return (double) Double.parseDouble(arbol.getSalida());
+                            }
+                            Principal.add_error("No es una cadena de caracteres", "Semantico", line, column);
+                            return null;
+                        }
+                        Principal.add_error("No es una cadena", "Semantico", line, column);
+                    }
+                    Principal.add_error("No existe variable", "Semantico", line, column);
+                    return 0.0;
                 default:
                     return null;
 
