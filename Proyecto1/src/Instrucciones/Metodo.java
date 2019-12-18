@@ -8,7 +8,9 @@ package Instrucciones;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
+import Tabla_Simbolos.Tipo_Retorno;
 import java.util.LinkedList;
+import proyecto1.Principal;
 
 /**
  *
@@ -74,7 +76,18 @@ public class Metodo implements Instruccion {
                     System.out.println("No puede retornar un valor a un metodo.");
                     return null;
                 } else {
-                    item.Ejecutar(local);
+                    Object result = item.Ejecutar(local);
+                    if (result != null) {
+                        try {
+                            Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                            if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+                                //error porque no se puede hacer el casteo explicito
+                                Principal.add_error("El valor" + etiqueta.getResultado() + " no puede ser retornado en un metodo", "Semantico", line, column);
+
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
                 }
             }
         }
