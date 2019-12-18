@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -37,6 +38,8 @@ public class Principal extends javax.swing.JFrame {
     public static boolean escribiendo = false;
     public static String ruta_estatica = "C:/Users/Andree/Desktop";
     public static String ruta_main = "C:/Users/Andree/Desktop";
+    public static BufferedWriter buffer;
+    public static boolean write = true;
 
     /**
      * Creates new form Principal

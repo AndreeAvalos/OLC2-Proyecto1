@@ -53,7 +53,7 @@ non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLA
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
                           DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH, DO_WHILE,FOR, INCREMENTO,DECREMENTO,
-                          TIPO_OPERADOR, CONCAT, IMPORTAR;
+                          TIPO_OPERADOR, CONCAT, IMPORTAR, WRITE, APEND, WF, CLOSE, READ;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -236,7 +236,22 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | DECREMENTO:a{:RESULT = a; :}
         | FOR:a {:RESULT = a; :}
         | CONCAT:a {:RESULT = a; :}
+        | WRITE:a {:RESULT = a; :}
+        | APEND:a {:RESULT = a; :}
+        | WF:a {:RESULT = a; :}
+        | CLOSE:a {:RESULT = a; :}
+        | READ:a {:RESULT = a; :}
         ;
+
+WRITE::= Twrite Tpar_a Tcadena:a Tpar_c Tpycoma {: RESULT = new Write(a,aleft,aright); :};
+APEND::= Tapend Tpar_a Tcadena:a Tpar_c Tpycoma {: RESULT = new Apend(a,aleft,aright); :};
+WF::= Twf  Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new WriteFile(new Operacion(a,TipoOperacion.CADENA,aleft,aright),aleft,aright ); :}
+        | Twf  Tpar_a Tcadena:a Tcoma VALORES_PARAMETROS:b Tpar_c Tpycoma
+        {: RESULT = new WriteFile(new Operacion(a,TipoOperacion.CADENA,aleft,aright),b,aleft,aright ); :}
+        ;
+CLOSE::= Tclose:a Tpar_a Tpar_c Tpycoma {: RESULT = new Close(aleft,aright); :};
+READ::= Tread Tpar_a Tcadena:a Tpar_c Tpycoma;
+
 CONCAT::= Tconc Tpar_a Tid:a Tcoma Tid:b Tpar_c Tpycoma
         {: RESULT = new Conc(a,b,aleft,aright); :}
         ;
@@ -361,8 +376,8 @@ OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,Tip
 
 
 VALOR::= Tid:a {: RESULT = new Operacion(a,TipoOperacion.IDENTIFICADOR, aleft, aright); :}
-        |Tentero:a {: RESULT = new Operacion(a, aright, aleft); :}
-        |Tdecimal:a {: RESULT = new Operacion(a, aright, aleft); :}
+        |Tentero:a {: RESULT = new Operacion(a, TipoOperacion.ENTERO, aright, aleft); :}
+        |Tdecimal:a {: RESULT = new Operacion(a,TipoOperacion.DECIMAL, aright, aleft); :}
         |Tcaracter:a {: RESULT = new Operacion(a,TipoOperacion.CARACTER, aleft, aright); :}
         |Ttrue:a {: RESULT = new Operacion(a,TipoOperacion.BOOL, aleft, aright); :}
         |Tcadena:a {: RESULT = new Operacion(a,TipoOperacion.CADENA,aleft,aright);:}

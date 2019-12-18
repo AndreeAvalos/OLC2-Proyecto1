@@ -54,6 +54,8 @@ public class Operacion implements Instruccion {
         ATXT,
         AENT,
         ADEC,
+        ENTERO,
+        DECIMAL
     }
 
     String id_objeto;
@@ -152,8 +154,10 @@ public class Operacion implements Instruccion {
                     return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) + (Double) Double.parseDouble(operadorDer.Ejecutar(ts).toString());
                 case NEGATIVO:
                     return (Double) Double.parseDouble(operadorIzq.Ejecutar(ts).toString()) * -1;
-                case NUMERO:
+                case DECIMAL:
                     return Double.parseDouble(valor.toString());
+                case ENTERO:
+                    return (int) Double.parseDouble(valor.toString());
                 case IDENTIFICADOR:
                     Object val = ts.getValor(valor.toString());
                     Simbolo sim = ts.getSimbolo(valor.toString());

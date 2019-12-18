@@ -51,7 +51,7 @@ public class Importar implements Instruccion {
         String rutas[] = ruta_relativa.split("/");
         String ruta_actual = Principal.ruta_main;
         String ruta_principal = ruta_actual;
-        System.out.println(Principal.ruta_main + ruta_relativa);
+        //System.out.println(Principal.ruta_main + ruta_relativa);
         for (int i = 0; i < rutas.length - 1; i++) {
             ruta_actual += rutas[i];
         }
