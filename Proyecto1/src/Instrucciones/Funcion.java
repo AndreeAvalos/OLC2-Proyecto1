@@ -126,8 +126,8 @@ public class Funcion implements Instruccion {
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
-                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(local))) {
-                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(local));
+                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(ts))) {
+                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(ts));
                     } else {
                         Principal.add_error("No coincide el parametro con el tipo enviado", "Semantico", line, column);
                     }
@@ -137,9 +137,9 @@ public class Funcion implements Instruccion {
                 return null;
             }
             if (tipo_funcion == TipoFuncion.NORMAL) {
-                EjecutarNormal(ts);
+                return EjecutarNormal(ts);
             } else if (tipo_funcion == TipoFuncion.STRUCT) {
-                EjecutarStruct(ts);
+                return EjecutarStruct(ts);
             } else if (tipo_funcion == TipoFuncion.ARREGLO) {
                 EjecutarArreglo(ts);
             }
@@ -148,7 +148,7 @@ public class Funcion implements Instruccion {
         return null;
     }
 
-    private void EjecutarNormal(TablaDeSimbolos ts) {
+    private Object EjecutarNormal(TablaDeSimbolos ts) {
 
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
@@ -161,7 +161,7 @@ public class Funcion implements Instruccion {
                     //error porque no se puede hacer el casteo explicito
                     Principal.add_error("El valor retornado no concuerda con el tipo", "Semantico", line, column);
                 }
-                return;
+                return null;
             } else {
 
                 Object result = item.Ejecutar(local);
@@ -172,6 +172,7 @@ public class Funcion implements Instruccion {
 
                             if (local.asignValor(id, etiqueta.getResultado())) {
                                 local.setValor(id, etiqueta.getResultado());
+                                return result;
                             } else {
                                 //error porque no se puede hacer el casteo explicito
                                 Principal.add_error("El valor" + etiqueta.getResultado() + " no concuerda con el tipo", "Semantico", line, column);
@@ -183,9 +184,10 @@ public class Funcion implements Instruccion {
             }
         }
         Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);
+        return null;
     }
 
-    private void EjecutarStruct(TablaDeSimbolos ts) {
+    private Object EjecutarStruct(TablaDeSimbolos ts) {
 
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
@@ -207,23 +209,42 @@ public class Funcion implements Instruccion {
                         }
                         if (!encontrada) {
                             Principal.add_error("No es posible hacer el casteo al tipo: " + tipo_struct, "Semantico", line, column);
-                            return;
+                            return null;
                         }
                     }
                     local.setValor(id, resultado);
+
                 } else {
                     //error porque no se puede hacer el casteo explicito
                     Principal.add_error("El valor retornado no concuerda con el tipo", "Semantico", line, column);
                 }
-                return;
+                return null;
             } else {
                 item.Ejecutar(local);
+                Object result = item.Ejecutar(local);
+                if (result != null) {
+                    try {
+                        Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                        if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+
+                            if (local.asignValor(id, etiqueta.getResultado())) {
+                                local.setValor(id, etiqueta.getResultado());
+                                return result;
+                            } else {
+                                //error porque no se puede hacer el casteo explicito
+                                Principal.add_error("El valor" + etiqueta.getResultado() + " no concuerda con el tipo", "Semantico", line, column);
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
         }
         Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);
+        return null;
     }
 
-    private void EjecutarArreglo(TablaDeSimbolos ts) {
+    private Object EjecutarArreglo(TablaDeSimbolos ts) {
         for (Instruccion item : contenido) {
             if (item.getType() == Tipo.RETURN) {
                 //Obtenemos el valor que da de retorno
@@ -232,19 +253,36 @@ public class Funcion implements Instruccion {
                     Arbol arreglo_resultado = (Arbol) result.getResultado();
                     if (arreglo.getNiveles() == arreglo_resultado.mapa.size()) {
                         ts.setValor(id, arreglo_resultado);
-                        return;
+                        return null;
                     } else {
                         Principal.add_error("No coinciden las dimensiones", "Semantico", line, column);
                     }
                 } catch (Exception e) {
                     Principal.add_error("El valor retornado no concuerda con el arreglo ", "Semantico", line, column);
                 }
-                return;
+                return null;
             } else {
-                item.Ejecutar(local);
+                Object result = item.Ejecutar(local);
+                if (result != null) {
+                    try {
+                        Tipo_Retorno etiqueta = (Tipo_Retorno) result;
+                        if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
+
+                            if (local.asignValor(id, etiqueta.getResultado())) {
+                                local.setValor(id, etiqueta.getResultado());
+                                return result;
+                            } else {
+                                //error porque no se puede hacer el casteo explicito
+                                Principal.add_error("El valor" + etiqueta.getResultado() + " no concuerda con el tipo", "Semantico", line, column);
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
             }
         }
         Principal.add_error("No se encontro la instruccion de retorno ", "Semantico", line, column);
+        return null;
     }
 
     @Override

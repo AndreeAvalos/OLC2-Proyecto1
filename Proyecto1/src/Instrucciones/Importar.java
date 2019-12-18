@@ -5,40 +5,74 @@
  */
 package Instrucciones;
 
+import Analizadores.Lexico;
+import Analizadores.Sintactico;
 import Tabla_Simbolos.TablaDeSimbolos;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.StringReader;
+import java.util.LinkedList;
+import java.util.Scanner;
+import proyecto1.Principal;
 
 /**
  *
  * @author Andree
  */
 public class Importar implements Instruccion {
-    
+
     String ruta_relativa;
-    
+
+    int line, column;
+
+    public Importar(String ruta_relativa, int line, int column) {
+        this.ruta_relativa = ruta_relativa;
+        this.line = line;
+        this.column = column;
+    }
 
     @Override
     public int getLine() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.line;
     }
 
     @Override
     public int getColumn() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.column;
     }
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(Principal.ruta_main + ruta_relativa);
+        try {
+            Scanner input = new Scanner(new File(Principal.ruta_main + ruta_relativa));
+            String clase = "";
+            while (input.hasNextLine()) {
+                clase += input.nextLine();
+            }
+
+            Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(clase))));
+            parser.parse();
+            LinkedList<Instruccion> AST = parser.AST;
+            AST.forEach((item) -> {
+                item.Recolectar(ts);
+            });
+            input.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
     }
 
     @Override
     public Tipo getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Tipo.IMPORTAR;
     }
-    
+
 }

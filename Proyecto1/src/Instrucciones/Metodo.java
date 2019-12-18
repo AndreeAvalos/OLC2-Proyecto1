@@ -56,8 +56,8 @@ public class Metodo implements Instruccion {
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
-                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(local))) {
-                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(local));
+                    if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(ts))) {
+                        local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(ts));
                     } else {
                         System.out.println("No coincide el parametro con el tipo enviado");
                         return null;

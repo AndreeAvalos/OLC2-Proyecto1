@@ -53,7 +53,7 @@ non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLA
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
                           RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
                           DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH, DO_WHILE,FOR, INCREMENTO,DECREMENTO,
-                          TIPO_OPERADOR, CONCAT;
+                          TIPO_OPERADOR, CONCAT, IMPORTAR;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -105,8 +105,10 @@ INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
             | ASIGNACION_FUSION:a {: RESULT = a; :}
             | DECLARACION_FUSION:a {: RESULT = a; :}
             | ASIGNACION_ARREGLO:a {:RESULT =a; :}
+            | IMPORTAR:a {:RESULT =a; :}
 			;
 
+IMPORTAR::= Timportar Tcadena:a {:RESULT = new Importar(a,aleft,aright); :};
 FUSION::= Tfusion Tid:a Tllave_a DECLARACIONES:b Tllave_c Tpycoma
             {: RESULT = new Struct(a,b,aleft,bleft); :}
             ;

@@ -35,7 +35,8 @@ public class Principal extends javax.swing.JFrame {
     public static ArrayList<String> salida = new ArrayList<>();
     NumeroLinea numerolinea;
     public static boolean escribiendo = false;
-    public static String ruta_estatica = "";
+    public static String ruta_estatica = "C:/Users/Andree/Desktop";
+    public static String ruta_main = "C:/Users/Andree/Desktop";
 
     /**
      * Creates new form Principal
@@ -64,14 +65,13 @@ public class Principal extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -142,8 +142,6 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(0, 11, Short.MAX_VALUE))
         );
 
-        jScrollPane1.setViewportView(jTree1);
-
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
         jScrollPane4.setViewportView(jTextArea2);
@@ -181,11 +179,13 @@ public class Principal extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jMenu1.setText("File");
@@ -347,34 +347,34 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         // muestra el cuadro de diálogo de archivos, para que el usuario pueda elegir el archivo a abrir
-//        JFileChooser selectorArchivos = new JFileChooser();
-//        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-//
-//        int resultado = selectorArchivos.showOpenDialog(this);
-//
-//        File archivo = selectorArchivos.getSelectedFile();
-//
-//        if ((archivo == null) || (archivo.getName().equals(""))) {
-//            JOptionPane.showMessageDialog(this, "Nombre de archivo inválido", "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
-//        }
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+        int resultado = selectorArchivos.showOpenDialog(this);
+
+        File archivo = selectorArchivos.getSelectedFile();
+
+        if ((archivo == null) || (archivo.getName().equals(""))) {
+            JOptionPane.showMessageDialog(this, "Nombre de archivo inválido", "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+        }
         Scanner scn;
-        String input = jTextArea2.getText();
+
         String texto = "";
-        System.out.println(input);
-//        try {
-//            scn = new Scanner(archivo);
-//            while (scn.hasNext()) {
-//                texto += scn.nextLine();
-//            }
 
         try {
-            Sintactico_Configuracion parser = new Sintactico_Configuracion(new Lexico_Configuracion(new BufferedReader(new StringReader(input))));
+            scn = new Scanner(archivo);
+            while (scn.hasNext()) {
+                texto += scn.nextLine();
+            }
+            Sintactico_Configuracion parser = new Sintactico_Configuracion(new Lexico_Configuracion(new BufferedReader(new StringReader(texto))));
             parser.parse();
             Proyecto pr = parser.arbol_configuracion;
-            System.out.println(pr);
+            pr.crearArbol();
+            jScrollPane1.setViewportView(pr.arbol);
         } catch (Exception ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.println(ruta_estatica);
 
 //        } catch (FileNotFoundException ex) {
 //            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
@@ -452,6 +452,5 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 }
