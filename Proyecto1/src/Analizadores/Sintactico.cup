@@ -250,7 +250,7 @@ WF::= Twf  Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new WriteFile(new Operacion
         {: RESULT = new WriteFile(new Operacion(a,TipoOperacion.CADENA,aleft,aright),b,aleft,aright ); :}
         ;
 CLOSE::= Tclose:a Tpar_a Tpar_c Tpycoma {: RESULT = new Close(aleft,aright); :};
-READ::= Tread Tpar_a Tcadena:a Tpar_c Tpycoma;
+READ::= Tread Tpar_a Tcadena:a Tcoma Tid:b Tpar_c Tpycoma CLOSE {: RESULT = new Read(a,b,aleft,aright); :};
 
 CONCAT::= Tconc Tpar_a Tid:a Tcoma Tid:b Tpar_c Tpycoma
         {: RESULT = new Conc(a,b,aleft,aright); :}
