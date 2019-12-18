@@ -48,9 +48,18 @@ public class Importar implements Instruccion {
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
+        String rutas[] = ruta_relativa.split("/");
+        String ruta_actual = Principal.ruta_main;
+        String ruta_principal = ruta_actual;
         System.out.println(Principal.ruta_main + ruta_relativa);
+        for (int i = 0; i < rutas.length - 1; i++) {
+            ruta_actual += rutas[i];
+        }
+        ruta_actual += rutas[rutas.length - 1];
+        Principal.ruta_main = ruta_actual;
+
         try {
-            Scanner input = new Scanner(new File(Principal.ruta_main + ruta_relativa));
+            Scanner input = new Scanner(new File(Principal.ruta_main));
             String clase = "";
             while (input.hasNextLine()) {
                 clase += input.nextLine();
@@ -64,10 +73,9 @@ public class Importar implements Instruccion {
             });
             input.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Principal.add_error("No existe archivo en la ruta", "Semantico", line, column);
         }
-
-
+        Principal.ruta_main = ruta_principal;
     }
 
     @Override
