@@ -13,6 +13,7 @@ import java.text.NumberFormat;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
@@ -52,43 +53,51 @@ public class Asignacion_Componente implements Instruccion {
             if (simbolo.getTipo_instruccion() == Tipo.COMPONENTE) {
                 switch (simbolo.getTipo().getTipo()) {
                     case LABEL:
-                        JLabel label = new JLabel();  
-                        label.setSize(20,20);
+                        JLabel label = new JLabel();
+                        label.setSize(20, 20);
                         Principal.ventana_actual.add(label);
                         ts.setValor(id, label);
                         break;
                     case TEXTBOX:
                         JTextField txt = new JTextField();
-                        txt.setSize(20,20);
+                        txt.setSize(20, 20);
                         ts.setValor(id, txt);
                         Principal.ventana_actual.add(txt);
                         break;
                     case TEXTAREA:
                         JTextArea area = new JTextArea();
-                        area.setSize(20,20);
+                        area.setSize(20, 20);
                         ts.setValor(id, area);
                         Principal.ventana_actual.add(area);
                         break;
                     case TEXTPASSWORD:
                         JPasswordField jpass = new JPasswordField();
-                        jpass.setSize(20,20);
+                        jpass.setSize(20, 20);
                         ts.setValor(id, jpass);
                         Principal.ventana_actual.add(jpass);
                         break;
                     case TEXTNUMERO:
                         NumberFormat formato = NumberFormat.getNumberInstance();
                         JFormattedTextField txtn = new JFormattedTextField(formato);
-                        txtn.setSize(20,20);
+                        txtn.setSize(20, 20);
                         ts.setValor(id, txtn);
-                         Principal.ventana_actual.add(txtn);
+                        Principal.ventana_actual.add(txtn);
                         break;
                     case BUTTON:
                         JButton boton = new JButton();
-                        boton.setSize(20,20);
+                        boton.setSize(20, 20);
+
                         boton.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
-                                System.out.println("PRUEBA DE IMPRESION");
+                                Instruccion aux = ts.getContenido("EVENTO_" + id + "_CLICK");
+                                if (aux != null) {
+                                    Crear_Evento aux2 = (Crear_Evento) aux;
+                                    aux2.Llamada = true;
+                                    aux2.Ejecutar(ts);
+                                }else{
+                                    System.out.println("no existe evento al click");
+                                }
                             }
                         });
                         Principal.ventana_actual.add(boton);

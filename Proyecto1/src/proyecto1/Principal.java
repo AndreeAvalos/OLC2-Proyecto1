@@ -60,7 +60,7 @@ public class Principal extends javax.swing.JFrame {
         textArea = new RSyntaxTextArea(434, 755);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
         textArea.setCodeFoldingEnabled(true);
-       
+
         RTextScrollPane sp = new RTextScrollPane(textArea);
         sp.setAutoscrolls(true);
         sp.setLineNumbersEnabled(true);
@@ -345,10 +345,7 @@ public class Principal extends javax.swing.JFrame {
                         break;
                 }
             });
-            salida.forEach((item) -> {
-                consola.append(item + "\n");
-            });
-            consola.append("---------------------  Final de la ejecucion   ---------------------\n");
+
         } catch (Exception e) {
             consola.append("---------------------  Error de Compilacion   ---------------------");
         }
@@ -438,12 +435,13 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public static void setMensaje(String mensaje) {
-        salida.add(mensaje);
+        consola.append(mensaje + "\n");
+        
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea consola;
+    private static javax.swing.JTextArea consola;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

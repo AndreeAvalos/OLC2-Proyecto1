@@ -5,6 +5,7 @@
  */
 package Instrucciones;
 
+import Arbol.Arbol;
 import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import javax.swing.JButton;
@@ -27,7 +28,6 @@ public class Set_Texto implements Instruccion {
     }
 
     String id_a;
-    String id_b;
     Operacion valor;
     Tipo_ST tipo;
     int line, column;
@@ -38,14 +38,6 @@ public class Set_Texto implements Instruccion {
         this.valor = valor;
         this.column = column;
         this.tipo = Tipo_ST.CADENA;
-    }
-
-    public Set_Texto(String id_a, String id_b, int line, int column) {
-        this.id_a = id_a;
-        this.id_b = id_b;
-        this.line = line;
-        this.column = column;
-        this.tipo = Tipo_ST.VARIABLE;
     }
 
     @Override
@@ -60,44 +52,27 @@ public class Set_Texto implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-        if (tipo == Tipo_ST.CADENA) {
-            String resultado = valor.Ejecutar(ts).toString();
-            if (ts.existeSimbolo(id_a)) {
-                Simbolo sim = ts.getSimbolo(id_a);
-                if (sim.getTipo_instruccion() == Tipo.COMPONENTE) {
-                    Object val = sim.getValor();
+
+        if (ts.existeSimbolo(id_a)) {
+            Simbolo sim = ts.getSimbolo(id_a);
+            if (sim.getTipo_instruccion() == Tipo.COMPONENTE) {
+                Object val = sim.getValor();
+                try {
+                    Arbol resultado = (Arbol) valor.Ejecutar(ts);
+                    resultado.print();
+                    SetText(sim.getTipo().getTipo(), val, resultado.getSalida());
+                } catch (Exception e) {
+                    String resultado = valor.Ejecutar(ts).toString();
                     SetText(sim.getTipo().getTipo(), val, resultado);
-                    return null;
                 }
-                Principal.add_error("No es un componente", "Semantico", line, column);
                 return null;
             }
-            Principal.add_error("No existe el componente " + id_a, "Semantico", line, column);
-            return null;
-        } else {
-            if (ts.existeSimbolo(id_b)) {
-                Simbolo simbolo = ts.getSimbolo(id_b);
-                if (simbolo.getTipo().getTipo() == Tipo.String) {
-                    String resultado = ts.getValor(id_b).toString();
-                    if (ts.existeSimbolo(id_a)) {
-                        Simbolo sim = ts.getSimbolo(id_a);
-                        if (sim.getTipo_instruccion() == Tipo.COMPONENTE) {
-                            Object val = sim.getValor();
-                            SetText(sim.getTipo().getTipo(), val, resultado);
-                            return null;
-                        }
-                        Principal.add_error("No es un componente", "Semantico", line, column);
-                        return null;
-                    }
-                    Principal.add_error("No existe el componente " + id_a, "Semantico", line, column);
-                    return null;
-                }
-                Principal.add_error("La variable " + id_b + " no es un rstring", "Semantico", line, column);
-                return null;
-            }
-            Principal.add_error("No existe la variable " + id_b, "Semantico", line, column);
+            Principal.add_error("No es un componente", "Semantico", line, column);
             return null;
         }
+        Principal.add_error("No existe el componente " + id_a, "Semantico", line, column);
+        return null;
+
     }
 
     @Override

@@ -327,7 +327,7 @@ public class Operacion implements Instruccion {
                     }
                     break;
                 case RSTRING:
-                    return valor.toString();
+                    return valor;
                 case ATXT:
                     if (ts.existeSimbolo(valor.toString())) {
                         sim = ts.getSimbolo(valor.toString());
@@ -401,7 +401,8 @@ public class Operacion implements Instruccion {
                     if (ts.existeSimbolo(valor.toString())) {
                         Simbolo simbolo_b = ts.getSimbolo(valor.toString());
                         if (simbolo_b.getTipo_instruccion() == Tipo.COMPONENTE) {
-                            return getText(simbolo_b.getTipo().getTipo(), simbolo_b.getValor());
+                            String txt = getText(simbolo_b.getTipo().getTipo(), simbolo_b.getValor());
+                            return txt;
                         } else {
                             Principal.add_error(valor.toString() + " no es un tipo de componente", "Semantico", line, column);
                             return null;
