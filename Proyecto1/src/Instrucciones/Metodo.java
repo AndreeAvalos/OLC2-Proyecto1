@@ -83,7 +83,7 @@ public class Metodo implements Instruccion {
                             if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
                                 //error porque no se puede hacer el casteo explicito
                                 Principal.add_error("El valor" + etiqueta.getResultado() + " no puede ser retornado en un metodo", "Semantico", line, column);
-
+                                return null;
                             }
                         } catch (Exception e) {
                         }

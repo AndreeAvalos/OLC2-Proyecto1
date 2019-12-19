@@ -124,7 +124,7 @@ public class Arbol {
     }
 
     public void print() {
-        salida="";
+        salida = "";
         print(raiz);
     }
 
@@ -275,8 +275,14 @@ public class Arbol {
 
         } catch (Exception e) {
             //de lo contrario es un hijo
-            Operacion operacion = (Operacion) valores;
-            String resultado = operacion.Ejecutar(ts).toString();
+
+            String resultado = "";
+            try {
+                Operacion operacion = (Operacion) valores;
+                resultado = operacion.Ejecutar(ts).toString();
+            } catch (Exception a2) {
+                resultado = valores.toString();
+            }
             Object val;
             try {
                 val = (int) Double.parseDouble(resultado);
@@ -289,12 +295,11 @@ public class Arbol {
                     return new NodoArbol(indice, val, padre, nivel);
                 } catch (Exception e3) {
                     try {
-                        val = (double) Double.parseDouble(resultado);
-                        this.tipo_dato = Tipo.Decimal;
-                        return new NodoArbol(indice, val, padre, nivel);
-                    } catch (Exception e4) {
                         this.tipo_dato = Tipo.Cadena;
                         return new NodoArbol(indice, resultado, padre, nivel);
+                    } catch (Exception e4) {
+                        return null;
+
                     }
                 }
             }

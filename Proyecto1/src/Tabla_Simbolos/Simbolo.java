@@ -24,6 +24,7 @@ public class Simbolo {
     private ArrayList<String> referencias = new ArrayList<>(); // id a los cual esta referida
     private ArrayList<String> referidos; // id a los cual esta referida
     private boolean PorReferencia; // si esta referenciada
+    private String clase;
 
     public Simbolo copy(Simbolo sim) {
         this.tipo = sim.getTipo();
@@ -34,6 +35,7 @@ public class Simbolo {
         this.tipo_instruccion = sim.getTipo_instruccion();
         this.referencias = sim.getReferencias();
         this.PorReferencia = sim.PorReferencia;
+        this.clase = sim.clase;
         return this;
     }
 
@@ -50,6 +52,7 @@ public class Simbolo {
         this.valor = null;
         this.declarado = false;
         this.tipo_instruccion = tipoinstru;
+        this.clase = "";
     }
 
     public Simbolo(TipoSimbolo tipo, String id, Instruccion contenido, Tipo tipo_instruccion) {
@@ -74,6 +77,23 @@ public class Simbolo {
         this.valor = valor;
         this.tipo_instruccion = tipo_instruccion;
     }
+
+    public Simbolo(TipoSimbolo tipo, String id, Instruccion contenido, Tipo tipo_instruccion, String clase) {
+        this.tipo = tipo;
+        this.id = id;
+        this.contenido = contenido;
+        this.tipo_instruccion = tipo_instruccion;
+        this.clase = clase;
+    }
+
+    public String getClase() {
+        return clase;
+    }
+
+    public void setClase(String clase) {
+        this.clase = clase;
+    }
+    
 
     /**
      * Constructor para tipos de estructuras

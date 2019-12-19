@@ -11,6 +11,12 @@ import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Objects;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import proyecto1.Principal;
 
 /**
@@ -55,7 +61,11 @@ public class Operacion implements Instruccion {
         AENT,
         ADEC,
         ENTERO,
-        DECIMAL
+        DECIMAL,
+        GETTEXTO,
+        GETANCHO,
+        GETALTO,
+        GETPOS
     }
 
     String id_objeto;
@@ -252,6 +262,8 @@ public class Operacion implements Instruccion {
                             Arbol arbol_aux = (Arbol) simbolo_aux.getValor();
                             return (int) Double.parseDouble(arbol_aux.getSize() + "");
 
+                        } else if (simbolo_aux.getTipo().getTipo() == Tipo.String) {
+                            return simbolo_aux.getValor().toString().length();
                         } else {
                             Principal.add_error("No es un tipo struct. ", "Semantico", line, column);
                             return null;
@@ -385,6 +397,59 @@ public class Operacion implements Instruccion {
                     }
                     Principal.add_error("No existe variable", "Semantico", line, column);
                     return 0.0;
+                case GETTEXTO:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        Simbolo simbolo_b = ts.getSimbolo(valor.toString());
+                        if (simbolo_b.getTipo_instruccion() == Tipo.COMPONENTE) {
+                            return getText(simbolo_b.getTipo().getTipo(), simbolo_b.getValor());
+                        } else {
+                            Principal.add_error(valor.toString() + " no es un tipo de componente", "Semantico", line, column);
+                            return null;
+                        }
+                    } else {
+                        Principal.add_error("No existe el componente " + valor.toString(), "Semantico", line, column);
+                        return null;
+                    }
+                case GETANCHO:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        Simbolo simbolo_b = ts.getSimbolo(valor.toString());
+                        if (simbolo_b.getTipo_instruccion() == Tipo.COMPONENTE) {
+                            return getAncho(simbolo_b.getTipo().getTipo(), simbolo_b.getValor());
+                        } else {
+                            Principal.add_error(valor.toString() + " no es un tipo de componente", "Semantico", line, column);
+                            return null;
+                        }
+                    } else {
+                        Principal.add_error("No existe el componente " + valor.toString(), "Semantico", line, column);
+                        return null;
+                    }
+                case GETALTO:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        Simbolo simbolo_b = ts.getSimbolo(valor.toString());
+                        if (simbolo_b.getTipo_instruccion() == Tipo.COMPONENTE) {
+                            return getAlto(simbolo_b.getTipo().getTipo(), simbolo_b.getValor());
+                        } else {
+                            Principal.add_error(valor.toString() + " no es un tipo de componente", "Semantico", line, column);
+                            return null;
+                        }
+                    } else {
+                        Principal.add_error("No existe el componente " + valor.toString(), "Semantico", line, column);
+                        return null;
+                    }
+                case GETPOS:
+                    if (ts.existeSimbolo(valor.toString())) {
+                        Simbolo simbolo_b = ts.getSimbolo(valor.toString());
+                        if (simbolo_b.getTipo_instruccion() == Tipo.COMPONENTE) {
+                            return getPos(simbolo_b.getTipo().getTipo(), simbolo_b.getValor(), ts);
+                        } else {
+                            Principal.add_error(valor.toString() + " no es un tipo de componente", "Semantico", line, column);
+                            return null;
+                        }
+                    } else {
+                        Principal.add_error("No existe el componente " + valor.toString(), "Semantico", line, column);
+                        return null;
+                    }
+
                 default:
                     return null;
 
@@ -394,6 +459,126 @@ public class Operacion implements Instruccion {
             return null;
         }
         return null;
+    }
+
+    private String getText(Tipo tipo, Object valor) {
+        switch (tipo) {
+            case LABEL:
+                JLabel lbl = (JLabel) valor;
+                return lbl.getText();
+            case TEXTBOX:
+                JTextField txt = (JTextField) valor;
+                return txt.getText();
+            case TEXTAREA:
+                JTextArea txta = (JTextArea) valor;
+                return txta.getText();
+            case TEXTPASSWORD:
+                JPasswordField txtp = (JPasswordField) valor;
+                return txtp.getText();
+            case TEXTNUMERO:
+                JFormattedTextField txtn = (JFormattedTextField) valor;
+                return txtn.getText();
+            case BUTTON:
+                JButton btn = (JButton) valor;
+                return btn.getText();
+            default:
+                return null;
+        }
+    }
+
+    private int getAlto(Tipo tipo, Object valor) {
+        switch (tipo) {
+            case LABEL:
+                JLabel lbl = (JLabel) valor;
+                return lbl.getHeight();
+            case TEXTBOX:
+                JTextField txt = (JTextField) valor;
+                return txt.getHeight();
+            case TEXTAREA:
+                JTextArea txta = (JTextArea) valor;
+                return txta.getHeight();
+            case TEXTPASSWORD:
+                JPasswordField txtp = (JPasswordField) valor;
+                return txtp.getHeight();
+            case TEXTNUMERO:
+                JFormattedTextField txtn = (JFormattedTextField) valor;
+                return txtn.getHeight();
+            case BUTTON:
+                JButton btn = (JButton) valor;
+                return btn.getHeight();
+            default:
+                return 0;
+        }
+    }
+
+    private int getAncho(Tipo tipo, Object valor) {
+        switch (tipo) {
+            case LABEL:
+                JLabel lbl = (JLabel) valor;
+                return lbl.getWidth();
+            case TEXTBOX:
+                JTextField txt = (JTextField) valor;
+                return txt.getWidth();
+            case TEXTAREA:
+                JTextArea txta = (JTextArea) valor;
+                return txta.getWidth();
+            case TEXTPASSWORD:
+                JPasswordField txtp = (JPasswordField) valor;
+                return txtp.getWidth();
+            case TEXTNUMERO:
+                JFormattedTextField txtn = (JFormattedTextField) valor;
+                return txtn.getWidth();
+            case BUTTON:
+                JButton btn = (JButton) valor;
+                return btn.getWidth();
+            default:
+                return 0;
+        }
+    }
+
+    private Arbol getPos(Tipo tipo, Object valor, TablaDeSimbolos ts) {
+        LinkedList<Object> resultado = new LinkedList<>();
+        Arbol arbol = new Arbol();
+        switch (tipo) {
+            case LABEL:
+                JLabel lbl = (JLabel) valor;
+                resultado.add(lbl.getX());
+                resultado.add(lbl.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            case TEXTBOX:
+                JTextField txt = (JTextField) valor;
+                resultado.add(txt.getX());
+                resultado.add(txt.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            case TEXTAREA:
+                JTextArea txta = (JTextArea) valor;
+                resultado.add(txta.getX());
+                resultado.add(txta.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            case TEXTPASSWORD:
+                JPasswordField txtp = (JPasswordField) valor;
+                resultado.add(txtp.getX());
+                resultado.add(txtp.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            case TEXTNUMERO:
+                JFormattedTextField txtn = (JFormattedTextField) valor;
+                resultado.add(txtn.getX());
+                resultado.add(txtn.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            case BUTTON:
+                JButton btn = (JButton) valor;
+                resultado.add(btn.getX());
+                resultado.add(btn.getY());
+                arbol.recorrerArbol2(resultado, ts);
+                return arbol;
+            default:
+                return arbol;
+        }
     }
 
     @Override

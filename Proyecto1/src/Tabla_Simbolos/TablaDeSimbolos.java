@@ -77,6 +77,8 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                                 //error porque no se puede cambiar el valor
                                 System.out.println("No se puede cambiar valor a la variable: \'" + id + "\' es una constante.");
                                 break;
+                            case COMPONENTE:
+                                item.setValor(valor);
                             case FUNCION:
                                 if (item.getTipo().getAsignado().equals("arreglo")) {
                                     item.setValor(valor);

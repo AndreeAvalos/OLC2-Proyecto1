@@ -11,6 +11,7 @@ import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 import proyecto1.Principal;
@@ -53,9 +54,15 @@ public class Importar implements Instruccion {
         String ruta_principal = ruta_actual;
         //System.out.println(Principal.ruta_main + ruta_relativa);
         for (int i = 0; i < rutas.length - 1; i++) {
-            ruta_actual += rutas[i];
+            ruta_actual += rutas[i] + "/";
         }
         ruta_actual += rutas[rutas.length - 1];
+
+        String nombre = rutas[rutas.length - 1];
+
+        String archivo[] = nombre.split("\\.");
+
+        Principal.clase_actual = archivo[0];
         Principal.ruta_main = ruta_actual;
 
         try {
@@ -76,6 +83,8 @@ public class Importar implements Instruccion {
             Principal.add_error("No existe archivo en la ruta", "Semantico", line, column);
         }
         Principal.ruta_main = ruta_principal;
+        Principal.clase_actual = "principal";
+       
     }
 
     @Override

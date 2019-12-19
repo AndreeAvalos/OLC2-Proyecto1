@@ -45,15 +45,17 @@ terminal String Tmenos, Tmas, Tpor, Tdiv, Tdiferente, Tigual, Tigualigual, Tmeno
                 Twhen, Ttrue, Tfalse, Tatxt, Tconc, Taent, Tadec, Teqls, Telse, Telseif, Timp, Twrite, Tapend, Twf, Tclose, Tread, 
                 Tlbl, Trtxt, Trtxta, Trtxtp, Trtxtn, Trbton, Trmensage, Tiniciarventana, Taldarclick, Taltoyancho, Tsettexto,
                 Tsetancho, Tsetalto, Tsetpos, Tgettexto, Tgetancho, Tgetalto, Tgetpos, Tnuevogui,
-                Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring; 
+                Tid, Tdecimal, Tentero, Tcadena, Tcaracter, Trstring,Tabrirventana; 
 
 // Producciones				
 non terminal String S;
-non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES;
+non terminal LinkedList<Instruccion> INSTRUCCIONES, CONTENIDO, PARAMETROS, DECLARACIONES, CONTENIDO_GUI;
 non terminal Instruccion  INSTRUCCION, DECLARACION, ASIGNACION, CONSTANTE, FUNCION, PARAMETRO, SENTENCIA, METODO, DECLARACION_STRUCT,
-                          RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE, ARREGLO_MULTI, REFERENCIA, FUSION, ASIGNACION_FUSION,
+                          RETORNAR, LLAMADA, IMPRIMIR, ARREGLO, ARREGLO_SIMPLE,  REFERENCIA, FUSION, ASIGNACION_FUSION,
                           DECLARACION_FUSION, ASIGNACION_ARREGLO, WHILE, SEGUIR, BREAK, SWITCH, DO_WHILE,FOR, INCREMENTO,DECREMENTO,
-                          TIPO_OPERADOR, CONCAT, IMPORTAR, WRITE, APEND, WF, CLOSE, READ;
+                          TIPO_OPERADOR, CONCAT, IMPORTAR, WRITE, APEND, WF, CLOSE, READ, SENTENCIAS_GUI, LLAMAR_VENTANA,
+                          DECLARACION_COMPONENTE,ASIGNACION_COMPONENTE, DESPLEGAR_MENSAJE, ALTO_ANCHO, SETTEXTO, SETANCHO, SETALTO ,
+                          SETPOS;
 non terminal Operacion OPERACION_NUMERICA,VALOR, OPERACION_RELACIONAL, OPERACION_LOGICA, VALOR_PARAMETRO,DIMENSION,ACCESO_ARREGLO, ACCESO_STRUCT;
 non terminal LinkedList<Operacion> VALORES_PARAMETROS,DIMENSIONES;
 non terminal LinkedList<Sentencia_IF> ELSE_IF;
@@ -63,7 +65,7 @@ non terminal LinkedList<Object> LLAVES;
 non terminal Object LLAVE; 
 non terminal Sentencia_IF ELSE;
 non terminal ArrayList<String> LISTA_ACCESOS_FUSION;
-non terminal Tipo TIPODATO;
+non terminal Tipo TIPODATO, TIPO_COMPONENTE;
 non terminal Integer DIMENSION_VACIA;
 non terminal LinkedList<Case> CASOS;
 non terminal ArrayList<Integer> DIMENSIONES_VACIAS;
@@ -106,8 +108,9 @@ INSTRUCCION::= DECLARACION:a {: RESULT = a; :}
             | DECLARACION_FUSION:a {: RESULT = a; :}
             | ASIGNACION_ARREGLO:a {:RESULT =a; :}
             | IMPORTAR:a {:RESULT =a; :}
+            | DECLARACION_COMPONENTE:a {: RESULT = a; :}
 			;
-
+DECLARACION_COMPONENTE::= TIPO_COMPONENTE:a Tid:b  Tpycoma {: RESULT = new Declaracion_Componente(a,b,aleft,aright); :};
 IMPORTAR::= Timportar Tcadena:a {:RESULT = new Importar(a,aleft,aright); :};
 FUSION::= Tfusion Tid:a Tllave_a DECLARACIONES:b Tllave_c Tpycoma
             {: RESULT = new Struct(a,b,aleft,bleft); :}
@@ -144,6 +147,8 @@ DECLARACION::= TIPODATO:a Tid:b Tpycoma {: RESULT = new Declaracion(a,a,b, bleft
             | Trstring Tid:a Tigual Tcadena:b Tpycoma 
             {: RESULT = new Declaracion(Tipo.String,Tipo.String,a,new Asignacion(a,new Operacion(b,TipoOperacion.RSTRING,bleft,bright),aleft,aleft), aleft,  aright); :}
             | Trstring Tid:a Tpycoma {: RESULT = new Declaracion(Tipo.String,Tipo.String,a, aleft, aright); :}
+            | Trstring Tid:a Tigual Tid:b Tpunto Tgettexto Tpar_a Tpar_c Tpycoma 
+            {: RESULT = new Declaracion(Tipo.String,Tipo.String,a,new Asignacion(a,new Operacion(b,TipoOperacion.GETTEXTO,bleft,bright),aleft,aleft), aleft,  aright);:}
             ;
 
         
@@ -152,7 +157,13 @@ TIPODATO::=	Tent:a{: RESULT = Tipo.Entero; :}
 		|	Tchr:a{: RESULT = Tipo.Char; :}
 		|	Tbul:a{: RESULT = Tipo.Bool; :}
 		;
-
+TIPO_COMPONENTE::= Tlbl:a{: RESULT = Tipo.LABEL; :}
+                | Trtxt:a{: RESULT = Tipo.TEXTBOX; :}
+                | Trtxta:a{: RESULT = Tipo.TEXTAREA; :}
+                | Trtxtp:a{: RESULT = Tipo.TEXTPASSWORD; :}
+                | Trtxtn:a{: RESULT = Tipo.TEXTNUMERO; :}
+                | Trbton:a{: RESULT = Tipo.BUTTON; :}
+                ;
 REFERENCIA::= Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(origen,destino,origenleft,origenright);  :}
             | TIPODATO:a Tid:origen Tigual Tpor Tid:destino Tpycoma {: RESULT = new Referencia(a,origen,destino,origenleft,origenright);  :};
 	
@@ -175,8 +186,11 @@ LLAVE::=Tllave_a LLAVES:a Tllave_c {: RESULT = a; :}
 
 CONSTANTE::= Tdefinir Tid:a OPERACION_LOGICA:b {: RESULT = new Definir(a,b,aleft,aright); :}
         | Tdefinir Tid:a Tllave_a LLAVES:b Tllave_c {: RESULT = new Arreglo(a,b,aleft,aright); :} 
+        ;
 
-;
+ASIGNACION_COMPONENTE::= Tnuevogui Tpar_a Tid:a Tpar_c Tpycoma
+                    {: RESULT = new Asignacion_Componente(a,aleft,aright); :}
+                    ;
 
 FUNCION::= TIPODATO:a Tid:b Tpar_a PARAMETROS:c Tpar_c Tllave_a CONTENIDO:d Tllave_c
             {: RESULT= new Funcion(a,b,c,d,bleft,bright);:}
@@ -201,7 +215,69 @@ METODO::= Tzro Tid:a Tpar_a PARAMETROS:b Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
         :}
         |Tzro Tid:a Tpar_a Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
             RESULT= new Metodo(a,c,aleft,aright);
-        :};
+        :}
+        | Tzro Tiniciarventana Tpar_a Tpar_c Tllave_a CONTENIDO_GUI:a Tllave_c 
+        {:
+            RESULT= new Iniciar_Ventana(a,aleft,aright);
+        :}
+        | Tzro Tid Tdospuntos Taldarclick Tpar_a Tpar_c Tllave_a CONTENIDO_GUI:b Tllave_c 
+        ;
+
+CONTENIDO_GUI::= CONTENIDO_GUI:a SENTENCIAS_GUI:b {: a.add(b); RESULT = a; :}
+            | SENTENCIAS_GUI:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
+
+            ;
+
+SENTENCIAS_GUI ::= DECLARACION:a {: RESULT = a; :}
+		| ASIGNACION:a {: RESULT = a; :}
+        | RETORNAR:a {:RESULT = a; :}
+        | LLAMADA:a Tpycoma {:RESULT = a; :}
+        | IMPRIMIR:a {:RESULT = a; :}
+        | REFERENCIA:a {: RESULT = a; :}
+        | ASIGNACION_FUSION:a {: RESULT = a; :}
+        | DECLARACION_FUSION:a {: RESULT = a; :}
+        | ARREGLO:a {: RESULT = a; :}
+        | ASIGNACION_ARREGLO:a {:RESULT = a; :}
+        | SENTENCIA_IF:a {: RESULT = new If(a,aleft,aright); :}
+        | WHILE:a {: RESULT = a; :}
+        | SEGUIR {: RESULT = new Siguiente(); :}
+        | BREAK {:RESULT = new Break(); :}
+        | SWITCH:a {: RESULT = a; :}
+        | DO_WHILE:a {:RESULT = a; :}
+        | INCREMENTO:a{:RESULT = a; :}
+        | DECREMENTO:a{:RESULT = a; :}
+        | FOR:a {:RESULT = a; :}
+        | CONCAT:a {:RESULT = a; :}
+        | WRITE:a {:RESULT = a; :}
+        | APEND:a {:RESULT = a; :}
+        | WF:a {:RESULT = a; :}
+        | CLOSE:a {:RESULT = a; :}
+        | READ:a {:RESULT = a; :}
+        | ASIGNACION_COMPONENTE:a {:RESULT = a; :}
+        | DESPLEGAR_MENSAJE:a {: RESULT = a; :}
+        | ALTO_ANCHO:a {: RESULT = a; :}
+        | SETTEXTO:a {: RESULT = a; :}
+        | SETANCHO:a {: RESULT = a; :}
+        | SETALTO:a {: RESULT = a; :}
+        | SETPOS:a {: RESULT = a; :}
+        ;        
+
+ALTO_ANCHO::= Taltoyancho Tpar_a OPERACION_NUMERICA:a Tcoma OPERACION_NUMERICA Tpar_c Tpycoma;
+
+SETTEXTO::= Tid:a Tpunto Tsettexto Tpar_a Tcadena Tpar_c Tpycoma
+        | Tid:a Tpunto Tsettexto Tpar_a Tid:b Tpar_c Tpycoma
+        ;
+SETANCHO::= Tid:a Tpunto Tsetancho Tpar_a OPERACION_NUMERICA Tpar_c Tpycoma;
+
+SETALTO::= Tid:a Tpunto Tsetalto Tpar_a OPERACION_NUMERICA Tpar_c Tpycoma;
+
+SETPOS::= Tid:a Tpunto Tsetpos Tpar_a OPERACION_NUMERICA:b Tcoma OPERACION_NUMERICA:c Tpar_c Tpycoma;
+    
+DESPLEGAR_MENSAJE::=Trmensage Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Desplegar_Mensaje(new Operacion(a,TipoOperacion.CADENA,aleft,aright),aleft,aright ); :}
+        | Trmensage  Tpar_a Tcadena:a Tcoma VALORES_PARAMETROS:b Tpar_c Tpycoma
+        {: RESULT = new Desplegar_Mensaje(new Operacion(a,TipoOperacion.CADENA,aleft,aright),b,aleft,aright ); :}
+        ;
+        
 
 PARAMETROS::= PARAMETROS:a Tcoma PARAMETRO:b {: a.add(b); RESULT = a; :}
             | PARAMETRO:a {: LinkedList<Instruccion> b = new LinkedList<Instruccion>(); b.add(a); RESULT = b; :}
@@ -241,7 +317,12 @@ SENTENCIA::= DECLARACION:a {: RESULT = a; :}
         | WF:a {:RESULT = a; :}
         | CLOSE:a {:RESULT = a; :}
         | READ:a {:RESULT = a; :}
+        | LLAMAR_VENTANA:a{:RESULT = a; :}
         ;
+
+LLAMAR_VENTANA::= Tabrirventana Tpar_a Tid:a Tpar_c Tpycoma
+                {: RESULT = new Abrir_Ventana(a,aleft,aright); :}
+            ;
 
 WRITE::= Twrite Tpar_a Tcadena:a Tpar_c Tpycoma {: RESULT = new Write(a,aleft,aright); :};
 APEND::= Tapend Tpar_a Tcadena:a Tpar_c Tpycoma {: RESULT = new Apend(a,aleft,aright); :};
@@ -371,6 +452,10 @@ OPERACION_NUMERICA::= Tmenos OPERACION_NUMERICA:a{: RESULT = new Operacion(a,Tip
         | Teqls Tpar_a Tid:a Tcoma Tid:b Tpar_c{:RESULT = new Operacion(a,b, aleft,aright); :}
         | Taent Tpar_a Tid:a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.AENT, aleft,aright); :}
         | Tadec Tpar_a Tid:a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.ADEC, aleft,aright); :}
+        | Tid:a Tpunto Tgettexto Tpar_a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.GETTEXTO, aleft,aright); :}
+        | Tid:a Tpunto Tgetancho Tpar_a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.GETALTO, aleft,aright); :}
+        | Tid:a Tpunto Tgetalto Tpar_a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.GETANCHO, aleft,aright); :}
+        | Tid:a Tpunto Tgetpos Tpar_a Tpar_c{:RESULT = new Operacion(a, TipoOperacion.GETPOS, aleft,aright); :}
         ;
 
 

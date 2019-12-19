@@ -92,6 +92,7 @@ public class sym {
   public static final int Tregresar = 50;
   public static final int Tgetpos = 84;
   public static final int Tconc = 55;
+  public static final int Tabrirventana = 92;
   public static final int Trbton = 72;
   public static final int Tfusion = 48;
   public static final int Twrite = 62;
@@ -192,7 +193,8 @@ public class sym {
   "Tentero",
   "Tcadena",
   "Tcaracter",
-  "Trstring"
+  "Trstring",
+  "Tabrirventana"
   };
 }
 

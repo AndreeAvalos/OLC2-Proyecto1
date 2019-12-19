@@ -105,8 +105,9 @@ Trtxta = "Rtxta"
 Trtxtp = "Rtxtp"
 Trtxtn = "Rtxtn"
 Trbton = "Rbton"
-Trmensage = "Rmensage"
-Tiniciarventana = "iniciar_ventana"
+Trmensage = "Rmensaje"
+Tiniciarventana = "R:iniciar_ventana"
+Tabrirventana = "_abrir_ventana"
 Taldarclick = "al_dar_click"
 Taltoyancho = "_alto_y_ancho"
 Tsettexto = "settexto"
@@ -197,7 +198,7 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Tgetalto}      { return new Symbol(sym.Tgetalto, yyline, yycolumn,yytext());}
 <YYINITIAL> {Tgetpos}      { return new Symbol(sym.Tgetpos, yyline, yycolumn,yytext());}
 <YYINITIAL> {Trstring}      { return new Symbol(sym.Trstring, yyline, yycolumn,yytext());}
-
+<YYINITIAL> {Tabrirventana}      { return new Symbol(sym.Tabrirventana, yyline, yycolumn,yytext());}
 
 
 <YYINITIAL> {Tmenos}     {return new Symbol(sym.Tmenos, yyline, yycolumn,yytext());}

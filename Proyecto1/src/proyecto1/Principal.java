@@ -17,6 +17,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
+import com.sun.prism.paint.Color;
+import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +26,12 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 /**
  *
@@ -40,14 +47,26 @@ public class Principal extends javax.swing.JFrame {
     public static String ruta_main = "C:/Users/Andree/Desktop";
     public static BufferedWriter buffer;
     public static boolean write = true;
+    public static String clase_actual = "principal";
+    public static JPanel ventana_actual;
+    public static JFrame frame;
+    RSyntaxTextArea textArea;
 
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
-        numerolinea = new NumeroLinea(jTextArea2);
-        jScrollPane4.setRowHeaderView(numerolinea);
+        textArea = new RSyntaxTextArea(434, 755);
+        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+        textArea.setCodeFoldingEnabled(true);
+       
+        RTextScrollPane sp = new RTextScrollPane(textArea);
+        sp.setAutoscrolls(true);
+        sp.setLineNumbersEnabled(true);
+        sp.setIconRowHeaderEnabled(true);
+
+        tabs.add(sp, "Default");
 
     }
 
@@ -68,9 +87,7 @@ public class Principal extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        tabs = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
@@ -145,12 +162,6 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(0, 11, Short.MAX_VALUE))
         );
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane4.setViewportView(jTextArea2);
-
-        jTabbedPane1.addTab("tab1", jScrollPane4);
-
         consola.setBackground(new java.awt.Color(0, 0, 0));
         consola.setColumns(20);
         consola.setForeground(new java.awt.Color(255, 255, 255));
@@ -176,14 +187,14 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+                    .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -292,7 +303,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        String input = jTextArea2.getText();
+        String input = textArea.getText();
         Lista_Errores_Semanticos.clear();
         salida.clear();
         consola.setText("");
@@ -326,6 +337,8 @@ public class Principal extends javax.swing.JFrame {
                         } else {
                             //no ejecutamos el metodo
                         }
+                        break;
+                    case INICIO_VENTANA:
                         break;
                     default:
                         item.Ejecutar(global);
@@ -452,8 +465,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 }
