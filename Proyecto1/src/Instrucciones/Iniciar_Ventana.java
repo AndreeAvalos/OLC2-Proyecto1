@@ -20,34 +20,38 @@ import proyecto1.Principal;
  * @author Andree
  */
 public class Iniciar_Ventana implements Instruccion {
-
+    
     LinkedList<Instruccion> contenido;
     String id;
     JFrame frame = new JFrame("Ventana OLC");
     int line, column;
-
+    
     public Iniciar_Ventana(LinkedList<Instruccion> contenido, int line, int column) {
         this.contenido = contenido;
         this.line = line;
         this.column = column;
         this.id = Principal.clase_actual + "_VENTANA";
     }
-
+    
     @Override
     public int getLine() {
         return this.line;
     }
-
+    
     @Override
     public int getColumn() {
         return this.column;
     }
-
+    
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
         JPanel panel = new JPanel();
+        panel.setSize(500, 500);
+        panel.setLayout(null);
         Principal.ventana_actual = panel;
         frame.setSize(500, 500);
+        
+        
         Principal.frame = frame;
         TablaDeSimbolos local = new TablaDeSimbolos();
         local.setPadre(ts);
@@ -76,7 +80,7 @@ public class Iniciar_Ventana implements Instruccion {
         Principal.frame = null;
         return null;
     }
-
+    
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
         if (ts.getPadre() == null) {
@@ -89,10 +93,10 @@ public class Iniciar_Ventana implements Instruccion {
             }
         }
     }
-
+    
     @Override
     public Tipo getType() {
         return Tipo.INICIO_VENTANA;
     }
-
+    
 }

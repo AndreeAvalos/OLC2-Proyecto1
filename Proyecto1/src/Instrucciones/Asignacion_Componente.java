@@ -52,32 +52,39 @@ public class Asignacion_Componente implements Instruccion {
             if (simbolo.getTipo_instruccion() == Tipo.COMPONENTE) {
                 switch (simbolo.getTipo().getTipo()) {
                     case LABEL:
-                        JLabel label = new JLabel();   
+                        JLabel label = new JLabel();  
+                        label.setSize(20,20);
                         Principal.ventana_actual.add(label);
-                        ts.setValor(id, new JLabel());
+                        ts.setValor(id, label);
                         break;
                     case TEXTBOX:
                         JTextField txt = new JTextField();
+                        txt.setSize(20,20);
                         ts.setValor(id, txt);
                         Principal.ventana_actual.add(txt);
                         break;
                     case TEXTAREA:
                         JTextArea area = new JTextArea();
+                        area.setSize(20,20);
                         ts.setValor(id, area);
                         Principal.ventana_actual.add(area);
                         break;
                     case TEXTPASSWORD:
                         JPasswordField jpass = new JPasswordField();
+                        jpass.setSize(20,20);
                         ts.setValor(id, jpass);
                         Principal.ventana_actual.add(jpass);
                         break;
                     case TEXTNUMERO:
                         NumberFormat formato = NumberFormat.getNumberInstance();
-                        ts.setValor(id, new JFormattedTextField(formato));
+                        JFormattedTextField txtn = new JFormattedTextField(formato);
+                        txtn.setSize(20,20);
+                        ts.setValor(id, txtn);
+                         Principal.ventana_actual.add(txtn);
                         break;
                     case BUTTON:
                         JButton boton = new JButton();
-
+                        boton.setSize(20,20);
                         boton.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent ae) {

@@ -22,7 +22,7 @@ import java_cup.runtime.Symbol;
 %char
 %column
 %full
-%state cadena
+%state cadena COMMENT
 %state cadena2
 
 
@@ -129,11 +129,11 @@ Tentero = [0-9]+
 space   = [\ \r\t\f\t]
 enter   = [\ \n]
 
-Comment = {EndOfLineComment} | {MultiLine}
+Comment = {EndOfLineComment}
 
 // Comment can be the last line of the file, without line terminator.
 EndOfLineComment     = "//" [^\r\n]* [\r|\n|\r\n]?
-MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
+
 
 
 
@@ -242,12 +242,17 @@ MultiLine   = "/*" [^/] ~"/>" | "</" "/"+ "*/"
 <YYINITIAL> {Comment} {/*iognore*/}
 <YYINITIAL> {space}     { /*Espacios en blanco, ignorados*/ }
 <YYINITIAL> {enter}     { /*Saltos de linea, ignorados*/}
-
+<YYINITIAL> "/*"                     {yybegin(COMMENT);}
 
 <YYINITIAL> . {
         String errLex = "Error léxico : '"+yytext()+"' en la línea: "+(yyline+1)+" y columna: "+(yycolumn+1);
         System.out.println(errLex);
 }
+
+<COMMENT> "*"                       {}
+<COMMENT> [^"*/"]                   {}
+<COMMENT> "*/"                    {yybegin(YYINITIAL); }
+
 <cadena> {
        
 [^\"]   {tempcadena+=yytext();}

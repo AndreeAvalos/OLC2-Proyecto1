@@ -220,7 +220,8 @@ METODO::= Tzro Tid:a Tpar_a PARAMETROS:b Tpar_c Tllave_a CONTENIDO:c Tllave_c {:
         {:
             RESULT= new Iniciar_Ventana(a,aleft,aright);
         :}
-        | Tzro Tid Tdospuntos Taldarclick Tpar_a Tpar_c Tllave_a CONTENIDO_GUI:b Tllave_c 
+        | Tzro Tid:a Tdospuntos Taldarclick Tpar_a Tpar_c Tllave_a CONTENIDO_GUI:b Tllave_c 
+        
         ;
 
 CONTENIDO_GUI::= CONTENIDO_GUI:a SENTENCIAS_GUI:b {: a.add(b); RESULT = a; :}
@@ -262,16 +263,26 @@ SENTENCIAS_GUI ::= DECLARACION:a {: RESULT = a; :}
         | SETPOS:a {: RESULT = a; :}
         ;        
 
-ALTO_ANCHO::= Taltoyancho Tpar_a OPERACION_NUMERICA:a Tcoma OPERACION_NUMERICA Tpar_c Tpycoma;
+ALTO_ANCHO::= Taltoyancho Tpar_a OPERACION_NUMERICA:a Tcoma OPERACION_NUMERICA:b Tpar_c Tpycoma
+            {: RESULT = new Set_Dimensiones_Frame(a,b,aleft,aright); :}
+            ;
 
-SETTEXTO::= Tid:a Tpunto Tsettexto Tpar_a Tcadena Tpar_c Tpycoma
+SETTEXTO::= Tid:a Tpunto Tsettexto Tpar_a Tcadena:b Tpar_c Tpycoma
+        {: RESULT = new Set_Texto(a,new Operacion(b,TipoOperacion.RSTRING,bleft,bright),aleft,aright); :}
         | Tid:a Tpunto Tsettexto Tpar_a Tid:b Tpar_c Tpycoma
+        {:RESULT = new Set_Texto(a,b,aleft,aright); :}
         ;
-SETANCHO::= Tid:a Tpunto Tsetancho Tpar_a OPERACION_NUMERICA Tpar_c Tpycoma;
+SETANCHO::= Tid:a Tpunto Tsetancho Tpar_a OPERACION_NUMERICA:b Tpar_c Tpycoma
+        {:RESULT = new Set_Ancho(a,b,aleft,aright); :}
+        ;
 
-SETALTO::= Tid:a Tpunto Tsetalto Tpar_a OPERACION_NUMERICA Tpar_c Tpycoma;
+SETALTO::= Tid:a Tpunto Tsetalto Tpar_a OPERACION_NUMERICA:b Tpar_c Tpycoma
+        {:RESULT = new Set_Alto(a,b,aleft,aright); :}
+        ;
 
-SETPOS::= Tid:a Tpunto Tsetpos Tpar_a OPERACION_NUMERICA:b Tcoma OPERACION_NUMERICA:c Tpar_c Tpycoma;
+SETPOS::= Tid:a Tpunto Tsetpos Tpar_a OPERACION_NUMERICA:b Tcoma OPERACION_NUMERICA:c Tpar_c Tpycoma
+        {: RESULT = new Set_Pos(a,b,c,aleft,aright); :}
+        ;
     
 DESPLEGAR_MENSAJE::=Trmensage Tpar_a Tcadena:a Tpar_c Tpycoma{:RESULT = new Desplegar_Mensaje(new Operacion(a,TipoOperacion.CADENA,aleft,aright),aleft,aright ); :}
         | Trmensage  Tpar_a Tcadena:a Tcoma VALORES_PARAMETROS:b Tpar_c Tpycoma
