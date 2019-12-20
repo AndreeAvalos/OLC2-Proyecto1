@@ -66,16 +66,16 @@ public class Principal extends javax.swing.JFrame {
      */
     public Principal() {
         initComponents();
-//        textArea = new RSyntaxTextArea(434, 755);
-//        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-//        textArea.setCodeFoldingEnabled(true);
-//
-//        RTextScrollPane sp = new RTextScrollPane(textArea);
-//        sp.setAutoscrolls(true);
-//        sp.setLineNumbersEnabled(true);
-//        sp.setIconRowHeaderEnabled(true);
-//
-//        tabs.add(sp, "Default");
+        textArea = new RSyntaxTextArea(434, 755);
+        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+        textArea.setCodeFoldingEnabled(true);
+
+        RTextScrollPane sp = new RTextScrollPane(textArea);
+        sp.setAutoscrolls(true);
+        sp.setLineNumbersEnabled(true);
+        sp.setIconRowHeaderEnabled(true);
+
+        tabs.add(sp, "Default");
 
     }
 
@@ -127,6 +127,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         jButton2.setText("Nuevo Proyecto");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Abrir Proyecto");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -226,6 +231,11 @@ public class Principal extends javax.swing.JFrame {
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem3.setText("Abrir Proyecto");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -339,7 +349,7 @@ public class Principal extends javax.swing.JFrame {
 
         String ruta_main2;
         if (!clases_proyecto.containsKey(clase_actual)) {
-            Principal.add_error("No existe la clase "+ clase_actual+ " en el proyecto", "Semantico", 0, 0);
+            Principal.add_error("No existe la clase " + clase_actual + " en el proyecto", "Semantico", 0, 0);
             return;
         }
 
@@ -404,8 +414,14 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
 
+        abrirProyecto();
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void abrirProyecto() {
+
+        // TODO add your handling code here:
         // muestra el cuadro de diálogo de archivos, para que el usuario pueda elegir el archivo a abrir
         JFileChooser selectorArchivos = new JFileChooser();
         selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -438,8 +454,8 @@ public class Principal extends javax.swing.JFrame {
 //        } catch (FileNotFoundException ex) {
 //            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
 //        }
+    }
 
-    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         // TODO add your handling code here:
@@ -479,6 +495,15 @@ public class Principal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        abrirProyecto();
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
