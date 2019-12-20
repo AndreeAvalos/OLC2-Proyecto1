@@ -258,6 +258,9 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JTabbedPane" name="tabs">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
+          </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
         </Container>

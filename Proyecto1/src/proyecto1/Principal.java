@@ -19,12 +19,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import Tipos_Importantes.Error;
-import com.sun.prism.paint.Color;
-import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,22 +58,24 @@ public class Principal extends javax.swing.JFrame {
     public static JFrame frame;
     RSyntaxTextArea textArea;
     public static TablaDeSimbolos tabla_final = new TablaDeSimbolos();
+    public static Hashtable<String, String> pestañas = new Hashtable<>();
+    public static Hashtable<String, String> clases_proyecto = new Hashtable<>();
 
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
-        textArea = new RSyntaxTextArea(434, 755);
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-        textArea.setCodeFoldingEnabled(true);
-
-        RTextScrollPane sp = new RTextScrollPane(textArea);
-        sp.setAutoscrolls(true);
-        sp.setLineNumbersEnabled(true);
-        sp.setIconRowHeaderEnabled(true);
-
-        tabs.add(sp, "Default");
+//        textArea = new RSyntaxTextArea(434, 755);
+//        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+//        textArea.setCodeFoldingEnabled(true);
+//
+//        RTextScrollPane sp = new RTextScrollPane(textArea);
+//        sp.setAutoscrolls(true);
+//        sp.setLineNumbersEnabled(true);
+//        sp.setIconRowHeaderEnabled(true);
+//
+//        tabs.add(sp, "Default");
 
     }
 
@@ -330,7 +331,27 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        String input = textArea.getText();
+        String input = "";
+
+        if (!clase_actual.contains(".r")) {
+            Principal.add_error("No se puede iniciar con un tipo diferente a .r", "Semantico", 0, 0);
+        }
+
+        String ruta_main2;
+        if (!clases_proyecto.containsKey(clase_actual)) {
+            Principal.add_error("No existe la clase "+ clase_actual+ " en el proyecto", "Semantico", 0, 0);
+            return;
+        }
+
+        ruta_main2 = clases_proyecto.get(clase_actual) + clase_actual;
+        ruta_main = clases_proyecto.get(clase_actual);
+        try (Scanner input2 = new Scanner(new File(ruta_main2))) {
+            while (input2.hasNextLine()) {
+                input += input2.nextLine() + "\n";
+            }
+        } catch (FileNotFoundException ex) {
+
+        }
         Lista_Errores_Semanticos.clear();
         salida.clear();
         consola.setText("");
@@ -442,7 +463,7 @@ public class Principal extends javax.swing.JFrame {
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
         // TODO add your handling code here:
         Reporte_Tabla tabla = new Reporte_Tabla(tabla_final);
-        
+
         try {
             JEditorPane editor = new JEditorPane();
             editor.setContentType("text/html");
@@ -508,7 +529,35 @@ public class Principal extends javax.swing.JFrame {
 
     public static void setMensaje(String mensaje) {
         consola.append(mensaje + "\n");
+    }
 
+    public static void addTab(String ruta) throws FileNotFoundException {
+
+        String rutas[] = ruta.split("/");
+        String nombre = rutas[rutas.length - 1];
+
+        if (nombre.contains(".")) {
+            if (!pestañas.containsKey(nombre)) {
+
+                String line = "";
+                try (Scanner input = new Scanner(new File(ruta))) {
+                    while (input.hasNextLine()) {
+                        line += input.nextLine() + "\n";
+                    }
+                }
+
+                RSyntaxTextArea textArea = new RSyntaxTextArea(434, 755);
+                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+                textArea.setCodeFoldingEnabled(true);
+                textArea.setText(line);
+                RTextScrollPane sp = new RTextScrollPane(textArea);
+                sp.setAutoscrolls(true);
+                sp.setLineNumbersEnabled(true);
+                sp.setIconRowHeaderEnabled(true);
+                pestañas.put(nombre, ruta);
+                tabs.add(sp, nombre);
+            }
+        }
     }
 
 
@@ -537,6 +586,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane tabs;
+    private static javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 }

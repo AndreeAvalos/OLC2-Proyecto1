@@ -5,7 +5,10 @@
  */
 package Configuracion;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -41,6 +44,24 @@ public class Proyecto implements TreeSelectionListener {
         this.hijos = hijos;
     }
 
+    public void crearRutas() {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) arbol.getModel().getRoot();
+
+        crearRutas(this.ruta, root);
+
+    }
+
+    private void crearRutas(String ruta_padre, DefaultMutableTreeNode nodo_padre) {
+        if (nodo_padre.getChildCount() != 0) {
+            for (int i = 0; i < nodo_padre.getChildCount(); i++) {
+                crearRutas(ruta_padre + nodo_padre.getUserObject() + "/", (DefaultMutableTreeNode) nodo_padre.getChildAt(i));
+            }
+        } else {
+            Principal.clases_proyecto.put(nodo_padre.getUserObject().toString(), Principal.ruta_estatica + ruta_padre);
+        }
+
+    }
+
     public void crearArbol() {
         ArrayList<Contenido> configuraciones = new ArrayList<>();
         for (Contenido item : hijos) {
@@ -65,12 +86,14 @@ public class Proyecto implements TreeSelectionListener {
         }
         raiz = new DefaultMutableTreeNode(nombre);
         modelo = new DefaultTreeModel(raiz);
-        Principal.ruta_estatica += ruta;
+
+        Principal.clase_actual = correr;
         ruta2 = "";
         crearArbol(raiz, configuraciones);
         arbol = new JTree(modelo);
-        Principal.ruta_main += ruta + nombre + "/" + ruta2+ "/" ;
-        
+        //Principal.ruta_main += ruta + nombre + "/" + ruta2 + "/";
+        crearRutas();
+
         arbol.getSelectionModel().addTreeSelectionListener(this);
 
     }
@@ -149,19 +172,16 @@ public class Proyecto implements TreeSelectionListener {
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
+        //DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
         TreePath rutaSeleccionada = e.getPath();
         Object[] nodos = rutaSeleccionada.getPath();
         String salida = "";
-        for (int i = 0; i < nodos.length - 1; i++) {
-            Object nodo = nodos[i];
+        salida = nodos[nodos.length - 1].toString();
+        try {
+            Principal.addTab(Principal.clases_proyecto.get(salida) + salida);
+        } catch (FileNotFoundException ex) {
 
-            salida += nodo.toString() + "/";
         }
-        salida += nodos[nodos.length - 1];
-        salida = Principal.ruta_estatica + salida;
-        System.out.println(salida);
-
     }
 
 }
