@@ -56,22 +56,21 @@ public class Importar implements Instruccion {
         for (int i = 0; i < rutas.length - 1; i++) {
             ruta_actual += rutas[i] + "/";
         }
-        ruta_actual += rutas[rutas.length - 1];
+        
 
         String nombre = rutas[rutas.length - 1];
 
         String archivo[] = nombre.split("\\.");
-
+        String temporal = Principal.clase_actual;
         Principal.clase_actual = archivo[0];
         Principal.ruta_main = ruta_actual;
 
         try {
-            Scanner input = new Scanner(new File(Principal.ruta_main));
+            Scanner input = new Scanner(new File(Principal.ruta_main+ nombre));
             String clase = "";
             while (input.hasNextLine()) {
-                clase += input.nextLine();
+                clase += input.nextLine() + "\n";
             }
-
             Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(clase))));
             parser.parse();
             LinkedList<Instruccion> AST = parser.AST;
@@ -80,10 +79,10 @@ public class Importar implements Instruccion {
             });
             input.close();
         } catch (Exception ex) {
-            Principal.add_error("No existe archivo en la ruta", "Semantico", line, column);
+            Principal.add_error("No existe "+ Principal.clase_actual+" en la ruta", "Semantico", line, column);
         }
         Principal.ruta_main = ruta_principal;
-        Principal.clase_actual = "principal";
+        Principal.clase_actual = temporal;
        
     }
 

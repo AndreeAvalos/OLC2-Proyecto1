@@ -213,6 +213,7 @@ public class Funcion implements Instruccion {
                         }
                     }
                     local.setValor(id, resultado);
+                    
 
                 } else {
                     //error porque no se puede hacer el casteo explicito

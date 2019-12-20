@@ -7,6 +7,7 @@ package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.LinkedList;
+import proyecto1.Principal;
 
 /**
  *
@@ -58,11 +59,11 @@ public class Llamada implements Instruccion {
                 aux2.valores_parametros = valores_parametros;
                 aux2.Ejecutar(local);
             } else {
-                System.out.println("No es metodo ni funcion");
+                Principal.add_error("No es metodo ni funcion", "Semantico", line,column);
                 return null;
             }
         } else {
-            System.out.println("No existe metodo ni funcion con ese identificador");
+            Principal.add_error("No existe metodo ni funcion con ese identificador", "Semantico",line,column);
         }
         return false;
     }

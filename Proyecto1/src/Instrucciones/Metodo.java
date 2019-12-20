@@ -61,19 +61,19 @@ public class Metodo implements Instruccion {
                     if (local.asignValorByIndex(i, valores_parametros.get(i).Ejecutar(ts))) {
                         local.setValorByIndex(i, valores_parametros.get(i).Ejecutar(ts));
                     } else {
-                        System.out.println("No coincide el parametro con el tipo enviado");
+                        Principal.add_error("No coincide el parametro con el tipo enviado", "Semantico", line, column);
                         return null;
                     }
                 }
             } else {
-                System.out.println("El numero de parametros no coincide1.");
+                Principal.add_error("El numero de parametros no coincide.", "Semantico", line, column);
                 return null;
             }
 
             for (Instruccion item : contenido) {
                 if (item.getType() == Tipo.RETURN) {
                     //aqui ponemos el valor en la funcion
-                    System.out.println("No puede retornar un valor a un metodo.");
+                    Principal.add_error("No puede retornar un valor a un metodo.", "Semantico", line, column);
                     return null;
                 } else {
                     Object result = item.Ejecutar(local);
@@ -102,7 +102,7 @@ public class Metodo implements Instruccion {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(Tipo.METODO, ""), id, this, Tipo.METODO));
             } else {
-                System.out.println("La funcion \'" + id + "\' ya esta declarada");
+                Principal.add_error("La funcion \'" + id + "\' ya esta declarada", "Semantico", line, column);
                 return;
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }

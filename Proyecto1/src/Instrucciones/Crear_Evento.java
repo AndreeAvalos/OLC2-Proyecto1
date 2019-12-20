@@ -50,7 +50,7 @@ public class Crear_Evento implements Instruccion {
             for (Instruccion item : contenido) {
                 if (item.getType() == Tipo.RETURN) {
                     //aqui ponemos el valor en la funcion
-                    System.out.println("No puede retornar un valor a un metodo.");
+                    Principal.add_error("No puede retornar un valor a un evento", "Semantico", line, column);
                     return null;
                 } else {
                     Object result = item.Ejecutar(local);
@@ -59,7 +59,7 @@ public class Crear_Evento implements Instruccion {
                             Tipo_Retorno etiqueta = (Tipo_Retorno) result;
                             if (etiqueta.getEtiqueta() == Tipo.ETIQUETA_RETURN) {
                                 //error porque no se puede hacer el casteo explicito
-                                Principal.add_error("El valor" + etiqueta.getResultado() + " no puede ser retornado en un metodo", "Semantico", line, column);
+                                Principal.add_error("El valor" + etiqueta.getResultado() + " no puede ser retornado en un evento", "Semantico", line, column);
                                 return null;
                             }
                         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class Crear_Evento implements Instruccion {
             if (!ts.existeSimbolo("EVENTO_" + id + "_CLICK")) {
                 ts.add(new Simbolo(new TipoSimbolo(Tipo.EVENTO, ""), "EVENTO_" + id + "_CLICK", this, Tipo.EVENTO));
             } else {
-               Principal.add_error("Ya se ha creado el evento para " +id, "Semantico", line, column);
+                Principal.add_error("Ya se ha creado el evento para " + id, "Semantico", line, column);
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
         }

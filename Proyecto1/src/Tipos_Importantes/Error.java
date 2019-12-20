@@ -13,15 +13,36 @@ public class Error {
 
     String mensaje;
     String tipo;
+    String archivo;
     int line, column;
 
-    public Error(String mensaje, String tipo, int line, int column) {
+    public Error(String mensaje, String tipo, String archivo, int line, int column) {
         this.mensaje = mensaje;
         this.tipo = tipo;
         this.line = line;
         this.column = column;
+        this.archivo = archivo;
     }
-    
+
+    public String getArchivo() {
+        return archivo;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
 
     @Override
     public String toString() {

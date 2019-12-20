@@ -9,6 +9,7 @@ import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.Tipo_Retorno;
 import Tipos_Importantes.Tipo_IF;
 import java.util.LinkedList;
+import proyecto1.Principal;
 
 /**
  *
@@ -130,7 +131,7 @@ public class If implements Instruccion {
 
             }
         } catch (Exception e) {
-
+            Principal.add_error("Hubo problemas al ejecutar el if", "Semantico", line, column);
         }
 
         return null;

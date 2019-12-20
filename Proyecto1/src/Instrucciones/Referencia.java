@@ -10,6 +10,7 @@ import Tabla_Simbolos.Simbolo;
 import Tabla_Simbolos.TablaDeSimbolos;
 import Tabla_Simbolos.TipoSimbolo;
 import java.util.ArrayList;
+import proyecto1.Principal;
 
 /**
  *
@@ -55,20 +56,19 @@ public class Referencia implements Instruccion {
                 if (!ts.existeSimbolo(origen)) {
                     ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), origen, Tipo.VARIABLE));
                 } else {
-                    System.out.println("La varaible \'" + origen + "\' ya esta declarada");
+                    Principal.add_error("La varaible \'" + origen + "\' ya esta declarada", "Semantico", line, column);
                     //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                 }
             }
             if (ts.compararTipos(origen, destino)) {
                 String result = new Operacion(destino, TipoOperacion.IDENTIFICADOR, line, column).Ejecutar(ts).toString();
                 ts.setValor(origen, result);
-                
 
                 ts.setReferencia(origen, destino);
                 ts.setReferencia(destino, origen);
-                
+
             } else {
-                System.out.println("No puede referenciar a otro tipo de dato");
+                Principal.add_error("No puede referenciar a otro tipo de dato", "Semantico", line, column);
             }
 
         } else {
@@ -77,12 +77,12 @@ public class Referencia implements Instruccion {
                 ts.setValor(origen, result);
 
                 ts.removeReferencias(origen);
-                
+
                 ts.setReferencia(origen, destino);
                 ts.setReferencia(destino, origen);
 
             } else {
-                System.out.println("No puede referenciar a otro tipo de dato");
+                Principal.add_error("No puede referenciar a otro tipo de dato", "Semantico", line, column);
             }
 
         }
@@ -96,7 +96,7 @@ public class Referencia implements Instruccion {
                 if (!ts.existeSimbolo(origen)) {
                     ts.add(new Simbolo(new TipoSimbolo(tipo_simbolo, ""), origen, Tipo.VARIABLE));
                 } else {
-                    System.out.println("La varaible \'" + origen + "\' ya esta declarada");
+                    Principal.add_error("La varaible \'" + origen + "\' ya esta declarada", "Semantico", line, column);
                     //aqui va el mensaje de error que ya esta declarada la variable en el ambito
                     return;
                 }
@@ -111,7 +111,7 @@ public class Referencia implements Instruccion {
                 ts.setReferencia(destino, origen);
 
             } else {
-                System.out.println("No puede referenciar a otro tipo de dato");
+                Principal.add_error("No puede referenciar a otro tipo de dato", "Semantico", line, column);
             }
 
         } else {

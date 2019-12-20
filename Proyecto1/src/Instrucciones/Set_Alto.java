@@ -95,9 +95,7 @@ public class Set_Alto implements Instruccion {
                 return;
             case BUTTON:
                 JButton btn = (JButton) valor;
-                int val = btn.getWidth();
                 btn.setSize(btn.getWidth(), resultado);
-                int x = btn.getX(); 
                 return;
             default:
                 return;

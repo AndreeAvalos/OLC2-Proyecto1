@@ -11,6 +11,8 @@ import Configuracion.Lexico_Configuracion;
 import Configuracion.Proyecto;
 import Configuracion.Sintactico_Configuracion;
 import Instrucciones.*;
+import Reportes.Reporte_Errores;
+import Reportes.Reporte_Tabla;
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -22,13 +24,16 @@ import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -40,6 +45,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class Principal extends javax.swing.JFrame {
 
     public static ArrayList<Error> Lista_Errores_Semanticos = new ArrayList<>();
+    public static ArrayList<Error> Lista_Errores_Lexicos = new ArrayList<>();
+    public static ArrayList<Error> Lista_Errores_Sintacticos = new ArrayList<>();
     public static ArrayList<String> salida = new ArrayList<>();
     NumeroLinea numerolinea;
     public static boolean escribiendo = false;
@@ -51,6 +58,7 @@ public class Principal extends javax.swing.JFrame {
     public static JPanel ventana_actual;
     public static JFrame frame;
     RSyntaxTextArea textArea;
+    public static TablaDeSimbolos tabla_final = new TablaDeSimbolos();
 
     /**
      * Creates new form Principal
@@ -102,6 +110,8 @@ public class Principal extends javax.swing.JFrame {
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        jMenuItem9 = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -255,6 +265,23 @@ public class Principal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu3.setText("Reportes");
+
+        jMenuItem9.setText("Errores ");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem9);
+
+        jMenuItem10.setText("Tabla de Simbolos");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem10);
+
         jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
@@ -308,10 +335,11 @@ public class Principal extends javax.swing.JFrame {
         salida.clear();
         consola.setText("");
         Sintactico parser = new Sintactico(new Lexico(new BufferedReader(new StringReader(input))));
+        TablaDeSimbolos global = new TablaDeSimbolos();
         try {
             parser.parse();
             LinkedList<Instruccion> AST = parser.AST;
-            TablaDeSimbolos global = new TablaDeSimbolos();
+
             consola.append("--------------------- Inicio de la recoleccion ---------------------\n");
             //Recolecatamos primero
             AST.forEach((item) -> {
@@ -350,9 +378,7 @@ public class Principal extends javax.swing.JFrame {
             consola.append("---------------------  Error de Compilacion   ---------------------");
         }
 
-        Lista_Errores_Semanticos.forEach((item) -> {
-            System.out.println(item.toString());
-        });
+        tabla_final = global;
 
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -377,7 +403,7 @@ public class Principal extends javax.swing.JFrame {
         try {
             scn = new Scanner(archivo);
             while (scn.hasNext()) {
-                texto += scn.nextLine();
+                texto += scn.nextLine() + "\n";
             }
             Sintactico_Configuracion parser = new Sintactico_Configuracion(new Lexico_Configuracion(new BufferedReader(new StringReader(texto))));
             parser.parse();
@@ -387,13 +413,51 @@ public class Principal extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(ruta_estatica);
 
 //        } catch (FileNotFoundException ex) {
 //            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        // TODO add your handling code here:
+        Reporte_Errores re = new Reporte_Errores(Lista_Errores_Lexicos, Lista_Errores_Sintacticos, Lista_Errores_Semanticos);
+        try {
+            JEditorPane editor = new JEditorPane();
+            editor.setContentType("text/html");
+            editor.setText(re.crear_Reporte());
+            JScrollPane scrollPane = new JScrollPane(editor);
+            JFrame errores = new JFrame("Tabla de errores");
+            errores.setSize(1000, 750);
+            errores.add(scrollPane);
+
+            errores.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        // TODO add your handling code here:
+        Reporte_Tabla tabla = new Reporte_Tabla(tabla_final);
+        
+        try {
+            JEditorPane editor = new JEditorPane();
+            editor.setContentType("text/html");
+            editor.setText(tabla.reporte_Tabla());
+            JScrollPane scrollPane = new JScrollPane(editor);
+            JFrame errores = new JFrame("Tabla de Simbolos");
+            errores.setSize(1000, 750);
+            errores.add(scrollPane);
+
+            errores.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -431,12 +495,20 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public static void add_error(String error, String tipo, int line, int column) {
-        Lista_Errores_Semanticos.add(new Error(error, tipo, line + 1, column + 1));
+        Lista_Errores_Semanticos.add(new Error(error, tipo, clase_actual, line + 1, column + 1));
+    }
+
+    public static void add_error_lexico(String error, String tipo, int line, int column) {
+        Lista_Errores_Lexicos.add(new Error(error, tipo, clase_actual, line + 1, column + 1));
+    }
+
+    public static void add_error_sintactico(String error, String tipo, int line, int column) {
+        Lista_Errores_Sintacticos.add(new Error(error, tipo, clase_actual, line + 1, column + 1));
     }
 
     public static void setMensaje(String mensaje) {
         consola.append(mensaje + "\n");
-        
+
     }
 
 
@@ -451,6 +523,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -458,6 +531,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

@@ -238,7 +238,7 @@ public class Operacion implements Instruccion {
                     Instruccion aux3 = ts.getContenido(funcion.id);
                     Simbolo simbolo = ts.getSimbolo(id_funcion);
                     if (aux3.getType() == Tipo.METODO) {
-                        System.out.println("No se Puede operar un metodo");
+                        Principal.add_error("No se Puede operar un metodo", "Semantico", line, column);
                         return 0.0;
                     } else {
                         funcion.Ejecutar(ts);

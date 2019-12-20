@@ -47,7 +47,7 @@ public class Read implements Instruccion {
                     String line = "";
                     try (Scanner input = new Scanner(new File(Principal.ruta_main + ruta))) {
                         while (input.hasNextLine()) {
-                            line += input.nextLine();
+                            line += input.nextLine() + "\n";
                         }
                     }
                     ts.setValor(id, line);

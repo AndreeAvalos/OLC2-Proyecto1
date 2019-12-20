@@ -70,7 +70,7 @@ public class Proyecto implements TreeSelectionListener {
         crearArbol(raiz, configuraciones);
         arbol = new JTree(modelo);
         Principal.ruta_main += ruta + nombre + "/" + ruta2+ "/" ;
-        System.out.println(Principal.ruta_main);
+        
         arbol.getSelectionModel().addTreeSelectionListener(this);
 
     }

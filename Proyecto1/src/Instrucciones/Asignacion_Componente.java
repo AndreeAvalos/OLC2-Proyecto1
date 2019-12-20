@@ -54,38 +54,38 @@ public class Asignacion_Componente implements Instruccion {
                 switch (simbolo.getTipo().getTipo()) {
                     case LABEL:
                         JLabel label = new JLabel();
-                        label.setSize(20, 20);
+                        label.setSize(50, 20);
                         Principal.ventana_actual.add(label);
                         ts.setValor(id, label);
-                        break;
+                        return null;
                     case TEXTBOX:
                         JTextField txt = new JTextField();
-                        txt.setSize(20, 20);
+                        txt.setSize(50, 20);
                         ts.setValor(id, txt);
                         Principal.ventana_actual.add(txt);
-                        break;
+                        return null;
                     case TEXTAREA:
                         JTextArea area = new JTextArea();
-                        area.setSize(20, 20);
+                        area.setSize(50, 20);
                         ts.setValor(id, area);
                         Principal.ventana_actual.add(area);
-                        break;
+                        return null;
                     case TEXTPASSWORD:
                         JPasswordField jpass = new JPasswordField();
-                        jpass.setSize(20, 20);
+                        jpass.setSize(50, 20);
                         ts.setValor(id, jpass);
                         Principal.ventana_actual.add(jpass);
-                        break;
+                        return null;
                     case TEXTNUMERO:
                         NumberFormat formato = NumberFormat.getNumberInstance();
                         JFormattedTextField txtn = new JFormattedTextField(formato);
-                        txtn.setSize(20, 20);
+                        txtn.setSize(50, 20);
                         ts.setValor(id, txtn);
                         Principal.ventana_actual.add(txtn);
-                        break;
+                        return null;
                     case BUTTON:
                         JButton boton = new JButton();
-                        boton.setSize(20, 20);
+                        boton.setSize(50, 20);
 
                         boton.addActionListener(new ActionListener() {
                             @Override
@@ -95,19 +95,20 @@ public class Asignacion_Componente implements Instruccion {
                                     Crear_Evento aux2 = (Crear_Evento) aux;
                                     aux2.Llamada = true;
                                     aux2.Ejecutar(ts);
-                                }else{
-                                    System.out.println("no existe evento al click");
+                                } else {
+                                    //System.out.println("no existe evento al click");
                                 }
                             }
                         });
                         Principal.ventana_actual.add(boton);
                         ts.setValor(id, boton);
-                        break;
+                        return null;
                 }
             }
-
+            Principal.add_error( id+ " no es un componente", "Semantico", line, column);
+            return null;
         }
-
+        Principal.add_error("No existe componente " + id, "Semantico", line, column);
         return null;
     }
 

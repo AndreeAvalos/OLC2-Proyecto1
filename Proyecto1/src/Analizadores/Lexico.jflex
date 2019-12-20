@@ -1,5 +1,5 @@
 package Analizadores;
-
+import proyecto1.Principal;
 import java_cup.runtime.Symbol;
 
 
@@ -246,7 +246,8 @@ EndOfLineComment     = "//" [^\r\n]* [\r|\n|\r\n]?
 
 <YYINITIAL> . {
         String errLex = "Error léxico : '"+yytext()+"' en la línea: "+(yyline+1)+" y columna: "+(yycolumn+1);
-        System.out.println(errLex);
+        //System.out.println(errLex);
+        Principal.add_error_lexico("Error léxico : "+yytext(),"Lexico",(yyline+1), (yycolumn+1) );
 }
 
 <COMMENT> "*"                       {}

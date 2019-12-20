@@ -15,32 +15,30 @@ public class Siguiente implements Instruccion {
 
     public Siguiente() {
     }
-    
-    
 
     @Override
     public int getLine() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     public int getColumn() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
-       return null;
+        return null;
     }
 
     @Override
     public void Recolectar(TablaDeSimbolos ts) {
-       
+
     }
 
     @Override
     public Tipo getType() {
         return Tipo.SEGUIR;
     }
-    
+
 }

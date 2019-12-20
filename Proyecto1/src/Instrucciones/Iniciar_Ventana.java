@@ -87,7 +87,7 @@ public class Iniciar_Ventana implements Instruccion {
             if (!ts.existeSimbolo(id)) {
                 ts.add(new Simbolo(new TipoSimbolo(Tipo.Frame, ""), id, this, Tipo.VENTANA));
             } else {
-                System.out.println("La funcion \'" + id + "\' ya esta declarada");
+                Principal.add_error("La funcion \'" + id + "\' ya esta declarada", "Semantico", line,column);
                 return;
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }

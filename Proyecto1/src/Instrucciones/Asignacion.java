@@ -7,6 +7,7 @@ package Instrucciones;
 
 import Tabla_Simbolos.TablaDeSimbolos;
 import java.util.ArrayList;
+import proyecto1.Principal;
 
 /**
  *
@@ -68,11 +69,11 @@ public class Asignacion implements Instruccion {
                 return true;
             } else {
                 //error porque no se puede hacer el casteo explicito
-                System.out.println("No es posible hacer el casteo ");
+                Principal.add_error("No es posible hacer el casteo ", "Semantico", line, column);
                 return false;
             }
         } else {
-            System.out.println("No existe la variable: " + id);
+            Principal.add_error("No existe la variable: " + id, "Semantico", line, column);
             return false;
         }
     }
