@@ -22,6 +22,7 @@ import Tipos_Importantes.Error;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Scanner;
@@ -60,6 +61,7 @@ public class Principal extends javax.swing.JFrame {
     public static TablaDeSimbolos tabla_final = new TablaDeSimbolos();
     public static Hashtable<String, String> pestañas = new Hashtable<>();
     public static Hashtable<String, String> clases_proyecto = new Hashtable<>();
+    public static String ruta_guardar = "C:/Users/Andree/Desktop";
 
     /**
      * Creates new form Principal
@@ -336,7 +338,14 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            crearClase();
+        } catch (FileNotFoundException ex) {
+
+        } catch (IOException ex) {
+
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -355,6 +364,7 @@ public class Principal extends javax.swing.JFrame {
 
         ruta_main2 = clases_proyecto.get(clase_actual) + clase_actual;
         ruta_main = clases_proyecto.get(clase_actual);
+        ruta_guardar = ruta_main;
         try (Scanner input2 = new Scanner(new File(ruta_main2))) {
             while (input2.hasNextLine()) {
                 input += input2.nextLine() + "\n";
@@ -557,15 +567,17 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public static void addTab(String ruta) throws FileNotFoundException {
+        String rutas2[] = ruta.split("/");
 
-        String rutas[] = ruta.split("/");
-        String nombre = rutas[rutas.length - 1];
+        String nombre = rutas2[rutas2.length - 1];
 
         if (nombre.contains(".")) {
+            String ruta_temp = clases_proyecto.get(nombre);
+
             if (!pestañas.containsKey(nombre)) {
 
                 String line = "";
-                try (Scanner input = new Scanner(new File(ruta))) {
+                try (Scanner input = new Scanner(new File(ruta_temp + nombre))) {
                     while (input.hasNextLine()) {
                         line += input.nextLine() + "\n";
                     }
@@ -582,7 +594,23 @@ public class Principal extends javax.swing.JFrame {
                 pestañas.put(nombre, ruta);
                 tabs.add(sp, nombre);
             }
+        } else {
+            ruta_guardar = ruta + "/";
         }
+    }
+
+    private void crearClase() throws FileNotFoundException, IOException {
+        String name = JOptionPane.showInputDialog("Nombre de clase con extension (.r|.m|.b");
+        if (!name.contains(".")) {
+            JOptionPane.showMessageDialog(null, "No es posible crear la clase sin extension");
+        }
+
+        File archivo = new File(ruta_guardar + name);
+        BufferedWriter bw;
+        bw = new BufferedWriter(new FileWriter(archivo));
+        clases_proyecto.put(name, ruta_guardar );
+        addTab(ruta_guardar + name);
+
     }
 
 

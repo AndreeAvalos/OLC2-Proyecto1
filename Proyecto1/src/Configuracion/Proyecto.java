@@ -92,6 +92,7 @@ public class Proyecto implements TreeSelectionListener {
         crearArbol(raiz, configuraciones);
         arbol = new JTree(modelo);
         //Principal.ruta_main += ruta + nombre + "/" + ruta2 + "/";
+        Principal.ruta_guardar += ruta + nombre+ "/";
         crearRutas();
 
         arbol.getSelectionModel().addTreeSelectionListener(this);
@@ -176,9 +177,14 @@ public class Proyecto implements TreeSelectionListener {
         TreePath rutaSeleccionada = e.getPath();
         Object[] nodos = rutaSeleccionada.getPath();
         String salida = "";
-        salida = nodos[nodos.length - 1].toString();
+//        salida = nodos[nodos.length - 1].toString();
+
+        for (int i = 0; i < nodos.length - 1; i++) {
+            String nodo = nodos[i].toString();
+            salida += nodo+"/";
+        }
         try {
-            Principal.addTab(Principal.clases_proyecto.get(salida) + salida);
+            Principal.addTab(Principal.ruta_estatica+"/"+salida+ nodos[nodos.length-1]);
         } catch (FileNotFoundException ex) {
 
         }
