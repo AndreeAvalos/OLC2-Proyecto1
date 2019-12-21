@@ -24,6 +24,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -34,6 +38,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -62,22 +70,23 @@ public class Principal extends javax.swing.JFrame {
     public static Hashtable<String, String> pestañas = new Hashtable<>();
     public static Hashtable<String, String> clases_proyecto = new Hashtable<>();
     public static String ruta_guardar = "C:/Users/Andree/Desktop";
+    public static String ruta_olc = "";
 
     /**
      * Creates new form Principal
      */
     public Principal() {
         initComponents();
-        textArea = new RSyntaxTextArea(434, 755);
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-        textArea.setCodeFoldingEnabled(true);
-
-        RTextScrollPane sp = new RTextScrollPane(textArea);
-        sp.setAutoscrolls(true);
-        sp.setLineNumbersEnabled(true);
-        sp.setIconRowHeaderEnabled(true);
-
-        tabs.add(sp, "Default");
+//        textArea = new RSyntaxTextArea(434, 755);
+//        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+//        textArea.setCodeFoldingEnabled(true);
+//
+//        RTextScrollPane sp = new RTextScrollPane(textArea);
+//        sp.setAutoscrolls(true);
+//        sp.setLineNumbersEnabled(true);
+//        sp.setIconRowHeaderEnabled(true);
+//
+//        tabs.add(sp, "Default");
 
     }
 
@@ -143,6 +152,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         jButton4.setText("Guardar Proyecto");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Correr Proyecto");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -269,10 +283,20 @@ public class Principal extends javax.swing.JFrame {
 
         jMenuItem7.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem7.setText("Guardar Archivo");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem7);
 
         jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem8.setText("Guardar Proyecto");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem8);
 
         jMenuBar1.add(jMenu1);
@@ -333,9 +357,93 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
+    String ruta_configuracion = "";
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         // TODO add your handling code here:
+        String ruta_relativa = JOptionPane.showInputDialog(null, "Escriba el nombre de la ruta relativa");
+
+        String carpeta_raiz = JOptionPane.showInputDialog(null, "Escriba el nombre de la carpeta raiz");
+
+        String nombre_correr = JOptionPane.showInputDialog(null, "Escriba el nombre de la clase principal con extension. (Opcional) ");
+
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        selectorArchivos.showOpenDialog(this);
+
+        String ruta_carpeta = selectorArchivos.getSelectedFile().getAbsoluteFile() + "\\";
+
+        File archivo = new File(ruta_carpeta + "configuracion.olc");
+        BufferedWriter bw;
+        try {
+            File fileRoot = new File(ruta_carpeta);
+            crearConfiguracion(fileRoot, 3);
+            ruta_configuracion = "{\n";
+            ruta_configuracion += "\t proyecto:{\n";
+            ruta_configuracion += "\t\t ruta:\"" + ruta_relativa + "\",\n";
+            ruta_configuracion += "\t\t nombre:\"" + carpeta_raiz + "\",\n";
+            ruta_configuracion += "\t\t correr:\"" + nombre_correr + "\",\n";
+            ruta_configuracion += "\t\t configuracion: {\n";
+            crearConfiguracion(fileRoot, 3);
+            ruta_configuracion += "\t\t }\n";
+            ruta_configuracion += "\t}\n";
+            ruta_configuracion += "}";
+            bw = new BufferedWriter(new FileWriter(archivo));
+            bw.write(ruta_configuracion);
+            bw.close();
+        } catch (IOException ex) {
+
+        }
+
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void crearConfiguracion(File root, int numtabs) {
+
+        File[] subItems = root.listFiles();
+        int contador = 0;
+        for (File file : subItems) {
+
+            if (file.isFile()) {
+                Date d = new Date(file.lastModified());
+                Calendar c = new GregorianCalendar();
+                c.setTime(d);
+
+                String dia, mes, annio, hora, minuto, segundo;
+
+                dia = Integer.toString(c.get(Calendar.DATE));
+                mes = Integer.toString(c.get(Calendar.MONTH));
+                annio = Integer.toString(c.get(Calendar.YEAR));
+                hora = Integer.toString(c.get(Calendar.HOUR_OF_DAY));
+                minuto = Integer.toString(c.get(Calendar.MINUTE));
+                segundo = Integer.toString(c.get(Calendar.SECOND));
+                ruta_configuracion += getTabulaciones(numtabs) + "archivo:{\n";
+                numtabs++;
+                ruta_configuracion += getTabulaciones(numtabs + 1) + "nombre: \"" + file.getName() + "\",\n"
+                        + getTabulaciones(numtabs + 1) + "fecha_mod: \"" + dia + "/" + mes + "/" + annio + "   " + hora + ":" + minuto + ":" + segundo + "\"\n";
+                ruta_configuracion += getTabulaciones(numtabs + 1) + "}";
+                numtabs--;
+            } else if (file.isDirectory()) {
+                ruta_configuracion += getTabulaciones(numtabs) + "carpeta:{ \n" + getTabulaciones(numtabs + 1) + "nombre:\"" + file.getName() + "\",\n";
+                crearConfiguracion(file, numtabs + 2);
+                ruta_configuracion += getTabulaciones(numtabs + 1) + "}";
+            }
+            if (contador == subItems.length - 1) {
+                ruta_configuracion += "\n";
+            } else {
+                ruta_configuracion += ",\n";
+            }
+            contador++;
+
+        }
+
+    }
+
+    private String getTabulaciones(int numero) {
+        String tabs = "";
+        for (int i = 0; i < numero; i++) {
+            tabs += "\t";
+        }
+        return tabs;
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
@@ -350,15 +458,21 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        guardarProyecto();
+
         String input = "";
+        if (clase_actual.equals("")) {
+            JOptionPane.showMessageDialog(null, "Debe configurar el archivo olc primero");
+            return;
+        }
 
         if (!clase_actual.contains(".r")) {
-            Principal.add_error("No se puede iniciar con un tipo diferente a .r", "Semantico", 0, 0);
+            Principal.add_error("No se puede iniciar con un tipo diferente a .r", "Semantico", -1, -1);
         }
 
         String ruta_main2;
         if (!clases_proyecto.containsKey(clase_actual)) {
-            Principal.add_error("No existe la clase " + clase_actual + " en el proyecto", "Semantico", 0, 0);
+            Principal.add_error("No existe la clase " + clase_actual + " en el proyecto", "Semantico", -1, -1);
             return;
         }
 
@@ -434,11 +548,15 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
         // muestra el cuadro de diálogo de archivos, para que el usuario pueda elegir el archivo a abrir
         JFileChooser selectorArchivos = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos OLC", "olc");
+        selectorArchivos.setFileFilter(filter);
         selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-        int resultado = selectorArchivos.showOpenDialog(this);
+        int num = selectorArchivos.showOpenDialog(this);
 
         File archivo = selectorArchivos.getSelectedFile();
+
+        ruta_olc = archivo.getAbsolutePath();
 
         if ((archivo == null) || (archivo.getName().equals(""))) {
             JOptionPane.showMessageDialog(this, "Nombre de archivo inválido", "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
@@ -481,7 +599,7 @@ public class Principal extends javax.swing.JFrame {
 
             errores.setVisible(true);
         } catch (IOException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+
         }
 
     }//GEN-LAST:event_jMenuItem9ActionPerformed
@@ -501,7 +619,7 @@ public class Principal extends javax.swing.JFrame {
 
             errores.setVisible(true);
         } catch (IOException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+
         }
 
     }//GEN-LAST:event_jMenuItem10ActionPerformed
@@ -512,8 +630,103 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            nuevo_proyecto();
+        } catch (IOException ex) {
+            
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void nuevo_proyecto() throws IOException {
+        String nombre_proyecto = JOptionPane.showInputDialog(null, "Nombre de proyecto");
+        String ruta_alternativa = "C:\\Users\\Andree\\Desktop\\";
+        File carpeta = new File(ruta_alternativa + nombre_proyecto);
+        carpeta.mkdirs();
+        File archivo = new File(ruta_alternativa + nombre_proyecto + "\\configuracion.olc");
+        BufferedWriter bw;
+        bw = new BufferedWriter(new FileWriter(archivo));
+        bw.close();
+        archivo = new File(ruta_alternativa + nombre_proyecto + "\\main.r");
+        bw = new BufferedWriter(new FileWriter(archivo));
+        bw.write("//Proyecto creado por IDE RMB");
+        bw.close();
+
+    }
+
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // TODO add your handling code here:
+        guardarClase();
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        guardarProyecto();
+        JOptionPane.showMessageDialog(null, "Proyecto Guardado");
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        // TODO add your handling code here:
+        guardarProyecto();
+        JOptionPane.showMessageDialog(null, "Proyecto Guardado");
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    public void guardarClase() {
+        String name = tabs.getTitleAt(tabs.getSelectedIndex());
+        RTextScrollPane ob = (RTextScrollPane) tabs.getSelectedComponent();
+        RSyntaxTextArea txta = (RSyntaxTextArea) ob.getTextArea();
+
+        String ruta = clases_proyecto.get(name) + name;
+
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(ruta);
+            pw = new PrintWriter(fichero);
+            pw.print(txta.getText());
+
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (IOException e2) {
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Clase Guardada");
+    }
+
+    private void guardarProyecto() {
+
+        FileWriter fichero;
+        PrintWriter pw;
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            String name = tabs.getTitleAt(i);
+            RTextScrollPane ob = (RTextScrollPane) tabs.getComponentAt(i);
+            RSyntaxTextArea txta = (RSyntaxTextArea) ob.getTextArea();
+            String ruta = clases_proyecto.get(name) + name;
+
+            fichero = null;
+            pw = null;
+            try {
+                fichero = new FileWriter(ruta);
+                pw = new PrintWriter(fichero);
+                pw.print(txta.getText());
+
+            } catch (IOException e) {
+            } finally {
+                try {
+                    if (null != fichero) {
+                        fichero.close();
+                    }
+                } catch (IOException e2) {
+                }
+            }
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -608,7 +821,8 @@ public class Principal extends javax.swing.JFrame {
         File archivo = new File(ruta_guardar + name);
         BufferedWriter bw;
         bw = new BufferedWriter(new FileWriter(archivo));
-        clases_proyecto.put(name, ruta_guardar );
+        bw.close();
+        clases_proyecto.put(name, ruta_guardar);
         addTab(ruta_guardar + name);
 
     }
