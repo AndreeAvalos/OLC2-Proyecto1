@@ -65,7 +65,8 @@ public class Operacion implements Instruccion {
         GETTEXTO,
         GETANCHO,
         GETALTO,
-        GETPOS
+        GETPOS,
+        RESERVAR
     }
 
     String id_objeto;

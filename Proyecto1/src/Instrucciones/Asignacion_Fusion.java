@@ -68,7 +68,7 @@ public class Asignacion_Fusion implements Instruccion {
 
 //            Object val = valor.Ejecutar(ts);
             TablaDeSimbolos local = ts.getTable(id, accesos);
-            
+
             if (local != null) {
                 Asignacion aux = new Asignacion(accesos.get(accesos.size() - 1), valor, line, column);
                 local.setPadre(ts);
@@ -92,9 +92,9 @@ public class Asignacion_Fusion implements Instruccion {
 
     private void Ejecutar_Memoria(TablaDeSimbolos ts) {
 
-        Simbolo sim = ts.getSimbolo(id);
-        String tipo_struct = sim.getTipo().getAsignado();
-        if (ts.existeSimbolo(tipo_struct)) {
+        if (ts.existeSimbolo(tipo)) {
+            Simbolo sim = ts.getSimbolo(id);
+            String tipo_struct = sim.getTipo().getAsignado();
             if (ts.existeSimbolo(id)) {
                 TablaDeSimbolos local = ts.get_struct(tipo_struct);
                 ts.setValor(id, local);

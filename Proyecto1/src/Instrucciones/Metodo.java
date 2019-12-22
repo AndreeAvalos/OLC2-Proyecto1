@@ -23,7 +23,7 @@ public class Metodo implements Instruccion {
     public LinkedList<Operacion> valores_parametros = new LinkedList<>();
     public boolean Llamada = false;
     int line, column;
-    TablaDeSimbolos local = new TablaDeSimbolos();
+    TablaDeSimbolos local2 = new TablaDeSimbolos();
 
     public Metodo(String id, LinkedList<Instruccion> parametros, LinkedList<Instruccion> contenido, int line, int column) {
         this.id = id;
@@ -55,6 +55,13 @@ public class Metodo implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
 
         if (Llamada == true) {
+            TablaDeSimbolos local = new TablaDeSimbolos();
+            for (Simbolo item : local2) {
+                Simbolo nuevo = new Simbolo("", "");
+                nuevo.copy(item);
+                local.add(nuevo);
+            }
+
             local.setPadre(ts);
             if (local.size() == valores_parametros.size()) {
                 for (int i = 0; i < valores_parametros.size(); i++) {
@@ -107,7 +114,7 @@ public class Metodo implements Instruccion {
                 //aqui va el mensaje de error que ya esta declarada la variable en el ambito
             }
             parametros.forEach((item) -> {
-                item.Recolectar(local);
+                item.Recolectar(local2);
             });
         }
     }

@@ -25,8 +25,6 @@ public class Declaracion_Objeto implements Instruccion {
         this.line = line;
         this.column = column;
     }
-    
-    
 
     @Override
     public int getLine() {
@@ -40,6 +38,15 @@ public class Declaracion_Objeto implements Instruccion {
 
     @Override
     public Object Ejecutar(TablaDeSimbolos ts) {
+        if (ts.getPadre() != null) {
+            if (!ts.existeSimbolo(id)) {
+                ts.add(new Simbolo(new TipoSimbolo(Tipo.Struct, tipo), id, Tipo.FUSION));
+                ts.setValor(id, null);
+            } else {
+                Principal.add_error("La variable \'" + id + "\' ya esta declarada", "Semantico", line, column);
+                //aqui va el mensaje de error que ya esta declarada la variable en el ambito
+            }
+        }
         return null;
     }
 

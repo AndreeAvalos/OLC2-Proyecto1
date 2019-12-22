@@ -1965,9 +1965,9 @@ public class Sintactico extends java_cup.runtime.lr_parser {
 
    ////////////////////////////
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        //System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.left+1)+ " Columna "+(s.right+1)+". Identificador " +
-        //s.value + " no reconocido.");     
-        Principal.add_error_sintactico("Identificador " +s.value,"Sintactico",(s.left+1), (s.right+1) );
+        System.err.println("El analizador No se recupero tras el error\nError en la Línea " + (s.left+1)+ " Columna "+(s.right+1)+". Identificador " +
+        s.value + " no reconocido.");     
+        //Principal.add_error_sintactico("Identificador " +s.value,"Sintactico",(s.left+1), (s.right+1) );
     }
     
     public void setSalida(String cadena)

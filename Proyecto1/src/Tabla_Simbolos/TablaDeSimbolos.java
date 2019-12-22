@@ -409,6 +409,9 @@ public class TablaDeSimbolos extends LinkedList<Simbolo> {
                     val_aux = Boolean.valueOf(valor.toString());
                     return true;
                 case Struct:
+                    if (valor == null) {
+                        return true;
+                    }
                     val_aux = (TablaDeSimbolos) valor;
                     return true;
                 default:
