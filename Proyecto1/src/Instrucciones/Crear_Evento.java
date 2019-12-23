@@ -22,7 +22,7 @@ public class Crear_Evento implements Instruccion {
     LinkedList<Instruccion> contenido;
     public boolean Llamada = false;
     int line, column;
-    TablaDeSimbolos local = new TablaDeSimbolos();
+    
 
     public Crear_Evento(String id, LinkedList<Instruccion> contenido, int line, int column) {
         this.id = id;
@@ -45,6 +45,7 @@ public class Crear_Evento implements Instruccion {
     public Object Ejecutar(TablaDeSimbolos ts) {
 
         if (Llamada == true) {
+            TablaDeSimbolos local = new TablaDeSimbolos();
             local.setPadre(ts);
 
             for (Instruccion item : contenido) {
